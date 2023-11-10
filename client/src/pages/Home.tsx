@@ -1,5 +1,11 @@
+import { Title } from "@mantine/core";
+
 function Home() {
-  return <></>;
+  return (
+    <>
+      <Title>Home page</Title>
+    </>
+  );
 }
 
 export default Home;
