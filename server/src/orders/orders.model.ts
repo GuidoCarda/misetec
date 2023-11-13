@@ -9,7 +9,7 @@ const OrderSchema = z.object({
   accesories: z.string().optional(),
   report: z.string().optional(),
   service_type_id: z.number(),
-  status_id: z.number(),
+  status_id: z.number().default(1),
   device_id: z.number().optional(),
   client_id: z.number(),
   staff_id: z.number(),

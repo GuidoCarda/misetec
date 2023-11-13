@@ -47,7 +47,7 @@ CREATE TABLE order(
   accesories varchar(255),
   report varchar(255),
   service_type_id int,
-  status_id int,
+  status_id int default 1,
   device_id int,
   client_id int,
   staff_id int,
