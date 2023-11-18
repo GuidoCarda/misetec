@@ -4,12 +4,13 @@ import { NavbarNested } from "./PrivateSidebar/NavbarNested";
 
 function PrivateLayout() {
   return (
-    <AppShell navbar={{ width: 300, breakpoint: "sm" }}>
+    <AppShell header={{ height: 60 }} navbar={{ width: 280, breakpoint: "lg" }}>
       <AppShell.Navbar>
         <NavbarNested />
       </AppShell.Navbar>
-      <AppShell.Main>
-        <Container size={"xl"} py="xl">
+      <AppShell.Header>Test </AppShell.Header>
+      <AppShell.Main bg={"#f9fbfc"}>
+        <Container size={"lg"} p="xl" mt="xl">
           <Outlet />
         </Container>
       </AppShell.Main>
