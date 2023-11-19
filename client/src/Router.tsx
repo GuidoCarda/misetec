@@ -6,6 +6,7 @@ import Clients from "./pages/Clients";
 import Dashboard from "./pages/Dashboard";
 import PublicLayout from "./components/PublicLayout";
 import ClientOrders from "./pages/ClientOrders";
+import NewClient from "./pages/NewClient";
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,12 @@ const router = createBrowserRouter([
       {
         path: "clients",
         element: <Clients />,
+        children: [
+          {
+            path: "new",
+            element: <NewClient />,
+          },
+        ],
       },
       {
         path: "dashboard",

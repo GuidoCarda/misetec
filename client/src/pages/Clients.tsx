@@ -1,10 +1,13 @@
 import {
   ActionIcon,
+  Box,
   Button,
   Card,
   Drawer,
   Group,
+  Modal,
   Select,
+  SimpleGrid,
   Space,
   Stack,
   Table,
@@ -15,6 +18,7 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { IconAdjustments, IconRowRemove } from "@tabler/icons-react";
 import { useState } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 
 const clientsMock = [
   {
@@ -57,8 +61,21 @@ const clientsMock = [
 function Clients() {
   const [clients, setClients] = useState(clientsMock);
   const [search, setSearch] = useState("");
-
   const [opened, { open, close }] = useDisclosure(false);
+  const [
+    deleteModalOpened,
+    { open: openDeleteModal, close: closeDeleteModal },
+  ] = useDisclosure(false);
+
+  const location = useLocation();
+
+  const lastPathnameSlug = location.pathname.split("/").slice(-1)[0];
+
+  if (lastPathnameSlug === "new") {
+    return <Outlet />;
+  }
+
+  console.log(lastPathnameSlug);
 
   const filteredClients = clients.filter((client) => {
     return (
@@ -94,6 +111,7 @@ function Clients() {
             color="red"
             size="lg"
             aria-label="Settings"
+            onClick={openDeleteModal}
           >
             <IconRowRemove
               style={{ width: "70%", height: "70%" }}
@@ -114,7 +132,9 @@ function Clients() {
             Esta pagina contiene un listado con todos los clientes
           </Text>
         </Stack>
-        <Button bg={"gray"}>Nuevo cliente</Button>
+        <Button bg={"gray"} component="a" href="clients/new">
+          Nuevo cliente
+        </Button>
       </Group>
       <Space h="xl" />
       <Group align="flex-end" gap={"xl"} justify="space-between">
@@ -161,6 +181,11 @@ function Clients() {
         </Table>
       </Card>
       <EditClientDrawer opened={opened} open={open} close={close} />
+      <ConfirmDeleteModal
+        opened={deleteModalOpened}
+        open={openDeleteModal}
+        close={closeDeleteModal}
+      />
     </>
   );
 }
@@ -188,6 +213,39 @@ function EditClientDrawer({ opened, close }: EditClientDrawerProps) {
           <Button mt={"xl"}>Guardar</Button>
         </Stack>
       </Drawer>
+    </>
+  );
+}
+
+interface ConfirmDeleteModalProps {
+  opened: boolean;
+  open: () => void;
+  close: () => void;
+}
+
+function ConfirmDeleteModal({ opened, close }: ConfirmDeleteModalProps) {
+  return (
+    <>
+      <Modal
+        opened={opened}
+        onClose={close}
+        centered
+        size={"md"}
+        title="Dar de baja cliente"
+      >
+        <Text c={"grey"}>
+          Estas seguro que quieres eliminar el cliente? Esta accion no se podra
+          revertir
+        </Text>
+        <Group justify="flex-end" mt={"xl"}>
+          <Button onClick={close} variant="subtle" color="lightgray" c={"grey"}>
+            Cancelar
+          </Button>
+          <Button onClick={close} color="red">
+            Eliminar
+          </Button>
+        </Group>
+      </Modal>
     </>
   );
 }
