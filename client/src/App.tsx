@@ -7,7 +7,7 @@ import Router from "./Router";
 
 function App() {
   return (
-    <MantineProvider>
+    <MantineProvider theme={{ fontFamily: "Outfit, sans-serif" }}>
       <Router />
     </MantineProvider>
   );
