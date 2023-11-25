@@ -34,7 +34,7 @@ CREATE TABLE staff(
   id int primary key auto_increment,
   firstname varchar(50),
   lastname varchar(50),
-  username varchar(50),
+  email varchar(50),
   `password` varchar(50)
 );
 
