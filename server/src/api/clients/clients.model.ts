@@ -4,14 +4,14 @@ export const ClientSchema = z.object({
   id: z.number().int().positive(),
   firstname: z.string().max(50),
   lastname: z.string().max(50),
-  address: z.string().max(100),
+  email: z.string().email(),
+  address: z.string().max(50),
   phone_number: z.string().max(20),
   postal_code: z.string().max(10),
-  email: z.string().email(),
 });
 
 export const CreateClientSchema = ClientSchema.omit({ id: true });
-export const UpdateClientSchema = ClientSchema.omit({ id: true });
+export const UpdateClientSchema = ClientSchema.omit({ id: true }).partial();
 
 export type Client = z.infer<typeof ClientSchema>;
 export type CreateClient = z.infer<typeof CreateClientSchema>;

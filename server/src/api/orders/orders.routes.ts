@@ -1,21 +1,21 @@
 import { Router } from "express";
-// import passport from "passport";
 
 import * as orderHandlers from "./orders.handlers";
 import { validateRequest } from "../middlewares";
+
 import {
   CreateOrderSchema,
   OrderQueryParamsSchema,
   UpdateOrderSchema,
   UpdateOrderStateSchema,
 } from "./orders.model";
+
 import { ParamsWithIdSchema } from "../interfaces/ParamsWithId";
 
 const router = Router();
 
 router.get(
   "/",
-  // passport.authenticate("jwt", { session: false }),
   validateRequest({ query: OrderQueryParamsSchema }),
   orderHandlers.getAllOrders
 );
