@@ -2,17 +2,29 @@ import { NextFunction, Request, Response } from "express";
 import pool from "../../database/db";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
 import { ParamsWithId } from "../interfaces/ParamsWithId";
-import { CreateClient, UpdateClient } from "./clients.model";
+import { ClientQueryParams, CreateClient, UpdateClient } from "./clients.model";
+import {
+  getInsertNamedPlacehoders,
+  getNamedPlaceholders,
+  getUpdateNamedPlaceholders,
+} from "../../database/utils";
 
 export async function getAllClients(
-  _req: Request,
+  req: Request<{}, {}, {}, ClientQueryParams>,
   res: Response,
   next: NextFunction
 ) {
+  let query = "SELECT * FROM client";
+
+  const namedPlaceholders = getNamedPlaceholders(req.query, "OR", "LIKE");
+  query += namedPlaceholders.length > 0 ? ` WHERE ${namedPlaceholders}` : "";
+
+  const values = Object.fromEntries(
+    Object.entries(req.query).map(([key, value]) => [key, `%${value}%`])
+  );
+
   try {
-    const [results] = await pool.execute<RowDataPacket[]>(
-      "SELECT * FROM client"
-    );
+    const [results] = await pool.execute<RowDataPacket[]>(query, values);
 
     res.status(200).json(results);
   } catch (error) {
@@ -51,14 +63,10 @@ export async function createClient(
   next: NextFunction
 ) {
   const client = req.body;
+
   let query = "INSERT INTO client";
-
-  const columns = Object.keys(client).join(", ");
-  const values = Object.values(client)
-    .map((value) => `"${value}"`)
-    .join(", ");
-
-  query += ` (${columns}) VALUES (${values})`;
+  const namedPlaceholders = getInsertNamedPlacehoders(client);
+  query += namedPlaceholders;
 
   console.log(query);
   try {
@@ -81,21 +89,21 @@ export async function updateClient(
 ) {
   const id = req.params.id;
   const client = req.body;
+  console.log(client);
+
+  if (Object.keys(client).length === 0) {
+    return res.status(400).json({ message: "client body is empty" });
+  }
 
   try {
     let query = "UPDATE client SET ";
-    const columns = Object.entries(client)
-      .filter(([_, value]) => value !== undefined)
-      .map(([key, _]) => `${key} = :${key}`)
-      .join(", ");
-
+    const columns = getUpdateNamedPlaceholders(client);
     query += columns + ` WHERE id = ${id}`;
-    console.log(query);
 
     const [results] = await pool.execute<ResultSetHeader>(query, client);
 
     if (results.affectedRows === 0) {
-      res.status(400).json({ message: "client was not updated" });
+      return res.status(400).json({ message: "client was not updated" });
     }
 
     res.json(results);
