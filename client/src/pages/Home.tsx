@@ -1,9 +1,9 @@
-import { Title } from "@mantine/core";
+import { Button } from "@/components/ui/button";
 
 function Home() {
   return (
     <>
-      <Title>Home page</Title>
+      <Button></Button>
     </>
   );
 }

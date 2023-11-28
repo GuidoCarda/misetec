@@ -1,102 +1,182 @@
+import { Button } from "@/components/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import {
-  Box,
-  Button,
-  Group,
-  SimpleGrid,
-  Stack,
-  Text,
-  TextInput,
-  Title,
-} from "@mantine/core";
-import { IconArrowNarrowLeft } from "@tabler/icons-react";
-import { Link, useNavigate } from "react-router-dom";
-import classes from "./NewClient.module.css";
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+const formSchema = z.object({
+  firstname: z.string().min(2, {
+    message: "El nombre debe tener al menos 2 caracteres.",
+  }),
+  lastname: z.string().min(2, {
+    message: "El apellido debe tener al menos 2 caracteres.",
+  }),
+  dni: z.string().length(8, {
+    message: "El DNI debe tener 8 caracteres.",
+  }),
+  address: z.string().min(2, {
+    message: "La direccion debe tener al menos 2 caracteres.",
+  }),
+  phone_number: z.string().min(2, {
+    message: "El telefono debe tener al menos 2 caracteres.",
+  }),
+  postal_code: z.string().min(2, {
+    message: "El codigo postal debe tener al menos 2 caracteres.",
+  }),
+  email: z.string().email({
+    message: "El email debe ser valido.",
+  }),
+});
 
 function NewClient() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("submit");
+  // 1. Define your form.
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      firstname: "",
+      lastname: "",
+      dni: "",
+      address: "",
+      phone_number: "",
+      postal_code: "",
+      email: "",
+    },
+  });
 
-    const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData);
-    console.log(data);
-
+  // 2. Define a submit handler.
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    // Do something with the form values.
+    // ✅ This will be type-safe and validated.
+    console.log(values);
     fetch("http://localhost:3000/api/v1/clients", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(values),
       mode: "cors",
     })
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        navigate(-1);
       });
-  };
-
+  }
   return (
     <>
-      <Group mb={"xl"} justify="space-between" pos={"relative"}>
-        <Button
-          variant="transparent"
-          to=".."
-          size="sm"
-          component={Link}
-          leftSection={<IconArrowNarrowLeft />}
-          pos={"absolute"}
-          top={-30}
-          className={classes.returnLink}
-          left={-15}
-        >
-          volver
-        </Button>
-        <Stack gap={2}>
-          <Title order={2}>Nuevo Cliente</Title>
-          <Text w="45ch" c={"gray"}>
-            Complete los datos del cliente para hacer un seguimiento de sus
-            ordenes
-          </Text>
-        </Stack>
-      </Group>
-      <form onSubmit={handleSubmit}>
-        <Stack>
-          <SimpleGrid cols={2}>
-            <TextInput label="Nombre" placeholder="Nombre" name="firstname" />
-            <TextInput
-              label="Apellido"
-              placeholder="Apellido"
-              name="lastname"
+      <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-10">
+        Clientes
+      </h2>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <div className="grid md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="firstname"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nombre</FormLabel>
+                  <FormControl>
+                    <Input placeholder="shadcn" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <TextInput label="DNI" placeholder="DNI" name="dni" />
-          </SimpleGrid>
-          <Box mt="xl">
-            <Title order={4}>Datos de contacto</Title>
-            <Text c={"gray"}>
-              Los siguientes datos seran de utilizad para poder contactar a el
-              cliente
-            </Text>
-          </Box>
-          <TextInput label="Direccion" placeholder="Direccion" name="address" />
-          <TextInput label="Email" placeholder="Email" name="email" />
-          <TextInput
-            label="Telefono"
-            placeholder="Telefono"
-            name="phone_number"
-          />
-          <TextInput
-            label="Codigo Postal"
-            placeholder="2000"
-            name="postal_code"
-          />
-        </Stack>
-        <Group justify="flex-end" mt={"xl"}>
+
+            <FormField
+              control={form.control}
+              name="lastname"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Apellido</FormLabel>
+                  <FormControl>
+                    <Input placeholder="shadcn" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Correo</FormLabel>
+                  <FormControl>
+                    <Input placeholder="shadcn" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="dni"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nro Documento</FormLabel>
+                  <FormControl>
+                    <Input placeholder="shadcn" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="address"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Direccion</FormLabel>
+                  <FormControl>
+                    <Input placeholder="shadcn" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="phone_number"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nro telefono</FormLabel>
+                  <FormControl>
+                    <Input placeholder="shadcn" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="postal_code"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Codigo postal</FormLabel>
+                  <FormControl>
+                    <Input placeholder="shadcn" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
           <Button type="submit">Cargar</Button>
-        </Group>
-      </form>
+        </form>
+      </Form>
     </>
   );
 }

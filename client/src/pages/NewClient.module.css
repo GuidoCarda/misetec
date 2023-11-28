@@ -1,9 +1,0 @@
-.returnLink {
-  color: var(--mantine-color-dark-1);
-  transition: transform 250ms;
-}
-
-.returnLink:hover {
-  transform: translateX(-0.125rem);
-  color: var(--mantine-color-dark-3);
-}
