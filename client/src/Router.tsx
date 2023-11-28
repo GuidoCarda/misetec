@@ -38,7 +38,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/public",
+    path: "/portal",
     element: <PublicLayout />,
     children: [
       {

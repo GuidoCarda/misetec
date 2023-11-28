@@ -1,4 +1,4 @@
-import { Group, Code, ScrollArea, NavLink } from "@mantine/core";
+import { ScrollArea, NavLink, Title } from "@mantine/core";
 import { IconNotes } from "@tabler/icons-react";
 import classes from "./NavbarNested.module.css";
 
@@ -29,9 +29,7 @@ export function NavbarNested() {
   return (
     <nav className={classes.navbar}>
       <div className={classes.header}>
-        <Group justify="space-between">
-          <Code fw={700}>Misetec</Code>
-        </Group>
+        <Title order={3}>Misetec</Title>
       </div>
 
       <ScrollArea className={classes.links}>

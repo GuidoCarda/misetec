@@ -8,23 +8,49 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
-import { IconArrowBack } from "@tabler/icons-react";
-import { Link } from "react-router-dom";
+import { IconArrowNarrowLeft } from "@tabler/icons-react";
+import { Link, useNavigate } from "react-router-dom";
+import classes from "./NewClient.module.css";
 
 function NewClient() {
+  const navigate = useNavigate();
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log("submit");
+
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData);
+    console.log(data);
+
+    fetch("http://localhost:3000/api/v1/clients", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+      mode: "cors",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        navigate(-1);
+      });
+  };
+
   return (
     <>
       <Group mb={"xl"} justify="space-between" pos={"relative"}>
         <Button
           variant="transparent"
           to=".."
-          c="grey"
           size="sm"
           component={Link}
-          leftSection={<IconArrowBack />}
+          leftSection={<IconArrowNarrowLeft />}
           pos={"absolute"}
           top={-30}
-          left={-10}
+          className={classes.returnLink}
+          left={-15}
         >
           volver
         </Button>
@@ -36,26 +62,39 @@ function NewClient() {
           </Text>
         </Stack>
       </Group>
-      <form>
-        <Stack gap={"md"}>
+      <form onSubmit={handleSubmit}>
+        <Stack>
           <SimpleGrid cols={2}>
-            <TextInput label="Nombre" placeholder="Nombre" />
-            <TextInput label="Apellido" placeholder="Apellido" />
-            <TextInput label="DNI" placeholder="DNI" />
+            <TextInput label="Nombre" placeholder="Nombre" name="firstname" />
+            <TextInput
+              label="Apellido"
+              placeholder="Apellido"
+              name="lastname"
+            />
+            <TextInput label="DNI" placeholder="DNI" name="dni" />
           </SimpleGrid>
-          <Box>
+          <Box mt="xl">
             <Title order={4}>Datos de contacto</Title>
             <Text c={"gray"}>
               Los siguientes datos seran de utilizad para poder contactar a el
               cliente
             </Text>
           </Box>
-          <TextInput label="Direccion" placeholder="Direccion" />
-          <TextInput label="Email" placeholder="Email" />
-          <TextInput label="Telefono" placeholder="Telefono" />
+          <TextInput label="Direccion" placeholder="Direccion" name="address" />
+          <TextInput label="Email" placeholder="Email" name="email" />
+          <TextInput
+            label="Telefono"
+            placeholder="Telefono"
+            name="phone_number"
+          />
+          <TextInput
+            label="Codigo Postal"
+            placeholder="2000"
+            name="postal_code"
+          />
         </Stack>
         <Group justify="flex-end" mt={"xl"}>
-          <Button>Cargar</Button>
+          <Button type="submit">Cargar</Button>
         </Group>
       </form>
     </>

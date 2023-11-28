@@ -1,13 +1,11 @@
 import {
   ActionIcon,
-  Box,
   Button,
   Card,
   Drawer,
   Group,
   Modal,
   Select,
-  SimpleGrid,
   Space,
   Stack,
   Table,
@@ -17,49 +15,49 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconAdjustments, IconRowRemove } from "@tabler/icons-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 
-const clientsMock = [
-  {
-    id: 1,
-    name: "Juan Perez",
-    address: "Calle 123",
-    email: "juan@gmail.com",
-    phone_number: "900990563",
-  },
-  {
-    id: 2,
-    name: "Pedro Perez",
-    address: "Calle 123",
-    email: "pedro@gmail.com",
-    phone_number: "1235474",
-  },
-  {
-    id: 3,
-    name: "Maria Perez",
-    address: "Calle 123",
-    email: "maria@gmail.com",
-    phone_number: "56467",
-  },
-  {
-    id: 4,
-    name: "Jose Perez",
-    address: "Calle 123",
-    email: "jose@gmail.com",
-    phone_number: "31231231",
-  },
-  {
-    id: 5,
-    name: "Luis Perez",
-    address: "Calle 123",
-    email: "luis@gmail.com",
-    phone_number: "23423423",
-  },
-];
+// const clientsMock = [
+//   {
+//     id: 1,
+//     name: "Juan Perez",
+//     address: "Calle 123",
+//     email: "juan@gmail.com",
+//     phone_number: "900990563",
+//   },
+//   {
+//     id: 2,
+//     name: "Pedro Perez",
+//     address: "Calle 123",
+//     email: "pedro@gmail.com",
+//     phone_number: "1235474",
+//   },
+//   {
+//     id: 3,
+//     name: "Maria Perez",
+//     address: "Calle 123",
+//     email: "maria@gmail.com",
+//     phone_number: "56467",
+//   },
+//   {
+//     id: 4,
+//     name: "Jose Perez",
+//     address: "Calle 123",
+//     email: "jose@gmail.com",
+//     phone_number: "31231231",
+//   },
+//   {
+//     id: 5,
+//     name: "Luis Perez",
+//     address: "Calle 123",
+//     email: "luis@gmail.com",
+//     phone_number: "23423423",
+//   },
+// ];
 
 function Clients() {
-  const [clients, setClients] = useState(clientsMock);
+  const [clients, setClients] = useState<Record<string, string>[]>([]);
   const [search, setSearch] = useState("");
   const [opened, { open, close }] = useDisclosure(false);
   const [
@@ -67,7 +65,27 @@ function Clients() {
     { open: openDeleteModal, close: closeDeleteModal },
   ] = useDisclosure(false);
 
+  const alreadyFetched = useRef(false);
+
   const location = useLocation();
+
+  useEffect(() => {
+    if (alreadyFetched.current) return;
+
+    fetch("http://localhost:3000/api/v1/clients", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      mode: "cors",
+    })
+      .then((res) => res.json())
+      .then((data) => setClients(data));
+
+    return () => {
+      alreadyFetched.current = true;
+    };
+  }, []);
 
   const lastPathnameSlug = location.pathname.split("/").slice(-1)[0];
 
@@ -79,7 +97,7 @@ function Clients() {
 
   const filteredClients = clients.filter((client) => {
     return (
-      client.name.toLowerCase().includes(search.toLowerCase()) ||
+      client.firstname.toLowerCase().includes(search.toLowerCase()) ||
       client.email.toLowerCase().includes(search.toLowerCase()) ||
       client.phone_number.toLowerCase().includes(search.toLowerCase())
     );
@@ -88,7 +106,9 @@ function Clients() {
   const rows = filteredClients.map((client) => (
     <Table.Tr key={client.id}>
       <Table.Td>{client.id}</Table.Td>
-      <Table.Td>{client.name}</Table.Td>
+      <Table.Td>
+        {client.firstname} {client.lastname}
+      </Table.Td>
       <Table.Td>{client.address}</Table.Td>
       <Table.Td>{client.email}</Table.Td>
       <Table.Td>{client.phone_number}</Table.Td>
