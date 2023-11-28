@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 
 function PublicLayout() {
   return (
-    <div>
+    <div className="min-h-screen">
       <Outlet />
     </div>
   );

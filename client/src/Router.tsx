@@ -1,12 +1,18 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import PrivateLayout from "./components/PrivateLayout";
-import Home from "./pages/Home";
-import Orders from "./pages/Orders";
-import Clients from "./pages/Clients";
-import Dashboard from "./pages/Dashboard";
-import PublicLayout from "./components/PublicLayout";
-import ClientOrders from "./pages/ClientOrders";
-import NewClient from "./pages/NewClient";
+
+// Layouts
+import PrivateLayout from "@/components/PrivateLayout";
+import PublicLayout from "@/components/PublicLayout";
+
+//Pages
+import ClientsLoginPage from "@/pages/ClientsLogin";
+import StaffLoginPage from "@/pages/StaffLogin";
+import ClientOrders from "@/pages/ClientOrders";
+import Clients from "@/pages/Clients";
+import Dashboard from "@/pages/Dashboard";
+import NewClientForm from "@/pages/NewClientForm";
+import Orders from "@/pages/Orders";
+import Home from "@/pages/Home";
 
 const router = createBrowserRouter([
   {
@@ -27,7 +33,7 @@ const router = createBrowserRouter([
         children: [
           {
             path: "new",
-            element: <NewClient />,
+            element: <NewClientForm />,
           },
         ],
       },
@@ -36,6 +42,14 @@ const router = createBrowserRouter([
         element: <Dashboard />,
       },
     ],
+  },
+  {
+    path: "/staff-login",
+    element: <StaffLoginPage />,
+  },
+  {
+    path: "/clients-login",
+    element: <ClientsLoginPage />,
   },
   {
     path: "/portal",

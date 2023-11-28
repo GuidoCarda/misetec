@@ -37,7 +37,7 @@ const formSchema = z.object({
   }),
 });
 
-function NewClient() {
+function NewClientForm() {
   // const navigate = useNavigate();
 
   // 1. Define your form.
@@ -181,4 +181,4 @@ function NewClient() {
   );
 }
 
-export default NewClient;
+export default NewClientForm;
