@@ -74,12 +74,15 @@ function NewClientForm() {
   }
   return (
     <>
-      <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-10">
-        Clientes
+      <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-6">
+        Nuevo Cliente
       </h2>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <div className="grid md:grid-cols-2 gap-4">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-8  w-full"
+        >
+          <div className="grid md:grid-cols-2 gap-6">
             <FormField
               control={form.control}
               name="firstname"
@@ -87,7 +90,7 @@ function NewClientForm() {
                 <FormItem>
                   <FormLabel>Nombre</FormLabel>
                   <FormControl>
-                    <Input placeholder="shadcn" {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -101,7 +104,7 @@ function NewClientForm() {
                 <FormItem>
                   <FormLabel>Apellido</FormLabel>
                   <FormControl>
-                    <Input placeholder="shadcn" {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -112,9 +115,9 @@ function NewClientForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Correo</FormLabel>
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="shadcn" {...field} />
+                    <Input placeholder="shadcn" type="email" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -127,7 +130,7 @@ function NewClientForm() {
                 <FormItem>
                   <FormLabel>Nro Documento</FormLabel>
                   <FormControl>
-                    <Input placeholder="shadcn" {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -140,7 +143,7 @@ function NewClientForm() {
                 <FormItem>
                   <FormLabel>Direccion</FormLabel>
                   <FormControl>
-                    <Input placeholder="shadcn" {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -153,7 +156,7 @@ function NewClientForm() {
                 <FormItem>
                   <FormLabel>Nro telefono</FormLabel>
                   <FormControl>
-                    <Input placeholder="shadcn" {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -166,14 +169,13 @@ function NewClientForm() {
                 <FormItem>
                   <FormLabel>Codigo postal</FormLabel>
                   <FormControl>
-                    <Input placeholder="shadcn" {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
-
           <Button type="submit">Cargar</Button>
         </form>
       </Form>

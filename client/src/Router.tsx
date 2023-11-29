@@ -8,11 +8,11 @@ import PublicLayout from "@/components/PublicLayout";
 import ClientsLoginPage from "@/pages/ClientsLogin";
 import StaffLoginPage from "@/pages/StaffLogin";
 import ClientOrders from "@/pages/ClientOrders";
-import Clients from "@/pages/Clients";
 import Dashboard from "@/pages/Dashboard";
 import NewClientForm from "@/pages/NewClientForm";
 import Orders from "@/pages/Orders";
 import Home from "@/pages/Home";
+import Clients from "@/pages/Clients/Clients";
 
 const router = createBrowserRouter([
   {
