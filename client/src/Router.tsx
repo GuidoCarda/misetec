@@ -13,11 +13,14 @@ import NewClientForm from "@/pages/NewClientForm";
 import Orders from "@/pages/Orders";
 import Home from "@/pages/Home";
 import Clients from "@/pages/Clients/Clients";
+import NewOrderForm from "@/pages/NewOrderForm";
+import ErrorPage from "@/pages/Error";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <PrivateLayout />,
+    errorElement: <ErrorPage />,
     children: [
       {
         index: true,
@@ -26,6 +29,7 @@ const router = createBrowserRouter([
       {
         path: "orders",
         element: <Orders />,
+        children: [{ path: "new", element: <NewOrderForm /> }],
       },
       {
         path: "clients",
