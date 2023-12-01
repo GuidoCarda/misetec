@@ -1,7 +1,8 @@
+import { Button } from "@/components/ui/button";
 import DataTable from "@/components/ui/data-table";
 import { Client, columns } from "@/pages/Clients/columns";
 import { useEffect, useRef, useState } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 
 function Clients() {
   const [clients, setClients] = useState<Client[]>([]);
@@ -47,9 +48,14 @@ function Clients() {
 
   return (
     <>
-      <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-10">
-        Clientes
-      </h2>
+      <header className="flex justify-between">
+        <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-10">
+          Clientes
+        </h2>
+        <Link to={"new"}>
+          <Button>Nueva orden</Button>
+        </Link>
+      </header>
       <DataTable columns={columns} data={clients} />
     </>
   );

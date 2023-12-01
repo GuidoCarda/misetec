@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
   firstname: z.string().min(2, {
@@ -38,7 +39,7 @@ const formSchema = z.object({
 });
 
 function NewClientForm() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -54,10 +55,7 @@ function NewClientForm() {
     },
   });
 
-  // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     console.log(values);
     fetch("http://localhost:3000/api/v1/clients", {
       method: "POST",
@@ -72,6 +70,7 @@ function NewClientForm() {
         console.log(data);
       });
   }
+
   return (
     <>
       <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-6">
@@ -176,7 +175,16 @@ function NewClientForm() {
               )}
             />
           </div>
-          <Button type="submit">Cargar</Button>
+          <div className="flex gap-4 justify-end">
+            <Button
+              onClick={() => navigate(-1)}
+              type="button"
+              variant={"ghost"}
+            >
+              Cancelar
+            </Button>
+            <Button type="submit">Cargar</Button>
+          </div>
         </form>
       </Form>
     </>

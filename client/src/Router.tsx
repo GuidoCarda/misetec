@@ -15,35 +15,42 @@ import Home from "@/pages/Home";
 import Clients from "@/pages/Clients/Clients";
 import NewOrderForm from "@/pages/NewOrderForm";
 import ErrorPage from "@/pages/Error";
+import RequireAuth from "@/components/RequireAuth";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <PrivateLayout />,
-    errorElement: <ErrorPage />,
+    element: <RequireAuth />,
     children: [
       {
-        index: true,
-        element: <Home />,
-      },
-      {
-        path: "orders",
-        element: <Orders />,
-        children: [{ path: "new", element: <NewOrderForm /> }],
-      },
-      {
-        path: "clients",
-        element: <Clients />,
+        path: "/",
+        element: <PrivateLayout />,
+        errorElement: <ErrorPage />,
         children: [
           {
-            path: "new",
-            element: <NewClientForm />,
+            index: true,
+            element: <Home />,
+          },
+          {
+            path: "orders",
+            element: <Orders />,
+            children: [{ path: "new", element: <NewOrderForm /> }],
+          },
+          {
+            path: "clients",
+            element: <Clients />,
+            children: [
+              {
+                path: "new",
+                element: <NewClientForm />,
+              },
+            ],
+          },
+          {
+            path: "dashboard",
+            element: <Dashboard />,
           },
         ],
-      },
-      {
-        path: "dashboard",
-        element: <Dashboard />,
       },
     ],
   },
@@ -57,11 +64,16 @@ const router = createBrowserRouter([
   },
   {
     path: "/portal",
-    element: <PublicLayout />,
+    element: <RequireAuth />,
     children: [
       {
-        index: true,
-        element: <ClientOrders />,
+        element: <PublicLayout />,
+        children: [
+          {
+            index: true,
+            element: <ClientOrders />,
+          },
+        ],
       },
     ],
   },

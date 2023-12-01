@@ -1,5 +1,11 @@
+import { SectionTitle } from "@/components/PrivateLayout";
+
 function Home() {
-  return <></>;
+  return (
+    <>
+      <SectionTitle />
+    </>
+  );
 }
 
 export default Home;

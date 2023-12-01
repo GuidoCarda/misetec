@@ -1,3 +1,4 @@
+import { SectionTitle } from "@/components/PrivateLayout";
 import { useEffect, useRef, useState } from "react";
 
 function ClientOrders() {
@@ -20,7 +21,14 @@ function ClientOrders() {
 
   console.log(orders);
 
-  return <></>;
+  return (
+    <>
+      <SectionTitle
+        title="Bienvenido usuario x"
+        description="Aca podras ver todas las ordenes a tu nombre"
+      />
+    </>
+  );
 }
 
 export default ClientOrders;

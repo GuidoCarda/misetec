@@ -20,7 +20,7 @@ import { Input } from "@/components/ui/input";
 //form handling and validation
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 const formSchema = z.object({
@@ -34,6 +34,8 @@ const formSchema = z.object({
 
 function StaffLoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -65,8 +67,8 @@ function StaffLoginPage() {
       .then((data) => {
         console.log(data);
         if (data.token) {
-          // localStorage.setItem("token", data.token);
-          navigate("/clients");
+          window.localStorage.setItem("token", data.token);
+          navigate(from, { replace: true });
         }
       })
       .catch((error) => console.log(error));
