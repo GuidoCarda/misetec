@@ -4,6 +4,7 @@ import { Link, useRouteError } from "react-router-dom";
 
 function ErrorPage() {
   const error = useRouteError() as Error;
+  console.log(error);
   return (
     <main className="min-h-screen w-full grid place-content-center">
       <div className="flex flex-col items-center">

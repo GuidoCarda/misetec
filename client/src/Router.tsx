@@ -6,13 +6,15 @@ import PublicLayout from "@/components/PublicLayout";
 
 //Pages
 import ClientsLoginPage from "@/pages/ClientsLogin";
-import StaffLoginPage from "@/pages/StaffLogin";
+import StaffLoginPage, { action as staffLoginAction } from "@/pages/StaffLogin";
 import ClientOrders from "@/pages/ClientOrders";
 import Dashboard from "@/pages/Dashboard";
-import NewClientForm from "@/pages/NewClientForm";
+import NewClientForm, {
+  action as newClientFormAction,
+} from "@/pages/NewClientForm";
 import Orders from "@/pages/Orders";
 import Home from "@/pages/Home";
-import Clients from "@/pages/Clients/Clients";
+import Clients, { loader as clientsLoader } from "@/pages/Clients/Clients";
 import NewOrderForm from "@/pages/NewOrderForm";
 import ErrorPage from "@/pages/Error";
 import RequireAuth from "@/components/RequireAuth";
@@ -39,10 +41,12 @@ const router = createBrowserRouter([
           {
             path: "clients",
             element: <Clients />,
+            loader: clientsLoader,
             children: [
               {
                 path: "new",
                 element: <NewClientForm />,
+                action: newClientFormAction,
               },
             ],
           },
@@ -57,6 +61,7 @@ const router = createBrowserRouter([
   {
     path: "/staff-login",
     element: <StaffLoginPage />,
+    action: staffLoginAction,
   },
   {
     path: "/clients-login",

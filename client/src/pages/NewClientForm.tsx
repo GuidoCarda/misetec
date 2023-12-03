@@ -12,7 +12,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useNavigate } from "react-router-dom";
+import {
+  ActionFunctionArgs,
+  redirect,
+  useNavigate,
+  useNavigation,
+  useSubmit,
+} from "react-router-dom";
 
 const formSchema = z.object({
   firstname: z.string().min(2, {
@@ -39,7 +45,11 @@ const formSchema = z.object({
 });
 
 function NewClientForm() {
+  const navigation = useNavigation();
   const navigate = useNavigate();
+  const submit = useSubmit();
+
+  const isSubmitting = navigation.state === "submitting";
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -56,19 +66,7 @@ function NewClientForm() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    fetch("http://localhost:3000/api/v1/clients", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-      mode: "cors",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-      });
+    submit(values, { method: "POST", action: "/clients/new" });
   }
 
   return (
@@ -183,12 +181,42 @@ function NewClientForm() {
             >
               Cancelar
             </Button>
-            <Button type="submit">Cargar</Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Cargando" : "Cargar"}
+            </Button>
           </div>
         </form>
       </Form>
     </>
   );
+}
+
+export async function action({ request }: ActionFunctionArgs) {
+  try {
+    const formData = await request.formData();
+    const body = Object.fromEntries(formData);
+
+    const response = await fetch("http://localhost:3000/api/v1/clients", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    console.log(response);
+
+    const data = await response.json();
+
+    if (response.status === 400) {
+      return data.message;
+    }
+
+    return redirect("/clients");
+  } catch (error) {
+    console.log(error);
+    return "Algo salio mal";
+  }
 }
 
 export default NewClientForm;

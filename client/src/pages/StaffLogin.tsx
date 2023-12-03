@@ -1,3 +1,4 @@
+import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -20,7 +21,15 @@ import { Input } from "@/components/ui/input";
 //form handling and validation
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useLocation, useNavigate } from "react-router-dom";
+import {
+  ActionFunctionArgs,
+  redirect,
+  useActionData,
+  useNavigation,
+  // useLocation,
+  // useNavigate,
+  useSubmit,
+} from "react-router-dom";
 import { z } from "zod";
 
 const formSchema = z.object({
@@ -33,9 +42,12 @@ const formSchema = z.object({
 });
 
 function StaffLoginPage() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
+  const errorMessage = useActionData() as string;
+  // const navigate = useNavigate();
+  const navigation = useNavigation();
+  // const location = useLocation();
+  const submit = useSubmit();
+  // const from = location.state?.from?.pathname || "/";
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -47,31 +59,7 @@ function StaffLoginPage() {
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log(values);
-
-    // TODO : Improve login flow & error handling
-    fetch("http://localhost:3000/api/v1/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    })
-      .then((res) => {
-        console.log(res);
-        if (!res.ok) {
-          throw new Error("Error en la llamada a la API");
-        }
-
-        return res.json();
-      })
-      .then((data) => {
-        console.log(data);
-        if (data.token) {
-          window.localStorage.setItem("token", data.token);
-          navigate(from, { replace: true });
-        }
-      })
-      .catch((error) => console.log(error));
+    submit(values, { method: "POST", action: "/staff-login" });
   };
 
   return (
@@ -79,6 +67,11 @@ function StaffLoginPage() {
       <main className="px-4 grid place-items-center min-h-[calc(100vh-4rem)]">
         <Card className="min-w-full md:min-w-[400px]">
           <CardHeader>
+            {errorMessage && (
+              <Alert variant={"destructive"} className="mb-2">
+                {errorMessage}
+              </Alert>
+            )}
             <CardTitle className="text-2xl">Ingresar al sistema</CardTitle>
             <CardDescription>
               Ingresa tu email y contraseña para continuar
@@ -120,8 +113,14 @@ function StaffLoginPage() {
                     </FormItem>
                   )}
                 />
-                <Button className="w-full mt-4" type="submit">
-                  Iniciar Sesión
+                <Button
+                  disabled={navigation.state === "submitting"}
+                  className="w-full mt-4"
+                  type="submit"
+                >
+                  {navigation.state === "submitting"
+                    ? "Enviando..."
+                    : "Iniciar Sesión"}
                 </Button>
               </form>
             </Form>
@@ -133,6 +132,32 @@ function StaffLoginPage() {
       </footer>
     </>
   );
+}
+
+export async function action({ request }: ActionFunctionArgs) {
+  const formData = await request.formData();
+  const body = Object.fromEntries(formData);
+
+  try {
+    const res = await fetch("http://localhost:3000/api/v1/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status === 400) {
+      return "Credeniales invalidas";
+    }
+
+    const data = await res.json();
+
+    window.localStorage.setItem("token", data.token);
+    return redirect("/");
+  } catch (error) {
+    return error;
+  }
 }
 
 export default StaffLoginPage;
