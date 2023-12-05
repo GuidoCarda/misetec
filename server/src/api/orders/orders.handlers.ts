@@ -24,7 +24,7 @@ export async function getAllOrders(
 
     res.json({
       query,
-      results,
+      data: results,
       count: results.length,
     });
   } catch (error) {

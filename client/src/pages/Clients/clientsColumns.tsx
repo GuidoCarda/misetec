@@ -82,7 +82,7 @@ export const columns: ColumnDef<Client>[] = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuLabel>Acciones</DropdownMenuLabel>
               <DropdownMenuItem
                 onClick={() =>
                   navigator.clipboard.writeText(client.id.toString())

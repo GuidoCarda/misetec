@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
 import DataTable from "@/components/ui/data-table";
+import { Input } from "@/components/ui/input";
+import { Label } from "@radix-ui/react-label";
+import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
-import { useEffect, useRef, useState } from "react";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
 type Order = {
   id: string;
@@ -38,34 +41,24 @@ const columns: ColumnDef<Order>[] = [
 ];
 
 function Orders() {
-  const [clients, setClients] = useState<Order[]>([]);
-  const location = useLocation();
+  const [search, setSearch] = useState("");
 
-  // TODO: Check if this is the best way to do this, maybe use a custom hook?
-  const lastPathnameSlug = location.pathname.split("/").slice(-1)[0];
+  const { data, isPending, isError, error } = useQuery({
+    queryKey: ["orders"],
+    queryFn: () =>
+      fetch("http://localhost:3000/api/v1/orders").then((res) => res.json()),
+    placeholderData: { data: [] },
+    select: (data) => {
+      return data.data.filter(
+        (order: Order) =>
+          order.id.toString().toLowerCase().includes(search.toLowerCase()) ||
+          order.description.toLowerCase().includes(search.toLowerCase())
+      );
+    },
+  });
 
-  const alreadyFetched = useRef(false);
-
-  useEffect(() => {
-    if (alreadyFetched.current) return;
-
-    fetch("http://localhost:3000/api/v1/orders", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      mode: "cors",
-    })
-      .then((res) => res.json())
-      .then((data) => setClients(data.results));
-
-    return () => {
-      alreadyFetched.current = true;
-    };
-  }, []);
-
-  if (lastPathnameSlug === "new") {
-    return <Outlet />;
+  if (isPending) {
+    return <div>Loading...</div>;
   }
 
   return (
@@ -78,7 +71,21 @@ function Orders() {
           <Button>Nueva orden</Button>
         </Link>
       </header>
-      <DataTable columns={columns} data={clients} />
+      <div className="mt-5 mb-4">
+        <Label className="mb-2 block">Buscar cliente</Label>
+        <Input
+          className="w-1/2"
+          type="search"
+          name="q"
+          id="q"
+          placeholder="nombre, email, nro cliente"
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
+
+      {isError && <div>Error: {error.message}</div>}
+
+      <DataTable columns={columns} data={data} />
     </div>
   );
 }
