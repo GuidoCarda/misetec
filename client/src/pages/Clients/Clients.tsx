@@ -2,32 +2,33 @@ import { Button } from "@/components/ui/button";
 import DataTable from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Client, columns } from "@/pages/Clients/columns";
-import { useEffect } from "react";
-import {
-  Form,
-  Link,
-  LoaderFunctionArgs,
-  Outlet,
-  useLoaderData,
-  useLocation,
-  useSubmit,
-} from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { Form, Link, useLocation } from "react-router-dom";
+import { columns } from "./clientsColumns";
 
-function Clients() {
-  const { clients, q } = useLoaderData() as { clients: Client[]; q: string };
+function ClientsPage() {
+  const {
+    isPending,
+    isError,
+    data: clients,
+    error,
+  } = useQuery({
+    queryKey: ["clients"],
+    queryFn: () =>
+      fetch("http://localhost:3000/api/v1/clients").then((res) => res.json()),
+  });
+
   const location = useLocation();
-  const submit = useSubmit();
+  console.log(location);
 
-  useEffect(() => {
-    const inputElement = document.getElementById("q") as HTMLInputElement;
-    inputElement.value = q;
-  }, [q]);
+  console.log(clients);
 
-  const lastPathnameSlug = location.pathname.split("/").slice(-1)[0];
+  if (isPending) {
+    return <div>Loading...</div>;
+  }
 
-  if (lastPathnameSlug === "new") {
-    return <Outlet />;
+  if (isError) {
+    return <div>Error: {error.message}</div>;
   }
 
   return (
@@ -50,8 +51,6 @@ function Clients() {
             name="q"
             id="q"
             placeholder="nombre, email, nro cliente"
-            defaultValue={q}
-            onChange={(e) => submit(e.currentTarget.form)}
           />
         </Form>
       </div>
@@ -61,27 +60,4 @@ function Clients() {
   );
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  const url = new URL(request.url);
-  console.log(url.searchParams.get("q"));
-  const q = url.searchParams.get("q") ?? "";
-
-  try {
-    const res = await fetch("http://localhost:3000/api/v1/clients");
-    const data = await res.json();
-
-    const clients = data.filter((client: Client) => {
-      return (
-        client.firstname.toLowerCase().includes(q.toLowerCase()) ||
-        client.email.toLowerCase().includes(q.toLowerCase()) ||
-        client.phone_number.toLowerCase().includes(q.toLowerCase())
-      );
-    });
-
-    return { clients, q };
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-export default Clients;
+export default ClientsPage;

@@ -8,7 +8,7 @@ export const OrderSchema = z.object({
   device_failure: z.string().optional(),
   accesories: z.string().optional(),
   report: z.string().optional(),
-  service_type_id: z.number().positive(),
+  service_type_id: z.coerce.number().positive(),
   status_id: z.number().positive().default(1),
   device_id: z.number().positive().optional(),
   client_id: z.number().positive(),

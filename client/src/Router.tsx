@@ -9,15 +9,13 @@ import ClientsLoginPage from "@/pages/ClientsLogin";
 import StaffLoginPage, { action as staffLoginAction } from "@/pages/StaffLogin";
 import ClientOrders from "@/pages/ClientOrders";
 import Dashboard from "@/pages/Dashboard";
-import NewClientForm, {
-  action as newClientFormAction,
-} from "@/pages/NewClientForm";
-import Orders from "@/pages/Orders";
+import Orders from "@/pages/orders/Orders";
 import Home from "@/pages/Home";
-import Clients, { loader as clientsLoader } from "@/pages/Clients/Clients";
-import NewOrderForm from "@/pages/NewOrderForm";
-import ErrorPage from "@/pages/Error";
 import RequireAuth from "@/components/RequireAuth";
+import ErrorPage from "@/pages/Error";
+import NewOrderPage from "@/pages/orders/NewOrder";
+import ClientsPage from "@/pages/clients/Clients";
+import NewClientPage from "@/pages/clients/NewClient";
 
 const router = createBrowserRouter([
   {
@@ -25,7 +23,6 @@ const router = createBrowserRouter([
     element: <RequireAuth />,
     children: [
       {
-        path: "/",
         element: <PrivateLayout />,
         errorElement: <ErrorPage />,
         children: [
@@ -35,21 +32,41 @@ const router = createBrowserRouter([
           },
           {
             path: "orders",
-            element: <Orders />,
-            children: [{ path: "new", element: <NewOrderForm /> }],
-          },
-          {
-            path: "clients",
-            element: <Clients />,
-            loader: clientsLoader,
             children: [
               {
+                index: true,
+                element: <Orders />,
+              },
+              {
                 path: "new",
-                element: <NewClientForm />,
-                action: newClientFormAction,
+                element: <NewOrderPage />,
+              },
+              {
+                path: ":id",
+                element: <div>Detalle orden x</div>,
+              },
+              {
+                path: ":id/edit",
+                element: <div>Editar orden x</div>,
               },
             ],
           },
+          {
+            path: "clients",
+            children: [
+              {
+                index: true,
+                element: <ClientsPage />,
+              },
+              {
+                path: "new",
+                element: <NewClientPage />,
+              },
+              { path: ":id", element: <div>Detalle cliente x</div> },
+              { path: ":id/edit", element: <div>Editar cliente x</div> },
+            ],
+          },
+
           {
             path: "dashboard",
             element: <Dashboard />,

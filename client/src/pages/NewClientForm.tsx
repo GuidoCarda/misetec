@@ -74,6 +74,7 @@ function NewClientForm() {
       <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-6">
         Nuevo Cliente
       </h2>
+
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -196,6 +197,8 @@ export async function action({ request }: ActionFunctionArgs) {
     const formData = await request.formData();
     const body = Object.fromEntries(formData);
 
+    console.log(request);
+
     const response = await fetch("http://localhost:3000/api/v1/clients", {
       method: "POST",
       headers: {
@@ -212,7 +215,7 @@ export async function action({ request }: ActionFunctionArgs) {
       return data.message;
     }
 
-    return redirect("/clients");
+    return redirect("..");
   } catch (error) {
     console.log(error);
     return "Algo salio mal";

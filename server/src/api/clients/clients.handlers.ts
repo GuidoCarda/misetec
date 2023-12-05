@@ -76,7 +76,7 @@ export async function createClient(
       res.status(400).json({ message: "client was not created" });
     }
 
-    res.json(results);
+    res.json({ data: { id: results.insertId, ...client }, results });
   } catch (error) {
     next(error);
   }

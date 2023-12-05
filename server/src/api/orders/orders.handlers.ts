@@ -62,12 +62,12 @@ export async function createOrder(
   res: Response,
   next: NextFunction
 ) {
-  const { description, client_id, staff_id, service_type_id } = req.body;
+  const { description, client_id, service_type_id } = req.body;
 
   try {
     const [results] = await pool.execute<RowDataPacket[]>(
-      "INSERT INTO `order` (description, client_id, staff_id, service_type_id) VALUES (?,?,?,?)",
-      [description, client_id, staff_id, service_type_id]
+      "INSERT INTO `order` (description, service_type_id, client_id ) VALUES (?,?,?)",
+      [description, service_type_id, client_id]
     );
     res.json(results);
   } catch (error) {

@@ -12,7 +12,7 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 
 export type Client = {
-  id: string;
+  id: number;
   firstname: string;
   lastname: string;
   dni: string;
@@ -83,7 +83,9 @@ export const columns: ColumnDef<Client>[] = [
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(client.id)}
+                onClick={() =>
+                  navigator.clipboard.writeText(client.id.toString())
+                }
               >
                 Copy client ID
               </DropdownMenuItem>
