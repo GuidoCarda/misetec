@@ -5,8 +5,7 @@ import PrivateLayout from "@/components/PrivateLayout";
 import PublicLayout from "@/components/PublicLayout";
 
 //Pages
-import ClientsLoginPage from "@/pages/ClientsLogin";
-import StaffLoginPage, { action as staffLoginAction } from "@/pages/StaffLogin";
+import StaffLoginPage from "@/pages/login/Login";
 import ClientOrders from "@/pages/ClientOrders";
 import Dashboard from "@/pages/Dashboard";
 import Orders from "@/pages/orders/Orders";
@@ -14,13 +13,19 @@ import Home from "@/pages/Home";
 import RequireAuth from "@/components/RequireAuth";
 import ErrorPage from "@/pages/Error";
 import NewOrderPage from "@/pages/orders/NewOrder";
-import ClientsPage from "@/pages/clients/Clients";
 import NewClientPage from "@/pages/clients/NewClient";
+import ClientsPage from "@/pages/clients/Clients";
+import EditClientPage from "@/pages/clients/EditClient";
+
+export const ROLES = {
+  staff: "staff",
+  client: "client",
+} as const;
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <RequireAuth />,
+    element: <RequireAuth allowedRoles={[ROLES.staff]} />,
     children: [
       {
         element: <PrivateLayout />,
@@ -62,8 +67,7 @@ const router = createBrowserRouter([
                 path: "new",
                 element: <NewClientPage />,
               },
-              { path: ":id", element: <div>Detalle cliente x</div> },
-              { path: ":id/edit", element: <div>Editar cliente x</div> },
+              { path: ":id/edit", element: <EditClientPage /> },
             ],
           },
 
@@ -76,17 +80,8 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/staff-login",
-    element: <StaffLoginPage />,
-    action: staffLoginAction,
-  },
-  {
-    path: "/clients-login",
-    element: <ClientsLoginPage />,
-  },
-  {
     path: "/portal",
-    element: <RequireAuth />,
+    // element: <RequireAuth allowedRoles={[ROLES.client]} />,
     children: [
       {
         element: <PublicLayout />,
@@ -98,6 +93,14 @@ const router = createBrowserRouter([
         ],
       },
     ],
+  },
+  {
+    path: "/unauthorized",
+    element: <div>Unauthorized</div>,
+  },
+  {
+    path: "/login",
+    element: <StaffLoginPage />,
   },
 ]);
 

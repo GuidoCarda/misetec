@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
+import { Link } from "react-router-dom";
 
 export type Client = {
   id: number;
@@ -87,11 +88,12 @@ export const columns: ColumnDef<Client>[] = [
                   navigator.clipboard.writeText(client.id.toString())
                 }
               >
-                Copy client ID
+                Copiar ID
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>View client</DropdownMenuItem>
-              <DropdownMenuItem>View client details</DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link to={`${client.id}/edit`}>Editar datos</Link>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

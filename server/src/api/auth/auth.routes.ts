@@ -60,7 +60,7 @@ router.post("/login", async (req, res, next) => {
 
     const token = createToken(user);
 
-    res.status(200).json({ token });
+    res.status(200).json({ role: "staff", token });
   } catch (error) {
     next(error);
   }

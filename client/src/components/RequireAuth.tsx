@@ -1,18 +1,33 @@
+// import { useAuth } from "@/hooks/useAuth";
+import { ROLES } from "@/Router";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
-function RequireAuth() {
+type RequireAuthProps = {
+  allowedRoles: string[];
+};
+
+function RequireAuth({ allowedRoles }: RequireAuthProps) {
+  // const { auth } = useAuth();
   const location = useLocation();
-  const token = window.localStorage.getItem("token");
+  const auth = JSON.parse(window.localStorage.getItem("user") || "{}");
 
-  // Si viene de clients login y tiene token, lo mando a portal de clientes
-  // Si viene de staff login y tiene token, lo mando a orders
-  // Si viene de cualquier otro lado y no tiene token, lo mando a staff login
+  if (!auth?.token) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
 
-  return token ? (
-    <Outlet />
-  ) : (
-    <Navigate to="/staff-login" state={{ from: location }} replace />
-  );
+  const isAllowed = allowedRoles.includes(auth?.role);
+
+  if (!isAllowed) {
+    if (auth.role === ROLES.client) {
+      return <Navigate to="/portal" state={{ from: location }} replace />;
+    }
+
+    if (auth.role === ROLES.staff) {
+      return <Navigate to="/" state={{ from: location }} replace />;
+    }
+  }
+
+  return <Outlet />;
 }
 
 export default RequireAuth;

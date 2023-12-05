@@ -66,7 +66,7 @@ function SidebarNav({ items }: SidebarProps) {
       <Button
         className="mt-auto"
         onClick={() => {
-          localStorage.removeItem("token");
+          localStorage.removeItem("user");
           navigate("/");
         }}
       >
