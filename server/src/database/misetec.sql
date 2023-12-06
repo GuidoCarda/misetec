@@ -40,8 +40,8 @@
 
   CREATE TABLE `order`(
     id int primary key auto_increment,
-    created_at date,
-    finished_at date,
+    created_at timestamp default current_timestamp,
+    finished_at timestamp ,
     `description` varchar(255),
     device_failure varchar(255),
     accesories varchar(255),
@@ -58,13 +58,35 @@
     foreign key (staff_id) references staff(id)
   );
 
-  INSERT INTO order_status (denomination) 
-  VALUES ('sin revisar'),
-        ('en espera'),
-        ('en progreso'),
-        ('cancelada'),
-        ('finalizada');
-        
+ALTER TABLE `order` MODIFY COLUMN created_at timestamp default current_timestamp;
+ALTER TABLE `order` MODIFY COLUMN finished_at timestamp default null;
+
+  -- CREATE TABLE order_history(
+  --   id int primary key auto_increment,
+  --   order_id int,
+  --   status_id int,
+  --   created_at timestamp default current_timestamp,
+  --   foreign key (order_id) references `order`(id),
+  --   foreign key (status_id) references order_status(id)
+  -- );
+
+INSERT INTO order_status (denomination) 
+VALUES ('sin revisar'),
+      ('en espera'),
+      ('en progreso'),
+      ('cancelada'),
+      ('finalizada');
+
+INSERT INTO service_type (denomination, `description`)
+VALUES
+  ('Reparación de PCs y Notebooks', 'Servicio de reparación de computadoras y notebooks.'),
+  ('Mantenimiento preventivo y correctivo', 'Servicio de mantenimiento para prevenir y corregir problemas en sistemas.'),
+  ('Consultoría IT', 'Servicio de consultoría en tecnologías de la información.'),
+  ('Servicio Remoto', 'Asistencia y solución de problemas de forma remota.'),
+  ('Cableados estructurados', 'Instalación y configuración de sistemas de cableado estructurado.'),
+  ('Instalación y configuración de cámaras de seguridad', 'Servicio de instalación y configuración de sistemas de cámaras de seguridad.');
+
+
   /*
   Consultar.
   -- 1 - Cuando setear campos a NOT NULL?
@@ -75,5 +97,22 @@
   -- Trigger, y una nueva tabla de movimientos/actualizaciones?
   -- Cuando se de un update en la tabla ORDER que se almacene la fecha y hora junto a la actualizacion dada?
   */
+
+
+CREATE VIEW order_list_view AS
+SELECT  o.id, 
+        o.created_at, 
+        o.description, 
+        o.status_id, 
+        os.denomination as status, 
+        o.service_type_id, 
+        st.denomination as service_type,  
+        o.client_id, 
+        c.firstname, 
+        c.lastname 
+FROM `order` o 
+INNER JOIN service_type st ON o.service_type_id = st.id 
+INNER JOIN client c ON o.client_id = c.id 
+INNER JOIN order_status os ON o.status_id = os.id;
 
 

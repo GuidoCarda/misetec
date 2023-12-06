@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import DataTable from "@/components/ui/data-table";
 import {
@@ -9,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { ComboboxPopover } from "@/pages/clients/Clients";
 
 import { Label } from "@radix-ui/react-label";
 import { useQuery } from "@tanstack/react-query";
@@ -25,27 +27,87 @@ type Order = {
   updated_at: string;
   staff_id: string;
   status_id: string;
+  firstname?: string;
+  lastname?: string;
+  service_type?: string;
 };
+
+function formatDateTime(timestamp: string) {
+  const date = new Date(timestamp);
+  const day = date.getDate();
+  const month = date.getMonth();
+  const year = date.getFullYear();
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+
+  return `${day}/${month}/${year} ${hours}:${minutes}`;
+}
+
+function formatTimeStamp(timestamp: string) {
+  const date = new Date(timestamp);
+  const day = date.getDate();
+  const month = date.getMonth();
+  const year = date.getFullYear();
+
+  return `${day}/${month}/${year}`;
+}
 
 const columns: ColumnDef<Order>[] = [
   {
     accessorKey: "id",
     header: "Codigo",
+    cell: ({ row }) => {
+      const id = row.getValue("id") as string;
+      return <div className="text-center">{id}</div>;
+    },
+  },
+  {
+    accessorKey: "created_at",
+    header: "Creada el",
+    cell: ({ row }) => {
+      const createdAt = row.getValue("created_at") as string;
+      const formattedDate = formatTimeStamp(createdAt);
+
+      return <div>{formattedDate}</div>;
+    },
   },
   {
     accessorKey: "description",
     header: "Descripcion",
+    cell: ({ row }) => {
+      console.log(row);
+      const description = row.getValue("description") as string;
+      const serviceType = row.original.service_type;
+
+      return (
+        <div className="w-[350px]">
+          {serviceType && (
+            <Badge className="rounded-md mb-2" variant={"outline"}>
+              {serviceType.split(" ").at(0)}
+            </Badge>
+          )}
+          <p className="whitespace-nowrap overflow-hidden text-ellipsis">
+            {description}
+          </p>
+        </div>
+      );
+    },
+  },
+  {
+    id: "Cliente",
+    accessorFn: (row) => `${row.firstname} ${row.lastname}`,
   },
   {
     accessorKey: "status_id",
     header: "Estado",
-  },
-  {
-    accessorKey: "service_type_id",
-    header: "Tipo de servicio",
     cell: ({ row }) => {
-      const serviceType = row.getValue("service_type_id") as string;
-      return <div>{serviceType ?? "-"}</div>;
+      const status = row.getValue("status_id") as string;
+
+      if (!status) {
+        return null;
+      }
+
+      return <SelectDemo defaultValue={status.toString()} />;
     },
   },
   {
@@ -76,7 +138,10 @@ const columns: ColumnDef<Order>[] = [
                 <Link to={`${client.id}`}>Ver detalle</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link to={`${client.id}/edit`}>Editar datos</Link>
+                <Link to={`${client.id}/edit`}>Editar</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to={`/clients/${client.id}`}>Ver cliente</Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -133,6 +198,41 @@ function Orders() {
 
       <DataTable columns={columns} data={data} />
     </div>
+  );
+}
+
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+type SelectDemoProps = {
+  defaultValue: string;
+  placeholder?: string;
+};
+
+export function SelectDemo({ defaultValue, placeholder }: SelectDemoProps) {
+  console.log(defaultValue);
+  return (
+    <Select>
+      <SelectTrigger className="w-[160px]">
+        <SelectValue defaultValue={"1"} placeholder={placeholder} />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectLabel>Fruits</SelectLabel>
+          <SelectItem value="1">Sin revisar</SelectItem>
+          <SelectItem value="2">En espera</SelectItem>
+          <SelectItem value="3">En progreso</SelectItem>
+          <SelectItem value="4">Finalizada</SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
   );
 }
 

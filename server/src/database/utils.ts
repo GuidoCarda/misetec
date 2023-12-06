@@ -34,7 +34,9 @@ export function getUpdateNamedPlaceholders(
   return namedPlaceholders;
 }
 
-export function getInsertNamedPlacehoders(queryParams: Record<string, string>) {
+export function getInsertNamedPlacehoders(
+  queryParams: Record<string, string | number>
+) {
   const columns = Object.keys(queryParams).join(", ");
   const placeholders = Object.keys(queryParams)
     .map((v) => `:${v}`)
