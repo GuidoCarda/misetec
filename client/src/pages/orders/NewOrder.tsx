@@ -29,6 +29,7 @@ import { Client } from "../clients/clientsColumns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const formSchema = z.object({
   description: z.string().min(2, {
@@ -44,7 +45,22 @@ const formSchema = z.object({
 
 function NewOrderPage() {
   const [client, setClient] = useState<Client>();
+  const [search, setSearch] = useState("");
   const navigate = useNavigate();
+
+  const clientsQuery = useQuery({
+    queryKey: ["clients"],
+    queryFn: () =>
+      fetch("http://localhost:3000/api/v1/clients").then((res) => res.json()),
+    placeholderData: [],
+    select: (data) =>
+      data.filter(
+        (client: Client) =>
+          client.firstname.toLowerCase().includes(search.toLowerCase()) ||
+          client.lastname.toLowerCase().includes(search.toLowerCase()) ||
+          client.id.toString().includes(search.toLowerCase())
+      ),
+  });
 
   const orderMutation = useMutation({
     mutationFn: (values: z.infer<typeof formSchema>) => newOrder(values),
@@ -136,14 +152,54 @@ function NewOrderPage() {
             <TabsTrigger value="create">Cargar cliente</TabsTrigger>
           </TabsList>
           <TabsContent value="search">
-            <Label>Buscar un cliente</Label>
-            <Input type="search" role="search" />
-            <div className="my-6 w-full border h-44 rounded-md p-4">
-              <h2 className="text-xl mb-2 font-bold">Resultados</h2>
+            <div className="mt-6 mb-4">
+              <h2 className="font-bold text-xl">Buscar cliente</h2>
+              <p className="text-tremor-content">
+                Busca y selecciona un cliente para asignarlo a la orden
+              </p>
             </div>
+            <Label>Nombre cliente</Label>
+            <Input
+              type="search"
+              role="search"
+              className="mb-4 lg:w-1/2"
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <ScrollArea className="mb-6 w-full border h-72 rounded-md ">
+              <div className="p-4">
+                <h4 className="mb-4 text-sm font-medium leading-none">
+                  Clientes
+                </h4>
+                {clientsQuery.data?.map((client: Client) => {
+                  return (
+                    <div
+                      key={client.id}
+                      className="flex justify-between items-center"
+                    >
+                      <div>
+                        <p className="font-semibold">
+                          {client.firstname} {client.lastname}
+                        </p>
+                        <p className="text-sm text-zinc-400">
+                          {client.email} - {client.phone_number}
+                        </p>
+                      </div>
+                      <Button onClick={() => setClient(client)}>
+                        Seleccionar
+                      </Button>
+                    </div>
+                  );
+                })}
+              </div>
+            </ScrollArea>
           </TabsContent>
           <TabsContent value="create">
-            Carga un nuevo cliente para asignarlo a la orden
+            <div className="mt-6 mb-4">
+              <h2 className="font-bold text-xl">Cargar cliente</h2>
+              <p className="text-tremor-content">
+                Carga un nuevo cliente para asignarlo a la orden
+              </p>
+            </div>
             <NewClientForm onSubmit={onSubmitNewClient} />
           </TabsContent>
         </Tabs>

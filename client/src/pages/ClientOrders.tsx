@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 
 function ClientOrders() {
-  const { data, isLoading } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: ["orders"],
     queryFn: getOrders,
   });
@@ -12,10 +12,10 @@ function ClientOrders() {
   async function getOrders() {
     const res = await fetch("http://localhost:3000/api/v1/orders?user_id=5");
     const data = await res.json();
-    return data.results;
+    return data.data;
   }
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isPending) return <div>Loading...</div>;
 
   const currentOrder = data.at(-1);
 

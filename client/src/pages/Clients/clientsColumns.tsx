@@ -91,7 +91,7 @@ export const columns: ColumnDef<Client>[] = [
                 Copiar ID
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem asChild>
                 <Link to={`${client.id}/edit`}>Editar datos</Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
