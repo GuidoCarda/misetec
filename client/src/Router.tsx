@@ -16,6 +16,8 @@ import NewOrderPage from "@/pages/orders/NewOrder";
 import NewClientPage from "@/pages/clients/NewClient";
 import ClientsPage from "@/pages/clients/Clients";
 import EditClientPage from "@/pages/clients/EditClient";
+import OrderDetailsPage from "@/pages/orders/OrderDetails";
+import EditOrderPage from "@/pages/orders/EditOrder";
 
 export const ROLES = {
   staff: "staff",
@@ -48,11 +50,11 @@ const router = createBrowserRouter([
               },
               {
                 path: ":id",
-                element: <div>Detalle orden x</div>,
+                element: <OrderDetailsPage />,
               },
               {
                 path: ":id/edit",
-                element: <div>Editar orden x</div>,
+                element: <EditOrderPage />,
               },
             ],
           },

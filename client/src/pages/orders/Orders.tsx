@@ -1,9 +1,19 @@
 import { Button } from "@/components/ui/button";
 import DataTable from "@/components/ui/data-table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+
 import { Label } from "@radix-ui/react-label";
 import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
+import { MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -36,6 +46,42 @@ const columns: ColumnDef<Order>[] = [
     cell: ({ row }) => {
       const serviceType = row.getValue("service_type_id") as string;
       return <div>{serviceType ?? "-"}</div>;
+    },
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      const client = row.original;
+
+      return (
+        <div className="text-right">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() =>
+                  navigator.clipboard.writeText(client.id.toString())
+                }
+              >
+                Copiar ID
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link to={`${client.id}`}>Ver detalle</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to={`${client.id}/edit`}>Editar datos</Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      );
     },
   },
 ];
