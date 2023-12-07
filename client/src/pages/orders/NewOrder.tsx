@@ -32,13 +32,13 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const formSchema = z.object({
+  client_id: z.coerce.number(),
   description: z.string().min(2, {
     message: "La descripcion debe tener al menos 2 caracteres.",
   }),
   service_type_id: z.coerce.number(),
   accesories: z.string().optional(),
   brand: z.string().optional(),
-  client_id: z.coerce.number(),
   model: z.string().optional(),
   serial_number: z.string().optional(),
 });
@@ -275,8 +275,10 @@ function NewOrderForm({ onSubmit }: NewOrderFormProps) {
 
   const selectedServiceType = form.watch("service_type_id", undefined);
 
+  console.log(selectedServiceType);
+
   const showDeviceFieldsAndAccesories =
-    selectedServiceType === 1 || selectedServiceType === 2;
+    Number(selectedServiceType) === 1 || Number(selectedServiceType) === 2;
 
   return (
     <Form {...form}>

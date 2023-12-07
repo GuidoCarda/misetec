@@ -15,12 +15,30 @@ export const OrderSchema = z.object({
   staff_id: z.number().positive(),
 });
 
+export const DeviceSchema = z.object({
+  id: z.number().positive(),
+  brand: z.string(),
+  model: z.string(),
+  serial_number: z.string(),
+});
+
+export const CreateDeviceSchema = DeviceSchema.omit({
+  id: true,
+}).partial();
+
+// export const CreateOrderSchema = OrderSchema.omit({
+//   id: true,
+//   created_at: true,
+//   status_id: true,
+//   finished_at: true,
+// });
+
 export const CreateOrderSchema = OrderSchema.omit({
   id: true,
   created_at: true,
   status_id: true,
   finished_at: true,
-});
+}).merge(CreateDeviceSchema);
 
 export const UpdateOrderSchema = OrderSchema.omit({
   id: true,
@@ -45,3 +63,6 @@ export type CreateOrder = z.infer<typeof CreateOrderSchema>;
 export type UpdateOrder = z.infer<typeof UpdateOrderSchema>;
 export type UpdateOrderState = z.infer<typeof UpdateOrderStateSchema>;
 export type OrderQueryParams = z.infer<typeof OrderQueryParamsSchema>;
+
+export type Device = z.infer<typeof DeviceSchema>;
+export type CreateDevice = z.infer<typeof CreateDeviceSchema>;
