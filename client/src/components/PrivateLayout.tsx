@@ -14,7 +14,7 @@ const sidebarNavItems = [
   },
   {
     to: "/dashboard",
-    label: "Dashboard",
+    label: "Informes",
   },
 ];
 
