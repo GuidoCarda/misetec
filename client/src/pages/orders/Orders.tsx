@@ -10,7 +10,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { ComboboxPopover } from "@/pages/clients/Clients";
 
 import { Label } from "@radix-ui/react-label";
 import { useQuery } from "@tanstack/react-query";
@@ -31,26 +30,6 @@ type Order = {
   lastname?: string;
   service_type?: string;
 };
-
-function formatDateTime(timestamp: string) {
-  const date = new Date(timestamp);
-  const day = date.getDate();
-  const month = date.getMonth();
-  const year = date.getFullYear();
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-
-  return `${day}/${month}/${year} ${hours}:${minutes}`;
-}
-
-function formatTimeStamp(timestamp: string) {
-  const date = new Date(timestamp);
-  const day = date.getDate();
-  const month = date.getMonth();
-  const year = date.getFullYear();
-
-  return `${day}/${month}/${year}`;
-}
 
 const columns: ColumnDef<Order>[] = [
   {
@@ -75,7 +54,7 @@ const columns: ColumnDef<Order>[] = [
     accessorKey: "description",
     header: "Descripcion",
     cell: ({ row }) => {
-      console.log(row);
+      // console.log(row);
       const description = row.getValue("description") as string;
       const serviceType = row.original.service_type;
 
@@ -210,6 +189,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { formatTimeStamp } from "@/utils";
 
 type SelectDemoProps = {
   defaultValue: string;
@@ -217,7 +197,7 @@ type SelectDemoProps = {
 };
 
 export function SelectDemo({ defaultValue, placeholder }: SelectDemoProps) {
-  console.log(defaultValue);
+  // console.log(defaultValue);
   return (
     <Select>
       <SelectTrigger className="w-[160px]">
