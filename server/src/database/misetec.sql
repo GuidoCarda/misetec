@@ -115,4 +115,31 @@ INNER JOIN service_type st ON o.service_type_id = st.id
 INNER JOIN client c ON o.client_id = c.id 
 INNER JOIN order_status os ON o.status_id = os.id;
 
+CREATE VIEW order_detail_view AS
+SELECT o.id,
+       o.created_at,
+       o.finished_at,
+       o.description,
+      o.device_failure,
+      o.accesories,
+      o.report,
+      o.service_type_id,
+      st.denomination as service_type,
+      o.status_id,
+      os.denomination as status,
+      o.device_id,
+      d.brand,
+      d.model,
+      d.type,
+      d.serial_number,
+      o.client_id,
+      c.firstname,
+      c.lastname,
+      c.email,
+      o.staff_id
+FROM `order` o
+INNER JOIN service_type st ON o.service_type_id = st.id
+INNER JOIN order_status os ON o.status_id = os.id
+LEFT JOIN device d ON o.device_id = d.id
+INNER JOIN client c ON o.client_id = c.id;
 
