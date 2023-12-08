@@ -20,6 +20,7 @@ export const DeviceSchema = z.object({
   brand: z.string(),
   model: z.string(),
   serial_number: z.string(),
+  client_id: z.number().positive(),
 });
 
 export const CreateDeviceSchema = DeviceSchema.omit({
@@ -40,11 +41,12 @@ export const CreateOrderSchema = OrderSchema.omit({
   finished_at: true,
 }).merge(CreateDeviceSchema);
 
-export const UpdateOrderSchema = OrderSchema.omit({
+export const UpdateOrderSchema = OrderSchema.partial().omit({
   id: true,
   created_at: true,
   client_id: true,
   staff_id: true,
+  service_type_id: true,
 });
 
 export const UpdateOrderStateSchema = z.object({

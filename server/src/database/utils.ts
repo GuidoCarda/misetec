@@ -24,7 +24,7 @@ export function getNamedPlaceholders(
 }
 
 export function getUpdateNamedPlaceholders(
-  queryParams: Record<string, string>
+  queryParams: Record<string, string | Date | number>
 ) {
   const namedPlaceholders = Object.entries(queryParams)
     .filter(([_, v]) => v !== undefined)

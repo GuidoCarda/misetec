@@ -12,6 +12,7 @@ import { ParamsWithId } from "../interfaces/ParamsWithId";
 import {
   getInsertNamedPlacehoders,
   getNamedPlaceholders,
+  getUpdateNamedPlaceholders,
 } from "../../database/utils";
 
 export async function getAllOrders(
@@ -47,7 +48,7 @@ export async function getOrder(
 
   try {
     const [results] = await pool.execute<RowDataPacket[]>(
-      "SELECT * FROM `order` WHERE id = ? ",
+      "SELECT * FROM `order_detail_view` WHERE id = ? ",
       [id]
     );
 
@@ -97,16 +98,18 @@ export async function updateOrder(
   res: Response,
   next: NextFunction
 ) {
+  console.log("entro?");
   const id = req.params.id;
-  const { description } = req.body as UpdateOrder;
+
+  let query = "UPDATE `order` SET ";
+  const columns = getUpdateNamedPlaceholders(req.body);
+  query += columns + ` WHERE id = ${id}`;
 
   try {
-    const [results] = await pool.execute<ResultSetHeader[]>(
-      "UPDATE `order` SET `description` = ? WHERE id = ?",
-      [description, id]
-    );
+    const [results] = await pool.execute<ResultSetHeader[]>(query, req.body);
     res.json(results);
   } catch (error) {
+    console.log(error);
     next(error);
   }
 }
