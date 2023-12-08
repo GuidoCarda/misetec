@@ -46,6 +46,10 @@ function NewClientPage() {
   const mutation = useMutation({
     mutationFn: (values: z.infer<typeof newClientFormSchema>) =>
       newClient(values),
+    onSuccess: () => {
+      console.log("Cliente creado");
+      navigate("..");
+    },
   });
 
   const newClient = async function (
@@ -66,8 +70,7 @@ function NewClientPage() {
 
     const data = await res.json();
 
-    console.log(data);
-    return navigate("..");
+    return data;
   };
 
   function onSubmit(values: z.infer<typeof newClientFormSchema>) {

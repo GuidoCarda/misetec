@@ -34,7 +34,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 const formSchema = z.object({
   client_id: z.coerce.number(),
   description: z.string().min(2, {
-    message: "La descripcion debe tener al menos 2 caracteres.",
+    message: "La descripcion debe tener al menos 10 caracteres.",
   }),
   service_type_id: z.coerce.number(),
   accesories: z.string().optional(),
@@ -64,6 +64,10 @@ function NewOrderPage() {
 
   const orderMutation = useMutation({
     mutationFn: (values: z.infer<typeof formSchema>) => newOrder(values),
+    onSuccess: () => {
+      console.log("Orden creada");
+      navigate("..");
+    },
   });
 
   const clientMutation = useMutation({
@@ -84,9 +88,13 @@ function NewOrderPage() {
       body: JSON.stringify(values),
     });
 
-    if (res.ok) {
-      navigate("..");
+    if (!res.ok) {
+      throw new Error("Error al crear orden");
     }
+
+    const data = await res.json();
+
+    return data;
   };
 
   const newClient = async function (

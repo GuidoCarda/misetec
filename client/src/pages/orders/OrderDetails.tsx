@@ -7,7 +7,7 @@ function OrderDetailsPage() {
   const params = useParams();
   const orderId = params.id;
   const { data, isPending, isError, error } = useQuery({
-    queryKey: ["orders", orderId],
+    queryKey: ["order", orderId],
     queryFn: () =>
       fetch(`http://localhost:3000/api/v1/orders/${orderId}`).then((res) =>
         res.json()
@@ -42,6 +42,28 @@ function OrderDetailsPage() {
         <h2 className="text-lg font-semibold">Descripcion</h2>
         <p className="text-zinc-500">{data.description}</p>
       </div>
+
+      {Boolean(data.device_failure) && (
+        <div className="w-full mb-10 border-2 p-4 rounded-md">
+          <h3 className="text-lg font-semibold">Falla del dispositivo</h3>
+          <p className="text-zinc-500">{data.device_failure}</p>
+        </div>
+      )}
+
+      {Boolean(data.device_id) && (
+        <div className="w-full mb-10 border-2 p-4 rounded-md">
+          <h3 className="text-lg font-semibold">Dispositivo</h3>
+          <p className="text-zinc-500">{data.brand}</p>
+          <p className="text-zinc-500">{data.model}</p>
+        </div>
+      )}
+
+      {Boolean(data.report) && (
+        <div className="w-full mb-10 border-2 p-4 rounded-md">
+          <h3 className="text-lg font-semibold">Informe al cliente</h3>
+          <p className="text-zinc-500">{data.report}</p>
+        </div>
+      )}
     </div>
   );
 }

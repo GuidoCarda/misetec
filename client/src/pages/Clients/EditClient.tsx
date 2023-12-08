@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { z } from "zod";
@@ -18,9 +18,10 @@ import { z } from "zod";
 function EditClientPage() {
   const params = useParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { isLoading, data } = useQuery({
-    queryKey: ["clients", params.id],
+    queryKey: ["client", params.id],
     queryFn: () =>
       fetch(`http://localhost:3000/api/v1/clients/${params.id}`).then((res) =>
         res.json()
@@ -31,6 +32,7 @@ function EditClientPage() {
     mutationFn: (values: z.infer<typeof editClientFormSchema>) =>
       updateClient(values),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["client", params.id] });
       navigate(-1);
     },
   });
