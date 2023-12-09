@@ -49,9 +49,13 @@ export const UpdateOrderSchema = OrderSchema.partial().omit({
   service_type_id: true,
 });
 
+// export const UpdateOrderStateSchema = z.object({
+//   status_id: z.number().positive(),
+//   finished_at: z.date().optional(),
+// });
+
 export const UpdateOrderStateSchema = z.object({
-  status_id: z.number().positive(),
-  finished_at: z.date().optional(),
+  status_id: z.coerce.number(),
 });
 
 export const OrderQueryParamsSchema = z.object({

@@ -37,7 +37,7 @@ function OrderDetailsPage() {
       <div className="w-full mb-10 border-2 p-4 rounded-md">
         <div className="flex gap-4 mb-4">
           <h3>Orden #{data.id}</h3>
-          <Badge>En espera</Badge>
+          <Badge>{data.status}</Badge>
         </div>
         <h2 className="text-lg font-semibold">Descripcion</h2>
         <p className="text-zinc-500">{data.description}</p>

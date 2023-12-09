@@ -39,7 +39,7 @@ router.patch(
 );
 
 router.patch(
-  "/:id/state",
+  "/:id/status",
   validateRequest({ params: ParamsWithIdSchema, body: UpdateOrderStateSchema }),
   orderHandlers.updateOrderState
 );

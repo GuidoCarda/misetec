@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 
 import { Label } from "@radix-ui/react-label";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { useState } from "react";
@@ -81,12 +81,18 @@ const columns: ColumnDef<Order>[] = [
     header: "Estado",
     cell: ({ row }) => {
       const status = row.getValue("status_id") as string;
+      const orderId = row.original.id;
 
       if (!status) {
         return null;
       }
 
-      return <SelectDemo defaultValue={status.toString()} />;
+      return (
+        <UpdateOrderStatus
+          defaultValue={status.toString()}
+          orderId={orderId.toString()}
+        />
+      );
     },
   },
   {
@@ -194,26 +200,66 @@ import { formatTimeStamp } from "@/utils";
 type SelectDemoProps = {
   defaultValue: string;
   placeholder?: string;
+  onChange: (value: string) => void;
 };
 
-export function SelectDemo({ defaultValue, placeholder }: SelectDemoProps) {
-  // console.log(defaultValue);
+export function SelectDemo({
+  defaultValue,
+  placeholder,
+  onChange,
+}: SelectDemoProps) {
+  // console.log(defaultValue, placeholder);
   return (
-    <Select>
+    <Select defaultValue={defaultValue} onValueChange={onChange}>
       <SelectTrigger className="w-[160px]">
-        <SelectValue defaultValue={"1"} placeholder={placeholder} />
+        <SelectValue />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectLabel>Fruits</SelectLabel>
+          <SelectLabel>Estados</SelectLabel>
           <SelectItem value="1">Sin revisar</SelectItem>
           <SelectItem value="2">En espera</SelectItem>
           <SelectItem value="3">En progreso</SelectItem>
-          <SelectItem value="4">Finalizada</SelectItem>
+          <SelectItem value="4">Candelada</SelectItem>
+          <SelectItem value="5">Finalizada</SelectItem>
         </SelectGroup>
       </SelectContent>
     </Select>
   );
+}
+
+export function UpdateOrderStatus({
+  defaultValue,
+  orderId,
+}: {
+  defaultValue: string;
+  orderId: string;
+}) {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: (status: string) => {
+      console.log("status dentro mutacion", status);
+      return fetch(`http://localhost:3000/api/v1/orders/${orderId}/status`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status_id: status }),
+      }).then((res) => res.json());
+    },
+    onSuccess: () => {
+      console.log("Orden actualizada");
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      alert("Orden actualizada");
+    },
+  });
+
+  const onChange = (status: string) => {
+    mutation.mutate(status);
+  };
+
+  return <SelectDemo defaultValue={defaultValue} onChange={onChange} />;
 }
 
 export default Orders;
