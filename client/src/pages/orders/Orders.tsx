@@ -61,11 +61,13 @@ const columns: ColumnDef<Order>[] = [
       return (
         <div className="w-[350px]">
           {serviceType && (
-            <Badge className="rounded-md mb-2" variant={"outline"}>
-              {serviceType.split(" ").at(0)}
-            </Badge>
+            <TooltipDemo tooltipContent={serviceType}>
+              <Badge className="rounded-md" variant={"outline"}>
+                {serviceType.split(" ").at(0)}
+              </Badge>
+            </TooltipDemo>
           )}
-          <p className="whitespace-nowrap overflow-hidden text-ellipsis">
+          <p className="mt-2 whitespace-nowrap overflow-hidden text-ellipsis">
             {description}
           </p>
         </div>
@@ -125,8 +127,9 @@ const columns: ColumnDef<Order>[] = [
               <DropdownMenuItem asChild>
                 <Link to={`${client.id}/edit`}>Editar</Link>
               </DropdownMenuItem>
+
               <DropdownMenuItem asChild>
-                <Link to={`/clients/${client.id}`}>Ver cliente</Link>
+                <Link to={`/clients/${client.client_id}`}>Ver cliente</Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -196,6 +199,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formatTimeStamp } from "@/utils";
+import { useToast } from "@/components/ui/use-toast";
 
 type SelectDemoProps = {
   defaultValue: string;
@@ -236,6 +240,7 @@ export function UpdateOrderStatus({
   orderId: string;
 }) {
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   const mutation = useMutation({
     mutationFn: (status: string) => {
@@ -251,7 +256,10 @@ export function UpdateOrderStatus({
     onSuccess: () => {
       console.log("Orden actualizada");
       queryClient.invalidateQueries({ queryKey: ["orders"] });
-      alert("Orden actualizada");
+      toast({
+        title: "Orden actualizada",
+        description: "El estado de la orden fue actualizado correctamente",
+      });
     },
   });
 
@@ -260,6 +268,32 @@ export function UpdateOrderStatus({
   };
 
   return <SelectDemo defaultValue={defaultValue} onChange={onChange} />;
+}
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+export function TooltipDemo({
+  children,
+  tooltipContent,
+}: {
+  children: React.ReactNode;
+  tooltipContent: string;
+}) {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger>{children}</TooltipTrigger>
+        <TooltipContent>
+          <p>{tooltipContent}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
 }
 
 export default Orders;
