@@ -1,5 +1,6 @@
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 
@@ -28,6 +29,7 @@ function PrivateLayout() {
       <main className="flex-1 lg:max-w-6xl p-4 lg:p-10">
         <Outlet />
       </main>
+      <Toaster />
     </div>
   );
 }

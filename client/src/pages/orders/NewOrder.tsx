@@ -30,6 +30,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useToast } from "@/components/ui/use-toast";
 
 const formSchema = z.object({
   client_id: z.coerce.number(),
@@ -46,6 +47,8 @@ const formSchema = z.object({
 function NewOrderPage() {
   const [client, setClient] = useState<Client>();
   const [search, setSearch] = useState("");
+
+  const { toast } = useToast();
   const navigate = useNavigate();
 
   const clientsQuery = useQuery({
@@ -119,7 +122,28 @@ function NewOrderPage() {
   };
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    if (!client) return;
+    if (!client) {
+      toast({
+        variant: "destructive",
+        title: "Cliente requerido",
+        description:
+          "Debe seleccionar un cliente o cargar uno nuevo para generar la orden",
+      });
+      return;
+    }
+
+    if (values.service_type_id === 1 || values.service_type_id === 2) {
+      if (!values.brand || !values.model || !values.serial_number) {
+        toast({
+          variant: "destructive",
+          title: "Datos de equipo requeridos",
+          description:
+            "Debe completar los datos de equipo para generar la orden",
+        });
+        return;
+      }
+    }
+
     console.log(values);
 
     const parsedValues = {
@@ -351,18 +375,19 @@ function NewOrderForm({ onSubmit }: NewOrderFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Marca</FormLabel>
-                  <Input placeholder="" {...field} />
+                  <Input {...field} />
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="model"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Modelo</FormLabel>
-                  <Input placeholder="" {...field} />
+                  <Input {...field} />
                   <FormMessage />
                 </FormItem>
               )}
@@ -374,7 +399,7 @@ function NewOrderForm({ onSubmit }: NewOrderFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Numero de serie</FormLabel>
-                  <Input placeholder="" {...field} />
+                  <Input {...field} />
                   <FormMessage />
                 </FormItem>
               )}

@@ -76,6 +76,7 @@ export async function createOrder(
 
   if (service_type_id === 1 || service_type_id === 2) {
     const { brand, model, serial_number } = req.body;
+
     const deviceData = { brand, model, serial_number };
     device_id = await createDevice(deviceData);
   }
@@ -122,11 +123,18 @@ export async function updateOrderState(
   const { id } = req.params;
   const { status_id } = req.body;
 
+  let query = "UPDATE `order` SET status_id = ?";
+  if (status_id === 5) {
+    query += ", `finished_at` = NOW()";
+  }
+  query += " WHERE id = ?";
+
   try {
-    const [results] = await pool.execute<ResultSetHeader[]>(
-      "UPDATE `order` SET `status_id` = ? WHERE id = ?",
-      [status_id, id]
-    );
+    const [results] = await pool.execute<ResultSetHeader[]>(query, [
+      status_id,
+      id,
+    ]);
+
     res.json(results);
   } catch (error) {
     next(error);
@@ -137,6 +145,8 @@ export async function createDevice(deviceData: CreateDevice) {
   let query = "INSERT INTO device";
   const namedPlaceholders = getInsertNamedPlacehoders(deviceData);
   query += namedPlaceholders;
+
+  console.log(query);
 
   try {
     const [results] = await pool.execute<ResultSetHeader>(query, deviceData);
