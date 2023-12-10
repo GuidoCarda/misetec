@@ -113,7 +113,8 @@ SELECT  o.id,
 FROM `order` o 
 INNER JOIN service_type st ON o.service_type_id = st.id 
 INNER JOIN client c ON o.client_id = c.id 
-INNER JOIN order_status os ON o.status_id = os.id;
+INNER JOIN order_status os ON o.status_id = os.id
+ORDER BY o.created_at;
 
 CREATE VIEW order_detail_view AS
 SELECT o.id,
@@ -142,4 +143,43 @@ INNER JOIN service_type st ON o.service_type_id = st.id
 INNER JOIN order_status os ON o.status_id = os.id
 LEFT JOIN device d ON o.device_id = d.id
 INNER JOIN client c ON o.client_id = c.id;
+
+
+SELECT
+      COUNT(*) AS finished_orders
+FROM `order`	
+WHERE status_id = 5
+
+SELECT
+      COUNT(*) AS pending_orders
+FROM `order`
+WHERE status_id == 1
+
+SELECT
+      COUNT(*) AS in_progress_orders
+FROM `order`
+WHERE status_id == 3
+
+SELECT
+      COUNT(*) AS canceled_orders
+FROM `order`
+WHERE status_id == 4
+
+SELECT
+      COUNT(*) AS total_orders
+FROM `order`
+
+
+CREATE VIEW order_status_count_view AS
+SELECT
+  COUNT(*) AS total_orders,
+  SUM(CASE WHEN status_id = 5 THEN 1 ELSE 0 END) AS finished_orders,
+  SUM(CASE WHEN status_id = 4 THEN 1 ELSE 0 END) AS cancelled_orders,
+  SUM(CASE WHEN status_id = 3 THEN 1 ELSE 0 END) AS in_progress_orders,
+  SUM(CASE WHEN status_id = 2 THEN 1 ELSE 0 END) AS waiting_for_approval_orders,
+  SUM(CASE WHEN status_id = 1 THEN 1 ELSE 0 END) AS pending_orders
+FROM `order`;
+
+
+
 
