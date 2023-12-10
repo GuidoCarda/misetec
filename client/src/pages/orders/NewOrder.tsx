@@ -32,17 +32,55 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
 
-const formSchema = z.object({
-  client_id: z.coerce.number(),
-  description: z.string().min(2, {
-    message: "La descripcion debe tener al menos 10 caracteres.",
-  }),
-  service_type_id: z.coerce.number(),
-  accesories: z.string().optional(),
-  brand: z.string().optional(),
-  model: z.string().optional(),
-  serial_number: z.string().optional(),
-});
+const formSchema = z
+  .object({
+    client_id: z.coerce.number(),
+    description: z.string().min(2, {
+      message: "La descripcion debe tener al menos 10 caracteres.",
+    }),
+    service_type_id: z.coerce.number(),
+    accesories: z.string().optional(),
+    brand: z.string().optional(),
+    model: z.string().optional(),
+    serial_number: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.service_type_id === 1 || data.service_type_id === 2) {
+        return data.brand;
+      }
+      return true;
+    },
+    {
+      message: "La marca es requerida para este tipo de servicio.",
+      path: ["brand"],
+    }
+  )
+  .refine(
+    (data) => {
+      console.log(data);
+      if (data.service_type_id === 1 || data.service_type_id === 2) {
+        return data.model;
+      }
+      return true;
+    },
+    {
+      message: "El modelo es requerido para este tipo de servicio.",
+      path: ["model"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.service_type_id === 1 || data.service_type_id === 2) {
+        return data.serial_number;
+      }
+      return true;
+    },
+    {
+      message: "El numero de serie es requerido para este tipo de servicio.",
+      path: ["serial_number"],
+    }
+  );
 
 function NewOrderPage() {
   const [client, setClient] = useState<Client>();
@@ -304,6 +342,8 @@ function NewOrderForm({ onSubmit }: NewOrderFormProps) {
       client_id: 1,
     },
   });
+
+  console.log(form.formState.errors);
 
   const selectedServiceType = form.watch("service_type_id", undefined);
 
