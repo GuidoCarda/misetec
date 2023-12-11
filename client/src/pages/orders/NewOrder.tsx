@@ -31,6 +31,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
+import { User } from "lucide-react";
 
 const formSchema = z
   .object({
@@ -167,6 +168,10 @@ function NewOrderPage() {
     return data.data;
   };
 
+  const discardSelectedClient = () => {
+    setClient(undefined);
+  };
+
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     if (!client) {
       toast({
@@ -278,11 +283,14 @@ function NewOrderPage() {
                 Carga un nuevo cliente para asignarlo a la orden
               </p>
             </div>
-            <NewClientForm onSubmit={onSubmitNewClient} />
+            <NewClientForm
+              onSubmit={onSubmitNewClient}
+              isPending={clientMutation.isPending}
+            />
           </TabsContent>
         </Tabs>
       ) : (
-        <OrderClientDetails client={client} />
+        <OrderClientDetails client={client} onClose={discardSelectedClient} />
       )}
 
       <NewOrderForm onSubmit={onSubmit} />
@@ -292,14 +300,25 @@ function NewOrderPage() {
 
 type OrderClientDetailsProps = {
   client: Client;
+  onClose: () => void;
 };
 
-function OrderClientDetails({ client }: OrderClientDetailsProps) {
+function OrderClientDetails({ client, onClose }: OrderClientDetailsProps) {
   console.log(client);
   return (
-    <Card>
-      <CardHeader>
+    <Card className="mb-6">
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Detalles del cliente</CardTitle>
+
+        <Button
+          size={"sm"}
+          onClick={onClose}
+          variant={"outline"}
+          className="w-fit"
+        >
+          <User className=" mr-2 h-4 w-4 " />
+          Seleccionar otro cliente
+        </Button>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-2">
