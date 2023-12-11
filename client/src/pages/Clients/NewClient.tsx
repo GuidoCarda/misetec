@@ -15,6 +15,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
+import { Alert } from "@/components/ui/alert";
 
 export const newClientFormSchema = z.object({
   firstname: z.string().min(2, {
@@ -22,9 +23,6 @@ export const newClientFormSchema = z.object({
   }),
   lastname: z.string().min(2, {
     message: "El apellido debe tener al menos 2 caracteres.",
-  }),
-  dni: z.string().length(8, {
-    message: "El DNI debe tener 8 caracteres.",
   }),
   address: z.string().min(2, {
     message: "La direccion debe tener al menos 2 caracteres.",
@@ -50,6 +48,9 @@ function NewClientPage() {
       console.log("Cliente creado");
       navigate("..");
     },
+    onError: (error) => {
+      console.log(error);
+    },
   });
 
   const newClient = async function (
@@ -64,11 +65,11 @@ function NewClientPage() {
       body: JSON.stringify(values),
     });
 
-    if (!res.ok) {
-      throw new Error("Error al crear cliente");
-    }
-
     const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message);
+    }
 
     return data;
   };
@@ -82,16 +83,22 @@ function NewClientPage() {
       <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-6">
         Nuevo Cliente
       </h2>
-      <NewClientForm onSubmit={onSubmit} />
+      {mutation.isError && (
+        <Alert className="mb-4" variant={"destructive"}>
+          {mutation.error.message}
+        </Alert>
+      )}
+      <NewClientForm onSubmit={onSubmit} isPending={mutation.isPending} />
     </>
   );
 }
 
 type NewClientFormProps = {
   onSubmit: (values: z.infer<typeof newClientFormSchema>) => void;
+  isPending: boolean;
 };
 
-export function NewClientForm({ onSubmit }: NewClientFormProps) {
+export function NewClientForm({ onSubmit, isPending }: NewClientFormProps) {
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof newClientFormSchema>>({
@@ -99,7 +106,6 @@ export function NewClientForm({ onSubmit }: NewClientFormProps) {
     defaultValues: {
       firstname: "",
       lastname: "",
-      dni: "",
       address: "",
       phone_number: "",
       postal_code: "",
@@ -116,6 +122,7 @@ export function NewClientForm({ onSubmit }: NewClientFormProps) {
         <div className="grid md:grid-cols-2 gap-6">
           <FormField
             control={form.control}
+            disabled={isPending}
             name="firstname"
             render={({ field }) => (
               <FormItem>
@@ -131,6 +138,7 @@ export function NewClientForm({ onSubmit }: NewClientFormProps) {
           <FormField
             control={form.control}
             name="lastname"
+            disabled={isPending}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Apellido</FormLabel>
@@ -144,32 +152,26 @@ export function NewClientForm({ onSubmit }: NewClientFormProps) {
           <FormField
             control={form.control}
             name="email"
+            disabled={isPending}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="shadcn" type="email" {...field} />
+                  <Input
+                    placeholder="ejemplo@hotmail.com"
+                    type="email"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="dni"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Nro Documento</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+
           <FormField
             control={form.control}
             name="address"
+            disabled={isPending}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Direccion</FormLabel>
@@ -183,6 +185,7 @@ export function NewClientForm({ onSubmit }: NewClientFormProps) {
           <FormField
             control={form.control}
             name="phone_number"
+            disabled={isPending}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Nro telefono</FormLabel>
@@ -196,6 +199,7 @@ export function NewClientForm({ onSubmit }: NewClientFormProps) {
           <FormField
             control={form.control}
             name="postal_code"
+            disabled={isPending}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Codigo postal</FormLabel>
@@ -211,7 +215,9 @@ export function NewClientForm({ onSubmit }: NewClientFormProps) {
           <Button onClick={() => navigate(-1)} type="button" variant={"ghost"}>
             Cancelar
           </Button>
-          <Button type="submit">Cargar cliente</Button>
+          <Button type="submit" disabled={isPending}>
+            Cargar cliente
+          </Button>
         </div>
       </form>
     </Form>

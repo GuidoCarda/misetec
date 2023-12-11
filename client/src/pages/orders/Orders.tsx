@@ -203,34 +203,41 @@ import { useToast } from "@/components/ui/use-toast";
 
 type SelectDemoProps = {
   defaultValue: string;
+  items: { id: string; denomination: string }[];
   placeholder?: string;
   onChange: (value: string) => void;
 };
 
 export function SelectDemo({
   defaultValue,
+  items,
   placeholder,
   onChange,
 }: SelectDemoProps) {
-  // console.log(defaultValue, placeholder);
   return (
     <Select defaultValue={defaultValue} onValueChange={onChange}>
       <SelectTrigger className="w-[160px]">
-        <SelectValue />
+        <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           <SelectLabel>Estados</SelectLabel>
-          <SelectItem value="1">Sin revisar</SelectItem>
-          <SelectItem value="2">En espera</SelectItem>
-          <SelectItem value="3">En progreso</SelectItem>
-          <SelectItem value="4">Candelada</SelectItem>
-          <SelectItem value="5">Finalizada</SelectItem>
+          {items.map((item) => (
+            <SelectItem key={item.id} value={item.id.toString()}>
+              {item.denomination}
+            </SelectItem>
+          ))}
         </SelectGroup>
       </SelectContent>
     </Select>
   );
 }
+
+type OrderStatus = {
+  id: string;
+  denomination: string;
+  description: string;
+};
 
 export function UpdateOrderStatus({
   defaultValue,
@@ -241,6 +248,14 @@ export function UpdateOrderStatus({
 }) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+
+  const orderStatusList = useQuery({
+    queryKey: ["orderStatusList"],
+    queryFn: () =>
+      fetch("http://localhost:3000/api/v1/order-status").then((res) =>
+        res.json()
+      ),
+  });
 
   const mutation = useMutation({
     mutationFn: (status: string) => {
@@ -267,7 +282,17 @@ export function UpdateOrderStatus({
     mutation.mutate(status);
   };
 
-  return <SelectDemo defaultValue={defaultValue} onChange={onChange} />;
+  if (orderStatusList.isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <SelectDemo
+      defaultValue={defaultValue}
+      items={orderStatusList.data.data}
+      onChange={onChange}
+    />
+  );
 }
 
 import {

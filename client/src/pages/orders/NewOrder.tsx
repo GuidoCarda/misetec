@@ -117,6 +117,14 @@ function NewOrderPage() {
     onSuccess: (data) => {
       setClient(data);
     },
+    onError(error) {
+      console.log(error);
+      toast({
+        variant: "destructive",
+        title: error.name,
+        description: error.message,
+      });
+    },
   });
 
   const newOrder = async function (values: z.infer<typeof formSchema>) {
@@ -141,7 +149,6 @@ function NewOrderPage() {
   const newClient = async function (
     values: z.infer<typeof newClientFormSchema>
   ) {
-    // console.log(values);
     const res = await fetch("http://localhost:3000/api/v1/clients", {
       method: "POST",
       headers: {
@@ -150,12 +157,13 @@ function NewOrderPage() {
       body: JSON.stringify(values),
     });
 
-    if (!res.ok) {
-      throw new Error("Error al crear cliente");
-    }
-
     const data = await res.json();
     console.log(data);
+
+    if (res.status === 400) {
+      throw new Error(data.message);
+    }
+
     return data.data;
   };
 
