@@ -4,6 +4,7 @@ import clientsRoutes from "./clients/clients.routes";
 import authRoutes from "./auth/auth.routes";
 import analyticsRoutes from "./analytics/analytics.routes";
 import servicesRoutes from "./orders/services/services.routes";
+import orderStatusRoutes from "./orders/status/order_status.routes";
 import MessageResponse from "./interfaces/MessageResponse";
 
 const router = Router();
@@ -18,6 +19,7 @@ router.use("/auth", authRoutes);
 router.use("/orders", ordersRoutes);
 router.use("/clients", clientsRoutes);
 router.use("/services", servicesRoutes);
+router.use("/order-status", orderStatusRoutes);
 router.use("/analytics", analyticsRoutes);
 
 export default router;

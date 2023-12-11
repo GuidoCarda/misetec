@@ -64,6 +64,18 @@ export async function createClient(
 ) {
   const client = req.body;
 
+  //check if there is already a client with the same email
+  const [existingClient] = await pool.execute<RowDataPacket[]>(
+    "SELECT * FROM client WHERE email = ?",
+    [client.email]
+  );
+
+  if (existingClient.length > 0) {
+    return res
+      .status(400)
+      .json({ message: "Ya existe un cliente con el email ingresado" });
+  }
+
   let query = "INSERT INTO client";
   const namedPlaceholders = getInsertNamedPlacehoders(client);
   query += namedPlaceholders;
