@@ -12,8 +12,7 @@ function ClientsPage() {
 
   const { isPending, isError, data, error } = useQuery({
     queryKey: ["clients"],
-    queryFn: () =>
-      fetch("http://localhost:3000/api/v1/clients").then((res) => res.json()),
+    queryFn: getClients,
     placeholderData: [],
     select: (data) =>
       data.filter(
@@ -32,8 +31,6 @@ function ClientsPage() {
   if (isError) {
     return <div>Error: {error.message}</div>;
   }
-
-  console.log(data);
 
   return (
     <>
@@ -57,8 +54,8 @@ function ClientsPage() {
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
-
-      <DataTable columns={columns} data={data} />
+      <ClientsTable data={data} />
+      {/* <DataTable columns={columns} data={data} /> */}
     </>
   );
 }
@@ -87,6 +84,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import ClientsTable from "@/components/ClientsTable";
+import { getClients } from "@/services/clients";
 
 type Status = {
   value: string;

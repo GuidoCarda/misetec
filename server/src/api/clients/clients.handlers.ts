@@ -47,7 +47,9 @@ export async function getClient(
     );
 
     if (results.length === 0) {
-      res.status(400).json({ message: "client not found" });
+      res
+        .status(400)
+        .json({ message: "No se encontro un cliente con el id ingresado" });
     }
 
     const client = results[0];

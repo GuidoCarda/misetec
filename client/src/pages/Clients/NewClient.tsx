@@ -16,10 +16,19 @@ import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { Alert } from "@/components/ui/alert";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { provinces } from "@/constants";
+import { createClient } from "@/services/clients";
 
 export const newClientFormSchema = z.object({
   firstname: z.string().min(2, {
-    message: "El nombre debe tener al menos 2 caracteres.",
+    message: "El name debe tener al menos 2 caracteres.",
   }),
   lastname: z.string().min(2, {
     message: "El apellido debe tener al menos 2 caracteres.",
@@ -36,6 +45,9 @@ export const newClientFormSchema = z.object({
   email: z.string().email({
     message: "El email debe ser valido.",
   }),
+  province: z.string({
+    required_error: "Debe seleccionar una provincia.",
+  }),
 });
 
 function NewClientPage() {
@@ -43,7 +55,7 @@ function NewClientPage() {
 
   const mutation = useMutation({
     mutationFn: (values: z.infer<typeof newClientFormSchema>) =>
-      newClient(values),
+      createClient(values),
     onSuccess: () => {
       console.log("Cliente creado");
       navigate("..");
@@ -52,27 +64,6 @@ function NewClientPage() {
       console.log(error);
     },
   });
-
-  const newClient = async function (
-    values: z.infer<typeof newClientFormSchema>
-  ) {
-    console.log(values);
-    const res = await fetch("http://localhost:3000/api/v1/clients", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.message);
-    }
-
-    return data;
-  };
 
   function onSubmit(values: z.infer<typeof newClientFormSchema>) {
     mutation.mutate(values);
@@ -126,7 +117,7 @@ export function NewClientForm({ onSubmit, isPending }: NewClientFormProps) {
             name="firstname"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nombre</FormLabel>
+                <FormLabel>name</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -167,6 +158,45 @@ export function NewClientForm({ onSubmit, isPending }: NewClientFormProps) {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="phone_number"
+            disabled={isPending}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nro telefono</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="province"
+            disabled={isPending}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Provincia</FormLabel>
+                <FormControl>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona una provincia" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {provinces.map((province) => (
+                        <SelectItem key={province.id} value={province.name}>
+                          {province.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <FormField
             control={form.control}
@@ -182,20 +212,7 @@ export function NewClientForm({ onSubmit, isPending }: NewClientFormProps) {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="phone_number"
-            disabled={isPending}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Nro telefono</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+
           <FormField
             control={form.control}
             name="postal_code"

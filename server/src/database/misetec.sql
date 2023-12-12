@@ -187,3 +187,6 @@ SELECT * FROM client WHERE  status = 1;
 
 
 
+
+
+ALTER TABLE `client` ADD COLUMN province varchar(50);

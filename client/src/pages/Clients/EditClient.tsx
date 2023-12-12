@@ -9,53 +9,41 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { provinces } from "@/constants";
+import { getClient, updateClient } from "@/services/clients";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { z } from "zod";
+import { Client } from "./clientsColumns";
 
 function EditClientPage() {
   const params = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { isLoading, data } = useQuery({
+  const { isLoading, isError, error, data } = useQuery<Client>({
     queryKey: ["client", params.id],
-    queryFn: () =>
-      fetch(`http://localhost:3000/api/v1/clients/${params.id}`).then((res) =>
-        res.json()
-      ),
+    queryFn: () => getClient(params.id as string),
+    retry: false,
   });
 
   const updateClientMutation = useMutation({
     mutationFn: (values: z.infer<typeof editClientFormSchema>) =>
-      updateClient(values),
+      updateClient(params.id as string, values),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["client", params.id] });
       navigate(-1);
     },
   });
-
-  async function updateClient(values: z.infer<typeof editClientFormSchema>) {
-    const res = await fetch(
-      `http://localhost:3000/api/v1/clients/${params.id}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      }
-    );
-
-    if (res.status !== 200) {
-      throw new Error("Error al actualizar cliente");
-    }
-
-    const data = await res.json();
-    return data;
-  }
 
   const onSubmit = (values: z.infer<typeof editClientFormSchema>) => {
     console.log(values);
@@ -64,6 +52,31 @@ function EditClientPage() {
 
   if (isLoading) {
     return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return (
+      <Alert
+        variant={"destructive"}
+        className="mb-6 flex items-center justify-between"
+      >
+        {error?.message}
+        <div>
+          <Link to={".."}>
+            <Button
+              variant={"ghost"}
+              className="hover:bg-red-50 hover:text-red-600"
+            >
+              Volver al inicio
+            </Button>
+          </Link>
+        </div>
+      </Alert>
+    );
+  }
+
+  if (!data) {
+    return <Navigate to={"..."} />;
   }
 
   return (
@@ -115,11 +128,14 @@ const editClientFormSchema = z.object({
   email: z.string().email({
     message: "El email debe ser valido.",
   }),
+  province: z.string({
+    required_error: "Debe seleccionar una provincia.",
+  }),
 });
 
 type EditClientProps = {
   onSubmit: (values: z.infer<typeof editClientFormSchema>) => void;
-  client: Record<string, unknown>;
+  client: Client;
 };
 
 export function EditClientForm({ onSubmit, client }: EditClientProps) {
@@ -180,19 +196,6 @@ export function EditClientForm({ onSubmit, client }: EditClientProps) {
 
           <FormField
             control={form.control}
-            name="address"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Direccion</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
             name="phone_number"
             render={({ field }) => (
               <FormItem>
@@ -204,6 +207,49 @@ export function EditClientForm({ onSubmit, client }: EditClientProps) {
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name="province"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Provincia</FormLabel>
+                <FormControl>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona una provincia" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {provinces.map((province) => (
+                        <SelectItem key={province.id} value={province.name}>
+                          {province.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="address"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Direccion</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name="postal_code"
