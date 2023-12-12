@@ -28,4 +28,12 @@ router.patch(
   clientHandlers.updateClient
 );
 
+router.delete(
+  "/:id",
+  validateRequest({
+    params: ParamsWithIdSchema,
+  }),
+  clientHandlers.deleteClient
+);
+
 export default router;

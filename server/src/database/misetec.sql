@@ -16,7 +16,7 @@
     id int primary key auto_increment,
     brand varchar(50),
     model varchar(50),
-    `type` varchar(50),
+    `type` enum('pc', 'notebook') default 'pc',
     serial_number varchar(50)
   );
 
@@ -25,9 +25,11 @@
     firstname varchar(50),
     lastname varchar(50),
     email varchar(50),
+    province varchar(50),
     `address` varchar(50),
     phone_number varchar(20),
-    postal_code varchar(10)
+    postal_code varchar(10),
+    `status` boolean default true
   );
 
   CREATE TABLE staff(
@@ -41,7 +43,7 @@
   CREATE TABLE `order`(
     id int primary key auto_increment,
     created_at timestamp default current_timestamp,
-    finished_at timestamp ,
+    finished_at timestamp,
     `description` varchar(255),
     device_failure varchar(255),
     accesories varchar(255),
@@ -180,6 +182,8 @@ SELECT
   SUM(CASE WHEN status_id = 1 THEN 1 ELSE 0 END) AS pending_orders
 FROM `order`;
 
+
+SELECT * FROM client WHERE  status = 1;
 
 
 

@@ -141,6 +141,23 @@ export async function updateOrderState(
   }
 }
 
+export async function deleteOrder(
+  req: Request<ParamsWithId, {}, {}, {}>,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const [results] = await pool.execute<ResultSetHeader[]>(
+      "DELETE FROM `order` WHERE id = ?",
+      [req.params.id]
+    );
+
+    res.json(results);
+  } catch (error) {
+    next(error);
+  }
+}
+
 export async function createDevice(deviceData: CreateDevice) {
   let query = "INSERT INTO device";
   const namedPlaceholders = getInsertNamedPlacehoders(deviceData);

@@ -17,7 +17,8 @@ export async function getAllClients(
   let query = "SELECT * FROM client";
 
   const namedPlaceholders = getNamedPlaceholders(req.query, "OR", "LIKE");
-  query += namedPlaceholders.length > 0 ? ` WHERE ${namedPlaceholders}` : "";
+  query += " WHERE status = 1";
+  query += namedPlaceholders.length > 0 ? ` AND ${namedPlaceholders}` : "";
 
   const values = Object.fromEntries(
     Object.entries(req.query).map(([key, value]) => [key, `%${value}%`])
@@ -64,24 +65,45 @@ export async function createClient(
 ) {
   const client = req.body;
 
-  //check if there is already a client with the same email
-  const [existingClient] = await pool.execute<RowDataPacket[]>(
-    "SELECT * FROM client WHERE email = ?",
-    [client.email]
-  );
-
-  if (existingClient.length > 0) {
-    return res
-      .status(400)
-      .json({ message: "Ya existe un cliente con el email ingresado" });
-  }
-
-  let query = "INSERT INTO client";
-  const namedPlaceholders = getInsertNamedPlacehoders(client);
-  query += namedPlaceholders;
-
-  console.log(query);
   try {
+    //check if there is already a client with the same email
+    const [existingClient] = await pool.execute<RowDataPacket[]>(
+      "SELECT * FROM client WHERE email = ?",
+      [client.email]
+    );
+
+    console.log(existingClient);
+
+    if (existingClient.length > 0) {
+      const client = existingClient[0];
+
+      // Si el cliente ya existe y está dado de baja, lo doy de alta
+      if (client.status === 0) {
+        const [results] = await pool.execute<ResultSetHeader>(
+          "UPDATE client SET status = 1 WHERE id = ?",
+          [client.id]
+        );
+
+        if (results.affectedRows === 0) {
+          return res
+            .status(400)
+            .json({ message: "El cliente no se pudo dar de alta" });
+        }
+
+        return res.json({ data: { client }, results });
+      }
+
+      // Si el cliente ya existe y está dado de alta, no lo creo
+      return res
+        .status(400)
+        .json({ message: "Ya existe un cliente con el email ingresado" });
+    }
+
+    let query = "INSERT INTO client";
+    const namedPlaceholders = getInsertNamedPlacehoders(client);
+    query += namedPlaceholders;
+
+    console.log(query);
     const [results] = await pool.execute<ResultSetHeader>(query, client);
 
     if (results.affectedRows === 0) {
@@ -116,6 +138,31 @@ export async function updateClient(
 
     if (results.affectedRows === 0) {
       return res.status(400).json({ message: "client was not updated" });
+    }
+
+    res.json(results);
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function deleteClient(
+  req: Request<ParamsWithId>,
+  res: Response,
+  next: NextFunction
+) {
+  const id = req.params.id;
+
+  const query = "UPDATE client SET STATUS = 0 WHERE id = ?";
+  const values = [id];
+
+  try {
+    const [results] = await pool.execute<ResultSetHeader>(query, values);
+
+    if (results.affectedRows === 0) {
+      return res
+        .status(400)
+        .json({ message: "El cliete no se pudo dar de baja" });
     }
 
     res.json(results);
