@@ -70,7 +70,7 @@ export async function createOrder(
   next: NextFunction
 ) {
   console.log(req.body);
-  const { description, client_id, service_type_id } = req.body;
+  const { description, client_id, service_type_id, accesories } = req.body;
 
   let device_id = null;
 
@@ -85,8 +85,8 @@ export async function createOrder(
 
   try {
     const [results] = await pool.execute<RowDataPacket[]>(
-      "INSERT INTO `order` (description, service_type_id, client_id, device_id) VALUES (?,?,?,?)",
-      [description, service_type_id, client_id, device_id]
+      "INSERT INTO `order` (description, accesories, service_type_id, client_id, device_id) VALUES (?,?,?,?,?)",
+      [description, accesories, service_type_id, client_id, device_id]
     );
     res.json(results);
   } catch (error) {
