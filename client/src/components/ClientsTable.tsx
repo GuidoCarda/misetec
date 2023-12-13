@@ -63,7 +63,7 @@ function ClientsTable({ data }: { data: Client[] }) {
       },
       {
         accessorKey: "postal_code",
-        header: "Codigo postal",
+        header: "Cod. Postal",
         cell: ({ row }) => {
           const postalCode = row.getValue("postal_code") as string;
           return <div>{postalCode}</div>;
