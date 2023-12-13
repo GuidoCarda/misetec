@@ -32,6 +32,8 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
 import { User } from "lucide-react";
+import { createClient } from "@/services/clients";
+import { createOrder } from "@/services/orders";
 
 const formSchema = z
   .object({
@@ -105,7 +107,7 @@ function NewOrderPage() {
   });
 
   const orderMutation = useMutation({
-    mutationFn: (values: z.infer<typeof formSchema>) => newOrder(values),
+    mutationFn: (values: z.infer<typeof formSchema>) => createOrder(values),
     onSuccess: () => {
       console.log("Orden creada");
       navigate("..");
@@ -114,7 +116,7 @@ function NewOrderPage() {
 
   const clientMutation = useMutation({
     mutationFn: (values: z.infer<typeof newClientFormSchema>) =>
-      newClient(values),
+      createClient(values),
     onSuccess: (data) => {
       setClient(data);
     },
@@ -127,46 +129,6 @@ function NewOrderPage() {
       });
     },
   });
-
-  const newOrder = async function (values: z.infer<typeof formSchema>) {
-    console.log(values);
-    const res = await fetch("http://localhost:3000/api/v1/orders", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    });
-
-    if (!res.ok) {
-      throw new Error("Error al crear orden");
-    }
-
-    const data = await res.json();
-
-    return data;
-  };
-
-  const newClient = async function (
-    values: z.infer<typeof newClientFormSchema>
-  ) {
-    const res = await fetch("http://localhost:3000/api/v1/clients", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    });
-
-    const data = await res.json();
-    console.log(data);
-
-    if (res.status === 400) {
-      throw new Error(data.message);
-    }
-
-    return data.data;
-  };
 
   const discardSelectedClient = () => {
     setClient(undefined);
