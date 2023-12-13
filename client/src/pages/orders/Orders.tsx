@@ -251,22 +251,13 @@ export function UpdateOrderStatus({
 
   const orderStatusList = useQuery({
     queryKey: ["orderStatusList"],
-    queryFn: () =>
-      fetch("http://localhost:3000/api/v1/order-status").then((res) =>
-        res.json()
-      ),
+    queryFn: getOrderStatusList,
   });
 
   const mutation = useMutation({
     mutationFn: (status: string) => {
       console.log("status dentro mutacion", status);
-      return fetch(`http://localhost:3000/api/v1/orders/${orderId}/status`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status_id: status }),
-      }).then((res) => res.json());
+      return updateOrderStatus(orderId, status);
     },
     onSuccess: () => {
       console.log("Orden actualizada");

@@ -50,7 +50,7 @@ export async function createClient(values: CreateClient) {
     throw new Error(data.message);
   }
 
-  return data;
+  return data.data;
 }
 
 export async function updateClient(id: string, values: UpdateClient) {
