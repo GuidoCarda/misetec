@@ -81,15 +81,22 @@ export async function createOrder(
     device_id = await createDevice(deviceData);
   }
 
-  console.log(device_id);
+  console.log({
+    description,
+    accesories,
+    service_type_id,
+    client_id,
+    device_id,
+  });
 
   try {
     const [results] = await pool.execute<RowDataPacket[]>(
       "INSERT INTO `order` (description, accesories, service_type_id, client_id, device_id) VALUES (?,?,?,?,?)",
-      [description, accesories, service_type_id, client_id, device_id]
+      [description, accesories ?? null, service_type_id, client_id, device_id]
     );
     res.json(results);
   } catch (error) {
+    console.log(error);
     next(error);
   }
 }
