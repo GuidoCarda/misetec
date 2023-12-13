@@ -214,8 +214,13 @@ export function SelectDemo({
   placeholder,
   onChange,
 }: SelectDemoProps) {
+  // console.log(items, defaultValue);
   return (
-    <Select defaultValue={defaultValue} onValueChange={onChange}>
+    <Select
+      disabled={defaultValue === "4" || defaultValue === "5"}
+      defaultValue={defaultValue}
+      onValueChange={onChange}
+    >
       <SelectTrigger className="w-[160px]">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
@@ -233,10 +238,12 @@ export function SelectDemo({
   );
 }
 
-type OrderStatus = {
-  id: string;
-  denomination: string;
-  description: string;
+const allowedTransitions: Record<string, string[]> = {
+  "1": ["2", "3"],
+  "2": ["3", "4"],
+  "3": ["5"],
+  "4": [],
+  "5": [],
 };
 
 export function UpdateOrderStatus({
@@ -277,10 +284,20 @@ export function UpdateOrderStatus({
     return <div>Loading...</div>;
   }
 
+  // console.log("defaultValue", defaultValue);
+  console.log(allowedTransitions[defaultValue]);
+
+  const allowedStatusList = orderStatusList.data.data.filter(
+    (status: OrderStatus) =>
+      allowedTransitions[defaultValue].includes(status.id.toString()) ||
+      status.id.toString() === defaultValue
+  );
+  // console.log("allowedStatus", allowedStatusList);
+
   return (
     <SelectDemo
       defaultValue={defaultValue}
-      items={orderStatusList.data.data}
+      items={allowedStatusList}
       onChange={onChange}
     />
   );
@@ -292,6 +309,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { getOrderStatusList, updateOrderStatus } from "@/services/orders";
+import { OrderStatus } from "@/types";
 
 export function TooltipDemo({
   children,
