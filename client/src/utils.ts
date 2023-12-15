@@ -17,3 +17,11 @@ export function formatTimeStamp(timestamp: string) {
 
   return `${day}/${month}/${year}`;
 }
+
+export function secondsToTime(seconds: number) {
+  const days = Math.floor(seconds / 86400);
+  const hours = Math.floor((seconds % 86400) / 3600);
+  const minutes = Math.floor(((seconds % 86400) % 3600) / 60);
+
+  return `${days}d ${hours}h ${minutes}m`;
+}

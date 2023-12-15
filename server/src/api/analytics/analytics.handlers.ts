@@ -10,24 +10,38 @@ export async function getAnalytics(
   const { start, end } = req.query as { start: string; end: string };
   console.log(start, end);
 
-  if (!start || !end) {
-    return res.status(400).json({ message: "start and end are required" });
+  let query = `
+    SELECT
+      COUNT(*) AS total,
+      SUM(CASE WHEN status_id = 3 THEN 1 ELSE 0 END) AS in_progress,
+      SUM(CASE WHEN status_id = 1 THEN 1 ELSE 0 END) AS pending,
+      ROUND(AVG(TIMESTAMPDIFF(SECOND, created_at, finished_at))) AS resolution_time
+    FROM \`order\`  
+   `;
+  const values: string[] = [];
+
+  if (!start && end) {
+    return res.status(400).json({ message: "Inicio requerido" });
   }
 
-  // El sistema deberá mostrar el número de órdenes en progreso
+  if (start && !end) {
+    query += " WHERE DATE(created_at) = ?";
+    values.push(start);
+  }
 
-  const query = `
-    SELECT
-      COUNT(*) AS total_orders
-    FROM \`order\`
-    WHERE created_at BETWEEN ? AND ?
-  `;
+  if (start && end) {
+    query += " WHERE created_at BETWEEN ? AND ? ";
+    values.push(start, end);
+  }
 
-  const values = [new Date(start), new Date(end)];
+  console.log(query);
+  console.log(values);
 
   try {
     const [results] = await pool.execute<RowDataPacket[]>(query, values);
-    res.json(results);
+    console.log(results);
+    const analytics = results[0];
+    res.json(analytics);
   } catch (error) {
     next(error);
   }

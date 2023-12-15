@@ -1,84 +1,106 @@
+import DateRangePicker from "@/components/DateRangePicker";
+import { Skeleton } from "@/components/ui/skeleton";
+import { secondsToTime } from "@/utils";
+import { useQuery } from "@tanstack/react-query";
+import { Card } from "@tremor/react";
+import { format, startOfMonth } from "date-fns";
+import { Hourglass, ListChecks, Loader } from "lucide-react";
+import { useState } from "react";
+import { DateRange } from "react-day-picker";
+
 function Dashboard() {
+  const [date, setDate] = useState<DateRange | undefined>({
+    from: startOfMonth(new Date()),
+    to: new Date(),
+  });
+
+  console.log(date);
+  const analyticsQuery = useQuery({
+    queryKey: ["analytics", date?.from, date?.to],
+    queryFn: () => getAnalytics(date),
+
+    retry: false,
+  });
+
+  async function getAnalytics(date: DateRange | undefined) {
+    const url = new URL("http://localhost:3000/api/v1/analytics");
+
+    if (date) {
+      console.log(date, "entro");
+      const { from: fromDate, to: toDate } = date as DateRange;
+
+      const params = new URLSearchParams({
+        start: format(fromDate!, "yyyy-MM-dd"),
+      });
+      console.log(params);
+
+      if (toDate) {
+        params.append("end", format(toDate!, "yyyy-MM-dd"));
+      }
+
+      url.search = params.toString();
+      // add the url params to the url
+
+      console.log(url.toString());
+    }
+
+    const res = await fetch(url);
+    const data = await res.json();
+    return data;
+  }
+
+  // if (analyticsQuery.isPending) return <p>Loading...</p>;
+
+  if (analyticsQuery.isError) return <p>{analyticsQuery.error.message}</p>;
+
+  console.log(analyticsQuery.data);
+
   return (
     <>
-      <h1 className="text-3xl font-bold mb-10">Dashboard</h1>
-      <div className="grid lg:grid-cols-5  gap-4">
-        <ExampleChart classNames="col-span-3" />
-        {[...Array(6)].map((_, i) => (
-          <div
-            key={i}
-            className="bg-white rounded-md shadow-sm border p-4 flex flex-col space-y-4"
-          >
-            <h2 className="text-xl font-semibold">Titulo</h2>
-            <p className="text-gray-500">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
-              voluptatum.
-            </p>
-          </div>
-        ))}
+      <h1 className="text-3xl font-semibold mb-10">Informes</h1>
+      <DateRangePicker date={date} setDate={setDate} className="mb-4" />
+      <div className="grid grid-cols-3 gap-4">
+        {analyticsQuery.isPending ? (
+          <>
+            <Skeleton className="h-40 w-full" />
+            <Skeleton className="h-40 w-full" />
+            <Skeleton className="h-40 w-full" />
+          </>
+        ) : (
+          <>
+            <Card>
+              <div className="flex items-center justify-between">
+                <h2 className="text-md  mb-2">Ordenes en progreso</h2>
+                <ListChecks className="h-5 w-5" />
+              </div>
+              <p className="text-3xl font-bold">
+                {analyticsQuery.data?.in_progress ?? "Sin resultados"}
+              </p>
+            </Card>
+            <Card>
+              <div className="flex items-center justify-between">
+                <h2 className="text-md  mb-2">Ordenes sin revisión</h2>
+                <Loader className="h-5 w-5" />
+              </div>
+              <p className="text-3xl font-bold">
+                {analyticsQuery.data?.pending ?? "Sin resultados"}
+              </p>
+            </Card>
+            <Card>
+              <div className="flex items-center justify-between">
+                <h2 className="text-md  mb-2">Tiempo promedio resolucion</h2>
+                <Hourglass className="h-5 w-5" />
+              </div>
+              <p className="text-3xl font-bold">
+                {secondsToTime(Number(analyticsQuery.data?.resolution_time)) ??
+                  "2d 3h"}
+              </p>
+            </Card>
+          </>
+        )}
       </div>
     </>
   );
 }
-
-import { BarChart, Card, Subtitle, Title } from "@tremor/react";
-import { HTMLAttributes } from "react";
-
-const chartdata = [
-  {
-    name: "Amphibians",
-    "Number of threatened species": 2488,
-  },
-  {
-    name: "Birds",
-    "Number of threatened species": 1445,
-  },
-  {
-    name: "Crustaceans",
-    "Number of threatened species": 743,
-  },
-  {
-    name: "Ferns",
-    "Number of threatened species": 281,
-  },
-  {
-    name: "Arachnids",
-    "Number of threatened species": 251,
-  },
-  {
-    name: "Corals",
-    "Number of threatened species": 232,
-  },
-  {
-    name: "Algae",
-    "Number of threatened species": 98,
-  },
-];
-
-const valueFormatter = (number: number) =>
-  `$ ${new Intl.NumberFormat("us").format(number).toString()}`;
-
-type ExampleChartProps = {
-  classNames?: HTMLAttributes<HTMLDivElement>["className"];
-};
-
-export const ExampleChart = ({ classNames }: ExampleChartProps) => (
-  <Card className={classNames}>
-    <Title>Number of species threatened with extinction (2021)</Title>
-    <Subtitle>
-      The IUCN Red List has assessed only a small share of the total known
-      species in the world.
-    </Subtitle>
-    <BarChart
-      className="mt-6"
-      data={chartdata}
-      index="name"
-      categories={["Number of threatened species"]}
-      colors={["blue"]}
-      valueFormatter={valueFormatter}
-      yAxisWidth={48}
-    />
-  </Card>
-);
 
 export default Dashboard;
