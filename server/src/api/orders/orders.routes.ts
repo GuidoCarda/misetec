@@ -44,4 +44,10 @@ router.patch(
   orderHandlers.updateOrderState
 );
 
+router.delete(
+  "/:id",
+  validateRequest({ params: ParamsWithIdSchema }),
+  orderHandlers.deleteOrder
+);
+
 export default router;

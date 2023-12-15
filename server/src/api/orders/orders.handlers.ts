@@ -155,7 +155,7 @@ export async function deleteOrder(
 ) {
   try {
     const [results] = await pool.execute<ResultSetHeader[]>(
-      "DELETE FROM `order` WHERE id = ?",
+      "UPDATE `order` SET status_id = 4 WHERE id = ?",
       [req.params.id]
     );
 

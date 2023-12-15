@@ -7,8 +7,18 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { allowedTransitions } from "@/constants";
+import { getOrderStatusList } from "@/services/orders";
+import { OrderStatus } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -73,7 +83,7 @@ function EditOrderPage() {
   const formDefaultValues: z.infer<typeof orderEditFormSchema> = {
     description: orderQuery?.data?.description ?? "",
     device_failure: orderQuery?.data?.device_failure ?? "",
-    status_id: orderQuery?.data?.status_id ?? 1,
+    status_id: orderQuery?.data?.status_id,
     accesories: orderQuery?.data?.accesories ?? "",
     report: orderQuery?.data?.report ?? "",
   };
@@ -84,7 +94,6 @@ function EditOrderPage() {
     <div>
       <Link to="../">Volver</Link>
       <h2 className="text-2xl font-bold mb-4">Editar Orden #{id}</h2>
-      {/* Datos cliente */}
       <div>
         <h3 className="text-xl font-bold mb-4">Datos del cliente</h3>
         <p className="mb-2">
@@ -109,7 +118,7 @@ const orderEditFormSchema = z.object({
   }),
   accesories: z.string().optional(),
   device_failure: z.string().optional(),
-  status_id: z.coerce.number().optional(),
+  status_id: z.coerce.number(),
   report: z.string().optional(),
 });
 
@@ -124,6 +133,26 @@ export function EditOrderForm({ defaultValues, onSubmit }: EditOrderFormProps) {
     defaultValues,
   });
 
+  const orderStatusQuery = useQuery<OrderStatus[]>({
+    queryKey: ["orderStatusList"],
+    queryFn: getOrderStatusList,
+  });
+
+  if (orderStatusQuery.isPending) {
+    return <p>Cargando...</p>;
+  }
+
+  if (orderStatusQuery.isError) {
+    return <p>Hubo un error</p>;
+  }
+
+  const allowedStatusList = orderStatusQuery.data.filter(
+    (status: OrderStatus) =>
+      allowedTransitions[defaultValues.status_id].includes(
+        status.id.toString()
+      ) || status.id === defaultValues.status_id
+  );
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -136,6 +165,41 @@ export function EditOrderForm({ defaultValues, onSubmit }: EditOrderFormProps) {
               <FormControl>
                 <Textarea {...field} />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="status_id"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Tipo de servicio</FormLabel>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={field.value.toString()}
+              >
+                <FormControl>
+                  <SelectTrigger className="w-[250px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {allowedStatusList.map(
+                    ({ id, denomination }: OrderStatus) => {
+                      return (
+                        <SelectItem
+                          key={denomination.split(" ").join("")}
+                          value={id.toString()}
+                        >
+                          {denomination}
+                        </SelectItem>
+                      );
+                    }
+                  )}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}

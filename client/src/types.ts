@@ -29,5 +29,10 @@ export type CreateOrder = Omit<Order, "id" | "created_at">;
 export type OrderStatus = {
   id: number;
   denomination: string;
+};
+
+export type ServiceType = {
+  id: number;
+  denomination: string;
   description: string;
 };

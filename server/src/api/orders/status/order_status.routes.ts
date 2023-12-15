@@ -10,10 +10,7 @@ router.get("/", async (_req, res, next) => {
       "SELECT * FROM order_status"
     );
 
-    res.json({
-      message: "Order status - 👋🌎🌍🌏",
-      data: results,
-    });
+    res.json(results);
   } catch (error) {
     next(error);
   }
