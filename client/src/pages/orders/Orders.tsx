@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-import { Label } from "@radix-ui/react-label";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { getOrderStatusList, updateOrderStatus } from "@/services/orders";
@@ -152,14 +151,16 @@ function Orders() {
 
   return (
     <div className="w-full">
-      <header className="flex justify-between">
-        <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-10">
-          Ordenes
-        </h2>
+      <header className="flex items-center justify-between md:mb-10">
+        <h2 className="text-2xl font-bold tracking-tight">Ordenes</h2>
         <Link to={"new"}>
-          <Button>Nueva orden</Button>
+          <Button>
+            <PlusIcon className="w-4 h-4 mr-2" />
+            Nueva orden
+          </Button>
         </Link>
       </header>
+
       <div className="mt-5 mb-4">
         <Label className="mb-2 block">Buscar cliente</Label>
         <Input
@@ -193,6 +194,8 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { allowedTransitions } from "@/constants";
+import { Label } from "@/components/ui/label";
+import { PlusIcon } from "lucide-react";
 // import { orderStatuses } from "@/constants";
 
 type SelectDemoProps = {

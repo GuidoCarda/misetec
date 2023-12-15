@@ -1,3 +1,4 @@
+import { SectionTitle } from "@/components/PrivateLayout";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -20,6 +21,7 @@ import { allowedTransitions } from "@/constants";
 import { getOrderStatusList } from "@/services/orders";
 import { OrderStatus } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { CaretLeftIcon } from "@radix-ui/react-icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -92,8 +94,18 @@ function EditOrderPage() {
 
   return (
     <div>
-      <Link to="../">Volver</Link>
-      <h2 className="text-2xl font-bold mb-4">Editar Orden #{id}</h2>
+      <Link
+        to=".."
+        className="group rounded-sm flex text-sm items-center text-slate-400 select-none  hover:text-slate-600 focus-within:outline-slate-100"
+      >
+        <CaretLeftIcon className="group-hover:-translate-x-1 transition-all duration-200" />
+        <span className="">Volver</span>
+      </Link>
+      <SectionTitle
+        title="Editar orden"
+        description="Actualiza los datos de la orden de servicio seleccionada"
+      />
+
       <div>
         <h3 className="text-xl font-bold mb-4">Datos del cliente</h3>
         <p className="mb-2">
@@ -128,6 +140,7 @@ type EditOrderFormProps = {
 };
 
 export function EditOrderForm({ defaultValues, onSubmit }: EditOrderFormProps) {
+  const navigate = useNavigate();
   const form = useForm<z.infer<typeof orderEditFormSchema>>({
     resolver: zodResolver(orderEditFormSchema),
     defaultValues,
@@ -244,9 +257,13 @@ export function EditOrderForm({ defaultValues, onSubmit }: EditOrderFormProps) {
             </FormItem>
           )}
         />
-        <footer className="flex justify-end mt-4">
+
+        <div className="flex gap-4 justify-end">
+          <Button onClick={() => navigate(-1)} type="button" variant={"ghost"}>
+            Cancelar
+          </Button>
           <Button type="submit">Actualizar orden</Button>
-        </footer>
+        </div>
       </form>
     </Form>
   );

@@ -1,6 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
+import { ComputerIcon } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 
 function OrderDetailsPage() {
@@ -23,6 +25,8 @@ function OrderDetailsPage() {
     return <div>Error: {error.message}</div>;
   }
 
+  console.log(data);
+
   return (
     <div>
       <header className="flex items-center justify-between">
@@ -34,10 +38,11 @@ function OrderDetailsPage() {
           <Link to={`edit`}> Editar Orden</Link>
         </Button>
       </header>
+
       <div className="w-full mb-10 border-2 p-4 rounded-md">
         <div className="flex gap-4 mb-4">
           <h3>Orden #{data.id}</h3>
-          <Badge>{data.status}</Badge>
+          <Badge className="rounded-md">{data.status}</Badge>
         </div>
         <h2 className="text-lg font-semibold">Descripcion</h2>
         <p className="text-zinc-500">{data.description}</p>
@@ -51,11 +56,35 @@ function OrderDetailsPage() {
       )}
 
       {Boolean(data.device_id) && (
-        <div className="w-full mb-10 border-2 p-4 rounded-md">
-          <h3 className="text-lg font-semibold">Dispositivo</h3>
-          <p className="text-zinc-500">{data.brand}</p>
-          <p className="text-zinc-500">{data.model}</p>
-        </div>
+        <Card className="">
+          <CardHeader>
+            <ComputerIcon />
+            <h2 className="text-xl font-semibold">Dispositivo</h2>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span>Equipo</span>
+                <p className="text-zinc-500">#{data.device_id}</p>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span>Marca</span>
+                <p className="text-zinc-500">{data.brand}</p>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span>Modelo</span>
+                <p className="text-zinc-500">{data.model}</p>
+              </div>
+
+              <div className="flex items-center justify-between ">
+                <span>Numero de serie</span>
+                <p className="text-zinc-500">{data.serial_number}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       {Boolean(data.report) && (

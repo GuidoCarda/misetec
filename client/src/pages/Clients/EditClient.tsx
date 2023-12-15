@@ -24,6 +24,8 @@ import { useForm } from "react-hook-form";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { z } from "zod";
 import { Client } from "./clientsColumns";
+import { CaretLeftIcon } from "@radix-ui/react-icons";
+import { SectionTitle } from "@/components/PrivateLayout";
 
 function EditClientPage() {
   const params = useParams();
@@ -81,9 +83,17 @@ function EditClientPage() {
 
   return (
     <>
-      <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-6">
-        Editar Cliente
-      </h2>
+      <Link
+        to=".."
+        className="group rounded-sm flex text-sm items-center text-slate-400 select-none  hover:text-slate-600 focus-within:outline-slate-100"
+      >
+        <CaretLeftIcon className="group-hover:-translate-x-1 transition-all duration-200" />
+        <span className="">Volver</span>
+      </Link>
+      <SectionTitle
+        title="Editar cliente"
+        description="Modificá los datos del cliente para tener su informacion actualizada"
+      />
       {updateClientMutation.isError && (
         <Alert
           variant={"destructive"}

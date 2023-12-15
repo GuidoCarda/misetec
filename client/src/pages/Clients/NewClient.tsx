@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { Alert } from "@/components/ui/alert";
 import {
@@ -25,6 +25,8 @@ import {
 } from "@/components/ui/select";
 import { provinces } from "@/constants";
 import { createClient } from "@/services/clients";
+import { SectionTitle } from "@/components/PrivateLayout";
+import { CaretLeftIcon } from "@radix-ui/react-icons";
 
 export const newClientFormSchema = z.object({
   firstname: z.string().min(2, {
@@ -71,9 +73,20 @@ function NewClientPage() {
 
   return (
     <>
-      <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-6">
+      <Link
+        to=".."
+        className="group rounded-sm flex text-sm items-center text-slate-400 select-none  hover:text-slate-600 focus-within:outline-slate-100"
+      >
+        <CaretLeftIcon className="group-hover:-translate-x-1 transition-all duration-200" />
+        <span className="">Volver</span>
+      </Link>
+      <SectionTitle
+        title="Nuevo Cliente"
+        description="Carga los datos del cliente para hacer seguimiento de sus ordenes de servicio"
+      />
+      {/* <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-6">
         Nuevo Cliente
-      </h2>
+      </h2> */}
       {mutation.isError && (
         <Alert className="mb-4" variant={"destructive"}>
           {mutation.error.message}
@@ -117,7 +130,7 @@ export function NewClientForm({ onSubmit, isPending }: NewClientFormProps) {
             name="firstname"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>name</FormLabel>
+                <FormLabel>Nombre</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>

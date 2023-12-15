@@ -57,7 +57,9 @@ function Dashboard() {
 
   return (
     <>
-      <h1 className="text-3xl font-semibold mb-10">Informes</h1>
+      <header className="flex items-center justify-between md:mb-10">
+        <h2 className="text-2xl font-bold tracking-tight">Informes</h2>
+      </header>
       <DateRangePicker date={date} setDate={setDate} className="mb-4" />
       <div className="grid grid-cols-3 gap-4">
         {analyticsQuery.isPending ? (

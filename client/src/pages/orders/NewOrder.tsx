@@ -35,6 +35,8 @@ import { User } from "lucide-react";
 import { createClient } from "@/services/clients";
 import { createOrder } from "@/services/orders";
 import { ServiceType } from "@/types";
+import { CaretLeftIcon } from "@radix-ui/react-icons";
+import { SectionTitle } from "@/components/PrivateLayout";
 
 const formSchema = z
   .object({
@@ -179,17 +181,28 @@ function NewOrderPage() {
 
   return (
     <div>
-      <header className="relative">
-        <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-10">
-          Nueva orden
-        </h2>
+      {/* <header className="mb-10">
         <Link
           to=".."
-          className="absolute flex -top-5 text-sm items-center text-zinc-400 hover:text-zinc-800 transition-colors"
+          className="group rounded-sm flex text-sm items-center text-slate-400 select-none  hover:text-slate-600 focus-within:outline-slate-100"
         >
-          Volver
+          <CaretLeftIcon className="group-hover:-translate-x-1 transition-all duration-200" />
+          <span className="">Volver</span>
         </Link>
-      </header>
+        <h2 className="text-2xl font-bold tracking-tight">Nueva Orden</h2>
+      </header> */}
+
+      <Link
+        to=".."
+        className="group rounded-sm flex text-sm items-center text-slate-400 select-none  hover:text-slate-600 focus-within:outline-slate-100"
+      >
+        <CaretLeftIcon className="group-hover:-translate-x-1 transition-all duration-200" />
+        <span className="">Volver</span>
+      </Link>
+      <SectionTitle
+        title="Nueva orden"
+        description="Complete los datos requeridos para generar una nueva orden de servicio"
+      />
 
       {!client ? (
         <Tabs defaultValue="search">
@@ -199,12 +212,14 @@ function NewOrderPage() {
           </TabsList>
           <TabsContent value="search">
             <div className="mt-6 mb-4">
-              <h2 className="font-bold text-xl">Buscar cliente</h2>
+              <h2 className="font-bold text-xl leading-tight">
+                Buscar cliente
+              </h2>
               <p className="text-tremor-content">
                 Busca y selecciona un cliente para asignarlo a la orden
               </p>
             </div>
-            <Label>Nombre cliente</Label>
+            <Label className="block mb-2">Nombre cliente</Label>
             <Input
               type="search"
               role="search"
@@ -241,7 +256,9 @@ function NewOrderPage() {
           </TabsContent>
           <TabsContent value="create">
             <div className="mt-6 mb-4">
-              <h2 className="font-bold text-xl">Cargar cliente</h2>
+              <h2 className="font-bold text-xl leading-tight">
+                Cargar cliente
+              </h2>
               <p className="text-tremor-content">
                 Carga un nuevo cliente para asignarlo a la orden
               </p>
@@ -256,6 +273,12 @@ function NewOrderPage() {
         <OrderClientDetails client={client} onClose={discardSelectedClient} />
       )}
 
+      <div className="mt-6 mb-4">
+        <h2 className="font-semibold text-lg leading-tight">Detalle Orden</h2>
+        <p className="text-tremor-content">
+          Complete los datos requeridos para generar una nueva orden de servicio
+        </p>
+      </div>
       <NewOrderForm onSubmit={onSubmit} />
     </div>
   );

@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import ClientsTable from "@/components/ClientsTable";
 import { getClients } from "@/services/clients";
+import { PlusIcon } from "@radix-ui/react-icons";
 
 function ClientsPage() {
   const [search, setSearch] = useState("");
@@ -35,12 +36,13 @@ function ClientsPage() {
 
   return (
     <>
-      <header className="flex justify-between ">
-        <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-10">
-          Clientes
-        </h2>
+      <header className="flex items-center justify-between md:mb-10">
+        <h2 className="text-2xl font-bold tracking-tight">Clientes</h2>
         <Link to={"new"}>
-          <Button>Nuevo Cliente</Button>
+          <Button>
+            <PlusIcon className="w-4 h-4 mr-2" />
+            Nuevo cliente
+          </Button>
         </Link>
       </header>
 
