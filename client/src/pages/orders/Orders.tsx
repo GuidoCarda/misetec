@@ -1,143 +1,133 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import DataTable from "@/components/ui/data-table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 
 import { Label } from "@radix-ui/react-label";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
 import { useState } from "react";
+import { getOrderStatusList, updateOrderStatus } from "@/services/orders";
+import { Order, OrderStatus } from "@/types";
+import OrdersTable from "@/components/OrdersTable";
 import { Link } from "react-router-dom";
 
-type Order = {
-  id: string;
-  description: string;
-  client_id: number;
-  created_at: string;
-  updated_at: string;
-  staff_id: string;
-  status_id: string;
-  firstname?: string;
-  lastname?: string;
-  service_type?: string;
-};
+// type Order = {
+//   id: string;
+//   description: string;
+//   client_id: number;
+//   created_at: string;
+//   finished_at?: string;
+//   staff_id: string;
+//   status_id: string;
+//   firstname?: string;
+//   lastname?: string;
+//   service_type?: string;
+// };
 
-const columns: ColumnDef<Order>[] = [
-  {
-    accessorKey: "id",
-    header: "Codigo",
-    cell: ({ row }) => {
-      const id = row.getValue("id") as string;
-      return <div className="text-center">{id}</div>;
-    },
-  },
-  {
-    accessorKey: "created_at",
-    header: "Creada el",
-    cell: ({ row }) => {
-      const createdAt = row.getValue("created_at") as string;
-      const formattedDate = formatTimeStamp(createdAt);
+// const columns: ColumnDef<Order>[] = [
+//   {
+//     accessorKey: "id",
+//     header: "Codigo",
+//     cell: ({ row }) => {
+//       const id = row.getValue("id") as string;
+//       return <div className="text-center">{id}</div>;
+//     },
+//   },
+//   {
+//     accessorKey: "created_at",
+//     header: "Creada el",
+//     cell: ({ row }) => {
+//       const createdAt = row.getValue("created_at") as string;
+//       const formattedDate = formatTimeStamp(createdAt);
 
-      return <div>{formattedDate}</div>;
-    },
-  },
-  {
-    accessorKey: "description",
-    header: "Descripcion",
-    cell: ({ row }) => {
-      // console.log(row);
-      const description = row.getValue("description") as string;
-      const serviceType = row.original.service_type;
+//       return <div>{formattedDate}</div>;
+//     },
+//   },
+//   {
+//     accessorKey: "description",
+//     header: "Descripcion",
+//     cell: ({ row }) => {
+//       const description = row.getValue("description") as string;
+//       const serviceType = row.original.service_type;
 
-      return (
-        <div className="w-[350px]">
-          {serviceType && (
-            <TooltipDemo tooltipContent={serviceType}>
-              <Badge className="rounded-md" variant={"outline"}>
-                {serviceType.split(" ").at(0)}
-              </Badge>
-            </TooltipDemo>
-          )}
-          <p className="mt-2 whitespace-nowrap overflow-hidden text-ellipsis">
-            {description}
-          </p>
-        </div>
-      );
-    },
-  },
-  {
-    id: "Cliente",
-    accessorFn: (row) => `${row.firstname} ${row.lastname}`,
-  },
-  {
-    accessorKey: "status_id",
-    header: "Estado",
-    cell: ({ row }) => {
-      const status = row.getValue("status_id") as string;
-      const orderId = row.original.id;
+//       return (
+//         <div className="w-[350px]">
+//           {serviceType && (
+//             <TooltipWrapper tooltipContent={serviceType}>
+//               <Badge className="rounded-md" variant={"outline"}>
+//                 {serviceType.split(" ").at(0)}
+//               </Badge>
+//             </TooltipWrapper>
+//           )}
+//           <p className="mt-2 whitespace-nowrap overflow-hidden text-ellipsis">
+//             {description}
+//           </p>
+//         </div>
+//       );
+//     },
+//   },
+//   {
+//     id: "Cliente",
+//     accessorFn: (row) => `${row.firstname} ${row.lastname}`,
+//   },
+//   {
+//     accessorKey: "status_id",
+//     header: "Estado",
+//     cell: ({ row }) => {
+//       const status = row.getValue("status_id") as string;
+//       const orderId = row.original.id;
 
-      if (!status) {
-        return null;
-      }
+//       if (!status) {
+//         return null;
+//       }
 
-      return (
-        <UpdateOrderStatus
-          defaultValue={status.toString()}
-          orderId={orderId.toString()}
-        />
-      );
-    },
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => {
-      const client = row.original;
+//       return (
+//         <UpdateOrderStatus
+//           defaultValue={status.toString()}
+//           orderId={orderId.toString()}
+//         />
+//       );
+//     },
+//   },
+//   {
+//     id: "actions",
+//     cell: ({ row }) => {
+//       const client = row.original;
 
-      return (
-        <div className="text-right">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() =>
-                  navigator.clipboard.writeText(client.id.toString())
-                }
-              >
-                Copiar ID
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link to={`${client.id}`}>Ver detalle</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to={`${client.id}/edit`}>Editar</Link>
-              </DropdownMenuItem>
-
-              <DropdownMenuItem asChild>
-                <Link to={`/clients/${client.client_id}`}>Ver cliente</Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      );
-    },
-  },
-];
+//       return (
+//         <div className="text-right">
+//           <DropdownMenu>
+//             <DropdownMenuTrigger asChild>
+//               <Button variant="ghost" className="h-8 w-8 p-0">
+//                 <span className="sr-only">Open menu</span>
+//                 <MoreHorizontal className="h-4 w-4" />
+//               </Button>
+//             </DropdownMenuTrigger>
+//             <DropdownMenuContent align="end">
+//               <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+//               <DropdownMenuItem
+//                 onClick={() =>
+//                   navigator.clipboard.writeText(client.id.toString())
+//                 }
+//               >
+//                 Copiar ID
+//               </DropdownMenuItem>
+//               <DropdownMenuSeparator />
+//               <DropdownMenuItem asChild>
+//                 <Link to={`${client.id}`}>Ver detalle</Link>
+//               </DropdownMenuItem>
+//               <DropdownMenuItem asChild>
+//                 <Link to={`${client.id}/edit`}>Editar</Link>
+//               </DropdownMenuItem>
+//               <DropdownMenuItem asChild>Dar de baja</DropdownMenuItem>
+//               <DropdownMenuItem asChild>
+//                 <Link to={`/clients/${client.client_id}`}>Ver cliente</Link>
+//               </DropdownMenuItem>
+//             </DropdownMenuContent>
+//           </DropdownMenu>
+//         </div>
+//       );
+//     },
+//   },
+// ];
 
 function Orders() {
   const [search, setSearch] = useState("");
@@ -184,7 +174,8 @@ function Orders() {
 
       {isError && <div>Error: {error.message}</div>}
 
-      <DataTable columns={columns} data={data} />
+      <OrdersTable data={data} />
+      {/* <DataTable columns={columns} data={data} /> */}
     </div>
   );
 }
@@ -198,12 +189,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { formatTimeStamp } from "@/utils";
+// import { formatTimeStamp } from "@/utils";
 import { useToast } from "@/components/ui/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
+import { allowedTransitions } from "@/constants";
+// import { orderStatuses } from "@/constants";
 
 type SelectDemoProps = {
   defaultValue: string;
-  items: { id: string; denomination: string }[];
+  items: { id: number; denomination: string }[];
   placeholder?: string;
   onChange: (value: string) => void;
 };
@@ -214,7 +208,7 @@ export function SelectDemo({
   placeholder,
   onChange,
 }: SelectDemoProps) {
-  // console.log(items, defaultValue);
+  console.log(items, defaultValue);
   return (
     <Select
       disabled={defaultValue === "4" || defaultValue === "5"}
@@ -237,14 +231,6 @@ export function SelectDemo({
     </Select>
   );
 }
-
-const allowedTransitions: Record<string, string[]> = {
-  "1": ["2", "3"],
-  "2": ["3", "4"],
-  "3": ["5"],
-  "4": [],
-  "5": [],
-};
 
 export function UpdateOrderStatus({
   defaultValue,
@@ -280,19 +266,21 @@ export function UpdateOrderStatus({
     mutation.mutate(status);
   };
 
-  if (orderStatusList.isLoading) {
-    return <div>Loading...</div>;
+  // if (orderStatusList.isPending) {
+  //   return <div>Loading...</div>;
+  // }
+
+  if (orderStatusList.isPending) {
+    return <Skeleton className="w-[160px] h-10" />;
   }
 
-  // console.log("defaultValue", defaultValue);
-  console.log(allowedTransitions[defaultValue]);
-
-  const allowedStatusList = orderStatusList.data.data.filter(
+  const allowedStatusList = orderStatusList.data.filter(
     (status: OrderStatus) =>
       allowedTransitions[defaultValue].includes(status.id.toString()) ||
       status.id.toString() === defaultValue
   );
-  // console.log("allowedStatus", allowedStatusList);
+
+  console.log({ orderId, defaultValue, allowedStatusList });
 
   return (
     <SelectDemo
@@ -300,34 +288,6 @@ export function UpdateOrderStatus({
       items={allowedStatusList}
       onChange={onChange}
     />
-  );
-}
-
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { getOrderStatusList, updateOrderStatus } from "@/services/orders";
-import { OrderStatus } from "@/types";
-
-export function TooltipDemo({
-  children,
-  tooltipContent,
-}: {
-  children: React.ReactNode;
-  tooltipContent: string;
-}) {
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger>{children}</TooltipTrigger>
-        <TooltipContent>
-          <p>{tooltipContent}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
   );
 }
 
