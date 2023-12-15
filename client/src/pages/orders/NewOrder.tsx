@@ -34,6 +34,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { User } from "lucide-react";
 import { createClient } from "@/services/clients";
 import { createOrder } from "@/services/orders";
+import { ServiceType } from "@/types";
 
 const formSchema = z
   .object({
@@ -306,12 +307,6 @@ function OrderClientDetails({ client, onClose }: OrderClientDetailsProps) {
 
 type NewOrderFormProps = {
   onSubmit: (values: z.infer<typeof formSchema>) => void;
-};
-
-type ServiceType = {
-  id: number;
-  denomination: string;
-  description: string;
 };
 
 function NewOrderForm({ onSubmit }: NewOrderFormProps) {

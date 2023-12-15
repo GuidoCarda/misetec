@@ -17,6 +17,8 @@ export type Client = {
   firstname: string;
   lastname: string;
   dni: string;
+  postal_code: string;
+  province: string;
   address: string;
   phone_number: string;
   email: string;
@@ -61,7 +63,7 @@ export const columns: ColumnDef<Client>[] = [
   },
   {
     accessorKey: "postal_code",
-    header: "Codigo postal",
+    header: "Cod. Postal",
     cell: ({ row }) => {
       const postalCode = row.getValue("postal_code") as string;
       return <div>{postalCode}</div>;
@@ -69,9 +71,8 @@ export const columns: ColumnDef<Client>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
-      const client = row.original;
-
+    cell: (props) => {
+      const client = props.row.original;
       return (
         <div className="text-right">
           <DropdownMenu>
@@ -90,6 +91,7 @@ export const columns: ColumnDef<Client>[] = [
               >
                 Copiar ID
               </DropdownMenuItem>
+              <DropdownMenuItem>Dar de baja</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <Link to={`${client.id}/edit`}>Editar datos</Link>
