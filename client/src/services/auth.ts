@@ -12,11 +12,11 @@ export async function login(values: LoginParams) {
     body: JSON.stringify(values),
   });
 
-  if (res.status === 400) {
-    throw new Error("Credeniales invalidas");
-  }
-
   const data = await res.json();
+
+  if (res.status === 400) {
+    throw new Error(data.message);
+  }
 
   window.localStorage.setItem("user", JSON.stringify(data));
   return data;

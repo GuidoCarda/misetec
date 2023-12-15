@@ -48,14 +48,16 @@ router.post("/login", async (req, res, next) => {
     );
 
     if (users.length === 0) {
-      return res.status(400).json({ message: "user not found" });
+      return res
+        .status(400)
+        .json({ message: "No existe un usuario con el email ingresado" });
     }
 
     const user = users[0];
     const match = await comparePassword(req.body.password, user.password);
 
     if (!match) {
-      return res.status(400).json({ message: "invalid password" });
+      return res.status(400).json({ message: "Contraseña incorrecta" });
     }
 
     const token = createToken(user);
