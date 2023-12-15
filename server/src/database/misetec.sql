@@ -116,7 +116,7 @@ FROM `order` o
 INNER JOIN service_type st ON o.service_type_id = st.id 
 INNER JOIN client c ON o.client_id = c.id 
 INNER JOIN order_status os ON o.status_id = os.id
-ORDER BY o.created_at;
+ORDER BY o.status_id;
 
 CREATE VIEW order_detail_view AS
 SELECT o.id,
@@ -147,31 +147,6 @@ LEFT JOIN device d ON o.device_id = d.id
 INNER JOIN client c ON o.client_id = c.id;
 
 
-SELECT
-      COUNT(*) AS finished_orders
-FROM `order`	
-WHERE status_id = 5
-
-SELECT
-      COUNT(*) AS pending_orders
-FROM `order`
-WHERE status_id == 1
-
-SELECT
-      COUNT(*) AS in_progress_orders
-FROM `order`
-WHERE status_id == 3
-
-SELECT
-      COUNT(*) AS canceled_orders
-FROM `order`
-WHERE status_id == 4
-
-SELECT
-      COUNT(*) AS total_orders
-FROM `order`
-
-
 CREATE VIEW order_status_count_view AS
 SELECT
   COUNT(*) AS total_orders,
@@ -185,6 +160,38 @@ FROM `order`;
 
 SELECT * FROM client WHERE  status = 1;
 
+
+
+SELECT *
+FROM `order`
+WHERE status_id = 1
+
+
+SELECT
+  id,
+  TIMESTAMPDIFF(SECOND, created_at, finished_at) AS resolution_time
+FROM `order`
+WHERE finished_at IS NOT NULL;
+
+SELECT 
+  id,
+  status,
+FROM order_list_view
+WHERE created_at BETWEEN ? AND ?
+
+
+SELECT 
+  COUNT(id) AS pending
+FROM `order`
+WHERE status_id = 1 AND created_at BETWEEN "2022-1-17" AND "2023-12-30"
+
+
+SELECT
+  COUNT(*) AS total,
+  SUM(CASE WHEN status_id = 3 THEN 1 ELSE 0 END) AS in_progress,
+  SUM(CASE WHEN status_id = 1 THEN 1 ELSE 0 END) AS pending;
+FROM `order`
+WHERE created_at BETWEEN "2022-1-17" AND "2023-12-30"
 
 
 
