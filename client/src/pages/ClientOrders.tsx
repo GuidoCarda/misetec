@@ -1,28 +1,36 @@
 import { SectionTitle } from "@/components/PrivateLayout";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getClient } from "@/services/clients";
+import { Order } from "@/types";
 import { useQuery } from "@tanstack/react-query";
+import { format } from "date-fns";
 
 function ClientOrders() {
+  const clientQuery = useQuery({
+    queryKey: ["client"],
+    queryFn: () => getClient("1"),
+  });
+
   const { data, isPending } = useQuery({
     queryKey: ["orders"],
     queryFn: getOrders,
   });
 
   async function getOrders() {
-    const res = await fetch("http://localhost:3000/api/v1/orders?user_id=5");
+    const res = await fetch("http://localhost:3000/api/v1/orders?client_id=5");
     const data = await res.json();
     return data.data;
   }
 
-  if (isPending) return <div>Loading...</div>;
+  if (isPending || clientQuery.isPending) return <div>Loading...</div>;
 
   const currentOrder = data.at(-1);
 
   return (
     <>
       <SectionTitle
-        title="Bienvenido usuario x"
+        title={`Bienvenido usuario ${clientQuery.data?.firstname}`}
         description="Aca podras ver todas las ordenes a tu nombre"
       />
 
@@ -51,7 +59,7 @@ function ClientOrders() {
           <CardTitle>Mis ordenes</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col p-4">
-          {data.map((order) => (
+          {data.map((order: Order) => (
             <div
               key={order.id}
               className="flex items-center justify-between border-b border-gray-200 py-4"
@@ -66,9 +74,10 @@ function ClientOrders() {
                   </span>
                 </div>
               </div>
+
               <div className="flex items-center">
                 <span className="text-sm text-gray-400">
-                  {order.created_at}
+                  {format(new Date(order.created_at), "yyyy-MM-dd")}
                 </span>
               </div>
             </div>
