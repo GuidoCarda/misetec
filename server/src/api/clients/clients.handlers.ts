@@ -91,8 +91,7 @@ export async function createClient(
             .status(400)
             .json({ message: "El cliente no se pudo dar de alta" });
         }
-
-        return res.json({ data: { client }, results });
+        return res.json({ data: client, results });
       }
 
       // Si el cliente ya existe y está dado de alta, no lo creo
@@ -105,7 +104,6 @@ export async function createClient(
     const namedPlaceholders = getInsertNamedPlacehoders(client);
     query += namedPlaceholders;
 
-    console.log(query);
     const [results] = await pool.execute<ResultSetHeader>(query, client);
 
     if (results.affectedRows === 0) {
