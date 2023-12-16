@@ -3,7 +3,11 @@ import { Input } from "@/components/ui/input";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { getOrderStatusList, updateOrderStatus } from "@/services/orders";
+import {
+  getOrderStatusList,
+  getOrders,
+  updateOrderStatus,
+} from "@/services/orders";
 import { Order, OrderStatus } from "@/types";
 import OrdersTable from "@/components/OrdersTable";
 import { Link } from "react-router-dom";
@@ -133,8 +137,7 @@ function Orders() {
 
   const { data, isPending, isError, error } = useQuery({
     queryKey: ["orders"],
-    queryFn: () =>
-      fetch("http://localhost:3000/api/v1/orders").then((res) => res.json()),
+    queryFn: getOrders,
     placeholderData: { data: [] },
     select: (data) => {
       return data.data.filter(

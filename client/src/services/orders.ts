@@ -2,11 +2,11 @@ import { getHeaders } from "./config";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export async function getOrders() {
+  const headers = getHeaders();
+  console.log(headers);
   const res = await fetch("http://localhost:3000/api/v1/orders", {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers,
   });
 
   const data = await res.json();

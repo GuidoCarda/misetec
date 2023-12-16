@@ -11,12 +11,14 @@ import {
 } from "./orders.model";
 
 import { ParamsWithIdSchema } from "../interfaces/ParamsWithId";
+import passport from "passport";
 
 const router = Router();
 
 router.get(
   "/",
   validateRequest({ query: OrderQueryParamsSchema }),
+  passport.authenticate("jwt", { session: false }),
   orderHandlers.getAllOrders
 );
 

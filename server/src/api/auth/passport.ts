@@ -18,12 +18,14 @@ export const jsonWebToken = new Strategy(opts, async (payload, done) => {
       "SELECT * FROM `staff` WHERE id = ?",
       [payload.id]
     );
+    console.log(users);
 
     if (users.length === 0) {
       return done(null, false, { message: "Unauthorized user" });
     }
 
     const user = users[0];
+    console.log(user);
     return done(false, user);
   } catch (error) {
     console.log(error);

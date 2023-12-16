@@ -1,4 +1,7 @@
-export const getHeaders = () => {
+export const getHeaders = (): {
+  "Content-Type": string;
+  Authorization?: string;
+} => {
   const authInfo = JSON.parse(localStorage.getItem("user") || "{}");
   const { role, token } = authInfo;
 

@@ -74,8 +74,6 @@ function ClientsTable({ data }: { data: Client[] }) {
         cell: (props) => {
           const client = props.row.original;
 
-          console.log(props);
-
           return (
             <div className="text-right">
               <DropdownMenu>
