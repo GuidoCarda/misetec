@@ -19,7 +19,7 @@ export async function staffLogin(values: StaffLoginParams) {
     throw new Error(data.message);
   }
 
-  window.localStorage.setItem("user", JSON.stringify(data));
+  // window.localStorage.setItem("user", JSON.stringify(data));
   return data;
 }
 
@@ -44,6 +44,6 @@ export async function clientLogin(values: ClientLoginParams) {
     throw new Error(data.message);
   }
 
-  window.localStorage.setItem("user", JSON.stringify(data));
+  // window.localStorage.setItem("user", JSON.stringify(data));
   return data;
 }

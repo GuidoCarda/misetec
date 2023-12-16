@@ -1,3 +1,8 @@
+export const ROLES = {
+  staff: "staff",
+  client: "client",
+} as const;
+
 export const provinces = [
   {
     id: "BA",

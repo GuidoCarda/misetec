@@ -121,6 +121,7 @@ function NewOrderPage() {
     mutationFn: (values: z.infer<typeof newClientFormSchema>) =>
       createClient(values),
     onSuccess: (data) => {
+      console.log(data);
       setClient(data);
     },
     onError(error) {

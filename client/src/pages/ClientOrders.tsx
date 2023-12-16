@@ -2,6 +2,7 @@ import { SectionTitle } from "@/components/PrivateLayout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAuth } from "@/hooks/useAuth";
 import { getClient } from "@/services/clients";
 import { getOrdersByClientId } from "@/services/orders";
 import { Order } from "@/types";
@@ -11,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 
 function ClientOrders() {
   const navigate = useNavigate();
+  const { signOut } = useAuth();
 
   const clientQuery = useQuery({
     queryKey: ["client"],
@@ -36,7 +38,7 @@ function ClientOrders() {
       <Button
         className="mt-auto"
         onClick={() => {
-          localStorage.removeItem("user");
+          signOut();
           navigate("/");
         }}
       >

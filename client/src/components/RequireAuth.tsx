@@ -1,5 +1,6 @@
 // import { useAuth } from "@/hooks/useAuth";
-import { ROLES } from "@/Router";
+import { ROLES } from "@/constants";
+import { useAuth } from "@/hooks/useAuth";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 type RequireAuthProps = {
@@ -7,9 +8,12 @@ type RequireAuthProps = {
 };
 
 function RequireAuth({ allowedRoles }: RequireAuthProps) {
-  // const { auth } = useAuth();
+  const { auth, isLoading } = useAuth();
   const location = useLocation();
-  const auth = JSON.parse(window.localStorage.getItem("user") || "{}");
+
+  if (isLoading) {
+    return <div>Loading</div>;
+  }
 
   if (!auth?.token) {
     return <Navigate to="/login" state={{ from: location }} replace />;

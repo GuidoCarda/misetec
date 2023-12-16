@@ -2,24 +2,28 @@ import { PropsWithChildren, createContext, useEffect, useState } from "react";
 
 type User = {
   token: string;
-  type: string;
+  role: string;
 };
 
 type AuthContextType = {
   auth: User | null;
   signIn: (user: User) => void;
-  signOut: (user: User) => void;
+  signOut: () => void;
+  isLoading: boolean;
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 const AuthProvider = ({ children }: PropsWithChildren) => {
   const [auth, setAuth] = useState<AuthContextType["auth"]>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const user = localStorage.getItem("user");
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
     if (user) {
-      setAuth(JSON.parse(user));
+      console.log("hay user", user);
+      setAuth(user);
+      setIsLoading(false);
     }
   }, []);
 
@@ -30,10 +34,11 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
 
   const signOut = () => {
     localStorage.removeItem("user");
+    setAuth(null);
   };
 
   return (
-    <AuthContext.Provider value={{ auth, signIn, signOut }}>
+    <AuthContext.Provider value={{ auth, signIn, signOut, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

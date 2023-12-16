@@ -39,14 +39,23 @@ function OrderDetailsPage() {
         </Button>
       </header>
 
-      <div className="w-full mb-10 border-2 p-4 rounded-md">
+      <Card className="w-full mb-10  p-4 ">
         <div className="flex gap-4 mb-4">
-          <h3>Orden #{data.id}</h3>
+          <h3>Estado</h3>
           <Badge className="rounded-md">{data.status}</Badge>
         </div>
-        <h2 className="text-lg font-semibold">Descripcion</h2>
-        <p className="text-zinc-500">{data.description}</p>
-      </div>
+        <h2 className="text-lg font-semibold mb-2">Descripcion</h2>
+        <div className="max-w-[60ch] space-y-1">
+          {data.description &&
+            data.description
+              .split("\n")
+              .map((paragraph: string, index: number) => (
+                <p key={index} className="text-zinc-500">
+                  {paragraph}
+                </p>
+              ))}
+        </div>
+      </Card>
 
       {Boolean(data.device_failure) && (
         <div className="w-full mb-10 border-2 p-4 rounded-md">

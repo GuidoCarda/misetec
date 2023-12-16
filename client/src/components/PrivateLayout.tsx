@@ -1,6 +1,7 @@
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Toaster } from "@/components/ui/toaster";
+import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 import { ChevronLeft } from "lucide-react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
@@ -46,6 +47,7 @@ type SidebarProps = {
 
 function SidebarNav({ items }: SidebarProps) {
   const navigate = useNavigate();
+  const { signOut } = useAuth();
 
   return (
     <nav className="flex lg:flex-col gap-4 flex-1">
@@ -69,7 +71,7 @@ function SidebarNav({ items }: SidebarProps) {
       <Button
         className="mt-auto"
         onClick={() => {
-          localStorage.removeItem("user");
+          signOut();
           navigate("/");
         }}
       >

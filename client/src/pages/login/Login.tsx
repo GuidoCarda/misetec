@@ -1,4 +1,3 @@
-import { ROLES } from "@/Router";
 import { Alert } from "@/components/ui/alert";
 import {
   Card,
@@ -7,20 +6,25 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+import { useAuth } from "@/hooks/useAuth";
+
 import ClientsLoginForm, {
   clientLoginFormSchema,
 } from "@/pages/login/ClientsLoginForm";
 import StaffLoginForm, { loginFormSchema } from "@/pages/login/StaffLoginForm";
-import { clientLogin, staffLogin } from "@/services/auth";
 
-//form handling and validation
 import { useMutation } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import { z } from "zod";
 
-function StaffLoginPage() {
+import { clientLogin, staffLogin } from "@/services/auth";
+
+import { ROLES } from "@/constants";
+
+function LoginPage() {
+  const { auth, signIn } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location?.state?.from?.pathname || "/";
@@ -32,7 +36,7 @@ function StaffLoginPage() {
     },
     onSuccess: (user) => {
       console.log("login success", user);
-      // signIn(user);
+      signIn(user);
       navigate(from, { replace: true });
     },
   });
@@ -44,11 +48,14 @@ function StaffLoginPage() {
     },
     onSuccess: (user) => {
       console.log("login success", user);
-      // signIn(user);
-
+      signIn(user);
       navigate(from, { replace: true });
     },
   });
+
+  if (auth?.token) {
+    navigate(from, { replace: true });
+  }
 
   const handleStaffLogin = (values: z.infer<typeof loginFormSchema>) => {
     console.log(values);
@@ -115,4 +122,4 @@ function StaffLoginPage() {
   );
 }
 
-export default StaffLoginPage;
+export default LoginPage;

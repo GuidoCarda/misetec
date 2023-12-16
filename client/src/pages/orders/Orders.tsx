@@ -211,7 +211,7 @@ export function SelectDemo({
   placeholder,
   onChange,
 }: SelectDemoProps) {
-  console.log(items, defaultValue);
+  // console.log(items, defaultValue);
   return (
     <Select
       disabled={defaultValue === "4" || defaultValue === "5"}
@@ -269,10 +269,6 @@ export function UpdateOrderStatus({
     mutation.mutate(status);
   };
 
-  // if (orderStatusList.isPending) {
-  //   return <div>Loading...</div>;
-  // }
-
   if (orderStatusList.isPending) {
     return <Skeleton className="w-[160px] h-10" />;
   }
@@ -283,7 +279,7 @@ export function UpdateOrderStatus({
       status.id.toString() === defaultValue
   );
 
-  console.log({ orderId, defaultValue, allowedStatusList });
+  // console.log({ orderId, defaultValue, allowedStatusList });
 
   return (
     <SelectDemo

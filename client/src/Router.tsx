@@ -5,7 +5,6 @@ import PrivateLayout from "@/components/PrivateLayout";
 import PublicLayout from "@/components/PublicLayout";
 
 //Pages
-import StaffLoginPage from "@/pages/login/Login";
 import ClientOrders from "@/pages/ClientOrders";
 import Dashboard from "@/pages/Dashboard";
 import Orders from "@/pages/orders/Orders";
@@ -18,11 +17,10 @@ import ClientsPage from "@/pages/clients/Clients";
 import EditClientPage from "@/pages/clients/EditClient";
 import OrderDetailsPage from "@/pages/orders/OrderDetails";
 import EditOrderPage from "@/pages/orders/EditOrder";
+import LoginPage from "@/pages/login/Login";
 
-export const ROLES = {
-  staff: "staff",
-  client: "client",
-} as const;
+//Constants
+import { ROLES } from "@/constants";
 
 const router = createBrowserRouter([
   {
@@ -83,7 +81,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/portal",
-    // element: <RequireAuth allowedRoles={[ROLES.client]} />,
+    element: <RequireAuth allowedRoles={[ROLES.client]} />,
     children: [
       {
         element: <PublicLayout />,
@@ -97,12 +95,8 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/unauthorized",
-    element: <div>Unauthorized</div>,
-  },
-  {
     path: "/login",
-    element: <StaffLoginPage />,
+    element: <LoginPage />,
   },
 ]);
 
