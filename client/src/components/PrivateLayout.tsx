@@ -2,7 +2,8 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { ChevronLeft } from "lucide-react";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 
 const sidebarNavItems = [
   {
@@ -97,5 +98,25 @@ export function SectionTitle({ title, description }: SectionTitleProps) {
       </div>
       <Separator className="my-6" />
     </>
+  );
+}
+
+export function NavigationBreadcrumb() {
+  return (
+    <div className="flex gap-3 items-center ">
+      <Link
+        to=".."
+        className="group border-[1px] w-fit  pl-1 pr-2 py-1  border-slate-200  rounded-md flex text-sm items-center text-slate-400 select-none  hover:text-slate-600 focus-within:outline-slate-100"
+      >
+        <ChevronLeft className="h-4 w-4 transition-all duration-200 mr-1" />
+        <span className="leading-none relative ">Volver</span>
+      </Link>
+      <div className="flex gap-2 text-sm text-slate-400 select-none">
+        <span className="block leading-none">/</span>
+        <span className="block leading-none">Ordenes</span>
+        <span className="block leading-none">/</span>
+        <span className="block leading-none">Editar</span>
+      </div>
+    </div>
   );
 }

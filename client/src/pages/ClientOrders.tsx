@@ -1,12 +1,17 @@
 import { SectionTitle } from "@/components/PrivateLayout";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getClient } from "@/services/clients";
+import { getOrdersByClientId } from "@/services/orders";
 import { Order } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 function ClientOrders() {
+  const navigate = useNavigate();
+
   const clientQuery = useQuery({
     queryKey: ["client"],
     queryFn: () => getClient("1"),
@@ -14,14 +19,8 @@ function ClientOrders() {
 
   const { data, isPending } = useQuery({
     queryKey: ["orders"],
-    queryFn: getOrders,
+    queryFn: () => getOrdersByClientId("1"),
   });
-
-  async function getOrders() {
-    const res = await fetch("http://localhost:3000/api/v1/orders?client_id=5");
-    const data = await res.json();
-    return data.data;
-  }
 
   if (isPending || clientQuery.isPending) return <div>Loading...</div>;
 
@@ -30,10 +29,19 @@ function ClientOrders() {
   return (
     <>
       <SectionTitle
-        title={`Bienvenido usuario ${clientQuery.data?.firstname}`}
+        title={`Bienvenido ${clientQuery.data?.firstname} ${clientQuery.data?.lastname}`}
         description="Aca podras ver todas las ordenes a tu nombre"
       />
 
+      <Button
+        className="mt-auto"
+        onClick={() => {
+          localStorage.removeItem("user");
+          navigate("/");
+        }}
+      >
+        Cerrar sesion
+      </Button>
       <div>
         <h2 className="text-2xl font-bold mb-4">Ultima orden</h2>
         {currentOrder && (

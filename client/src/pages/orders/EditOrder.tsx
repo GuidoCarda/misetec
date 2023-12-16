@@ -31,8 +31,6 @@ function EditOrderPage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  console.log(id);
-
   const queryClient = useQueryClient();
 
   const orderQuery = useQuery({

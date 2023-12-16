@@ -1,3 +1,5 @@
+import { getHeaders } from "./config";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export async function getOrders() {
   const res = await fetch("http://localhost:3000/api/v1/orders", {
@@ -88,4 +90,22 @@ export async function getOrderStatusList() {
 
   const data = await res.json();
   return data;
+}
+
+export async function getOrdersByClientId(id: string) {
+  const headers = getHeaders();
+  console.log(headers);
+
+  const res = await fetch(
+    `http://localhost:3000/api/v1/orders?client_id=${id}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  const data = await res.json();
+  return data.data;
 }

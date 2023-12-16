@@ -68,6 +68,33 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
+router.post("/client-login", async (req, res, next) => {
+  if (!req.body.email) {
+    return res.status(400).json({ message: "El email es requerido" });
+  }
+
+  try {
+    const [users] = await pool.execute<RowDataPacket[]>(
+      "SELECT * FROM `client` WHERE `email` = ?",
+      [req.body.email]
+    );
+
+    if (users.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "No existe un cliente con el email ingresado" });
+    }
+
+    const user = users[0];
+
+    const token = createToken(user);
+
+    res.status(200).json({ role: "client", token });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.post("/logout", () => {});
 
 export default router;

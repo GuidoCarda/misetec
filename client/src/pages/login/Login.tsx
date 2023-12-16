@@ -13,7 +13,7 @@ import ClientsLoginForm, {
   clientLoginFormSchema,
 } from "@/pages/login/ClientsLoginForm";
 import StaffLoginForm, { loginFormSchema } from "@/pages/login/StaffLoginForm";
-import { login } from "@/services/auth";
+import { clientLogin, staffLogin } from "@/services/auth";
 
 //form handling and validation
 import { useMutation } from "@tanstack/react-query";
@@ -26,13 +26,26 @@ function StaffLoginPage() {
   const from = location?.state?.from?.pathname || "/";
 
   const staffLoginMutation = useMutation({
-    mutationFn: login,
+    mutationFn: staffLogin,
     onError: (error) => {
       console.log("login error", error);
     },
     onSuccess: (user) => {
       console.log("login success", user);
       // signIn(user);
+      navigate(from, { replace: true });
+    },
+  });
+
+  const clientLoginMutation = useMutation({
+    mutationFn: clientLogin,
+    onError: (error) => {
+      console.log("login error", error);
+    },
+    onSuccess: (user) => {
+      console.log("login success", user);
+      // signIn(user);
+
       navigate(from, { replace: true });
     },
   });
@@ -44,17 +57,22 @@ function StaffLoginPage() {
 
   const handleClientLogin = (values: z.infer<typeof clientLoginFormSchema>) => {
     console.log(values);
+    clientLoginMutation.mutate(values);
   };
+
+  const isLoginError =
+    staffLoginMutation.isError || clientLoginMutation.isError;
 
   return (
     <>
       <main className="relative px-4 grid place-items-center min-h-[calc(100vh-4rem)]">
-        {staffLoginMutation.isError && (
+        {isLoginError && (
           <Alert
             variant={"destructive"}
             className="absolute mb-2 top-10 max-w-fit"
           >
-            {staffLoginMutation.error?.message}
+            {staffLoginMutation.error?.message ||
+              clientLoginMutation.error?.message}
           </Alert>
         )}
         <Card className="min-w-full md:min-w-[500px]">

@@ -1,12 +1,14 @@
 import DateRangePicker from "@/components/DateRangePicker";
 import { Skeleton } from "@/components/ui/skeleton";
 import { secondsToTime } from "@/utils";
+import { CaretLeftIcon } from "@radix-ui/react-icons";
 import { useQuery } from "@tanstack/react-query";
 import { Card } from "@tremor/react";
 import { format, startOfMonth } from "date-fns";
-import { Hourglass, ListChecks, Loader } from "lucide-react";
+import { ChevronLeft, Hourglass, ListChecks, Loader } from "lucide-react";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
+import { Link } from "react-router-dom";
 
 function Dashboard() {
   const [date, setDate] = useState<DateRange | undefined>({

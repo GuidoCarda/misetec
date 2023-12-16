@@ -1,6 +1,6 @@
 import { UpdateOrderStatus } from "@/pages/orders/Orders";
 import { ColumnDef } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,7 +43,7 @@ function OrdersTable({ data }: { data: Order[] }) {
     setDeleteDialogOpen((prev) => !prev);
   };
 
-  const columns: ColumnDef<Order>[] = useMemo(() => [
+  const columns: ColumnDef<Order>[] = [
     {
       accessorKey: "id",
       header: "Codigo",
@@ -154,7 +154,7 @@ function OrdersTable({ data }: { data: Order[] }) {
         );
       },
     },
-  ]);
+  ];
 
   const deleteOrderMutation = useMutation({
     mutationFn: (orderId: string) => deleteOrder(orderId),
