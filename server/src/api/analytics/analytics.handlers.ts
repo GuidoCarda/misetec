@@ -30,7 +30,7 @@ export async function getAnalytics(
   }
 
   if (start && end) {
-    query += " WHERE created_at BETWEEN ? AND ? ";
+    query += " WHERE DATE(created_at) BETWEEN ? AND ? ";
     values.push(start, end);
   }
 
