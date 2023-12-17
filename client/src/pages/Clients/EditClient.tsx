@@ -121,20 +121,22 @@ export default EditClientPage;
 
 const editClientFormSchema = z.object({
   firstname: z.string().min(2, {
-    message: "El nombre debe tener al menos 2 caracteres.",
+    message: "El nombre es requerido",
   }),
   lastname: z.string().min(2, {
-    message: "El apellido debe tener al menos 2 caracteres.",
+    message: "El apellido es requerido",
   }),
-  address: z.string().min(2, {
-    message: "La direccion debe tener al menos 2 caracteres.",
+  address: z.string().min(1, {
+    message: "La direccion es requerida",
   }),
-  phone_number: z.string().min(2, {
-    message: "El telefono debe tener al menos 2 caracteres.",
-  }),
-  postal_code: z.string().min(2, {
-    message: "El codigo postal debe tener al menos 2 caracteres.",
-  }),
+  phone_number: z
+    .string()
+    .min(6, { message: "Debe contener al menos 6 digitos" })
+    .regex(/^\d{6,10}$/, { message: "Debe contener maximo 10 digitos" }),
+  postal_code: z
+    .string()
+    .min(1, { message: "El codigo postal es requerido" })
+    .regex(/^\d{1,4}$/, { message: "Debe contener maximo 4 digitos" }),
   email: z.string().email({
     message: "El email debe ser valido.",
   }),

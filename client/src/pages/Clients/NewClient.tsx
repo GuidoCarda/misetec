@@ -38,12 +38,14 @@ export const newClientFormSchema = z.object({
   address: z.string().min(2, {
     message: "La direccion debe tener al menos 2 caracteres.",
   }),
-  phone_number: z.string().min(2, {
-    message: "El telefono debe tener al menos 2 caracteres.",
-  }),
-  postal_code: z.string().min(2, {
-    message: "El codigo postal debe tener al menos 2 caracteres.",
-  }),
+  phone_number: z
+    .string()
+    .min(6, { message: "Debe contener al menos 6 digitos" })
+    .regex(/^\d{6,10}$/, { message: "Debe contener maximo 10 digitos" }),
+  postal_code: z
+    .string()
+    .min(1, { message: "El codigo postal es requerido" })
+    .regex(/^\d{1,4}$/, { message: "Debe contener maximo 4 digitos" }),
   email: z.string().email({
     message: "El email debe ser valido.",
   }),
@@ -84,9 +86,6 @@ function NewClientPage() {
         title="Nuevo Cliente"
         description="Carga los datos del cliente para hacer seguimiento de sus ordenes de servicio"
       />
-      {/* <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-6">
-        Nuevo Cliente
-      </h2> */}
       {mutation.isError && (
         <Alert className="mb-4" variant={"destructive"}>
           {mutation.error.message}
