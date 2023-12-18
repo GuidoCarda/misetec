@@ -186,7 +186,7 @@ export function EditOrderForm({ defaultValues, onSubmit }: EditOrderFormProps) {
           name="status_id"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Tipo de servicio</FormLabel>
+              <FormLabel>Estado</FormLabel>
               <Select
                 onValueChange={field.onChange}
                 defaultValue={field.value.toString()}

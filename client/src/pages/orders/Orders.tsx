@@ -78,6 +78,7 @@ import { Label } from "@/components/ui/label";
 import { PlusIcon } from "lucide-react";
 
 type SelectDemoProps = {
+  disabled: boolean;
   defaultValue: string;
   items: { id: number; denomination: string }[];
   placeholder?: string;
@@ -85,6 +86,7 @@ type SelectDemoProps = {
 };
 
 export function SelectDemo({
+  disabled,
   defaultValue,
   items,
   placeholder,
@@ -93,7 +95,7 @@ export function SelectDemo({
   // console.log(items, defaultValue);
   return (
     <Select
-      disabled={defaultValue === "4" || defaultValue === "5"}
+      disabled={disabled}
       defaultValue={defaultValue}
       onValueChange={onChange}
     >
@@ -158,10 +160,19 @@ export function UpdateOrderStatus({
       status.id.toString() === defaultValue
   );
 
-  // console.log({ orderId, defaultValue, allowedStatusList });
+  if (mutation.isPending && defaultValue === "5") {
+    return (
+      <Skeleton className="w-[160px] h-10 flex items-center px-2">
+        Actualizando..
+      </Skeleton>
+    );
+  }
+
+  const isDisabled = defaultValue === "4" || defaultValue === "5";
 
   return (
     <SelectDemo
+      disabled={isDisabled}
       defaultValue={defaultValue}
       items={allowedStatusList}
       onChange={onChange}

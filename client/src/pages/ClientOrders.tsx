@@ -30,35 +30,49 @@ function ClientOrders() {
   if (isPending || clientQuery.isPending) return <div>Loading...</div>;
 
   const clientHasOrders = data.length > 0;
-  const currentOrder = clientHasOrders && data.at(-1);
+  const currentOrder = clientHasOrders && data.at(0);
 
   return (
     <>
       <SectionTitle
-        title={`Bienvenido ${clientQuery.data?.firstname} ${clientQuery.data?.lastname}`}
+        title={`Bienvenido/a ${clientQuery.data?.firstname} ${clientQuery.data?.lastname}`}
         description="Aca podras ver todas las ordenes a tu nombre"
       />
 
-      <Button
-        className="mt-auto"
-        onClick={() => {
-          signOut();
-          navigate("/");
-        }}
-      >
-        Cerrar sesion
-      </Button>
       <div>
-        <h2 className="text-2xl font-bold mb-4">Ultima orden</h2>
+        <div className="flex items-center justify-between mb-10">
+          <h2 className="text-2xl font-bold ">Ultima orden</h2>
+          <Button
+            className="mt-auto"
+            size={"sm"}
+            variant={"secondary"}
+            onClick={() => {
+              signOut();
+              navigate("/");
+            }}
+          >
+            Cerrar sesion
+          </Button>
+        </div>
         {currentOrder && (
-          <div className="w-full mb-10 border-2 p-4 rounded-md">
-            <div className="flex gap-4 mb-4">
-              <h3>Orden #{currentOrder.id}</h3>
-              <Badge>En espera</Badge>
+          <Card className="w-full mb-10 p-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-2xl font-bold">
+                Orden{" "}
+                <span className="bg-slate-200 ml-1 text-slate-600 font-semibold px-4   text-lg rounded-sm ">
+                  {" "}
+                  #{currentOrder.id}{" "}
+                </span>
+              </h3>
+              <Badge className="rounded-md h-max">En espera</Badge>
             </div>
-            <h2 className="text-lg font-semibold">Descripcion</h2>
-            <p className="text-zinc-500">{currentOrder.description}</p>
-          </div>
+            <h2 className="text-lg font-semibold mb-4">Descripcion</h2>
+            <div className="text-zinc-500 max-w-[70ch] space-y-2  ">
+              {currentOrder.description.split("\n").map((line: string) => (
+                <p key={line}>{line}</p>
+              ))}
+            </div>
+          </Card>
         )}
 
         {!currentOrder && (
@@ -69,31 +83,27 @@ function ClientOrders() {
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Mis ordenes</CardTitle>
+        <CardHeader className="border-b">
+          <CardTitle>Historial ordenes</CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col p-4">
+        <CardContent className="flex flex-col divide-y pt-4">
           {data.map((order: Order) => (
             <div
               key={order.id}
-              className="flex items-center justify-between border-b border-gray-200 py-4"
+              className="flex items-start justify-between  border-gray-200  py-4"
             >
-              <div className="flex items-center">
-                <div className="flex flex-col">
-                  <span className="text-sm font-semibold text-gray-500">
-                    Orden #{order.id}
-                  </span>
-                  <span className="text-sm text-gray-400">
-                    {order.description}
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex items-center">
-                <span className="text-sm text-gray-400">
-                  {format(new Date(order.created_at), "yyyy-MM-dd")}
+              <div className="flex flex-col w-1/2">
+                <span className="text-sm font-semibold text-gray-800">
+                  Orden #{order.id}
+                </span>
+                <span className="text-sm text-gray-500 ">
+                  {order.description}
                 </span>
               </div>
+
+              <span className="text-sm text-gray-500">
+                {format(new Date(order.created_at), "yyyy-MM-dd")}
+              </span>
             </div>
           ))}
         </CardContent>

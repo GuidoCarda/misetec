@@ -60,9 +60,9 @@ function LoginPage() {
     },
     onSuccess: (user) => {
       console.log("login success", user);
-      setIsEmailSent(true);
-      // signIn(user);
-      // navigate(from, { replace: true });
+      // setIsEmailSent(true);
+      signIn(user);
+      navigate(from, { replace: true });
     },
   });
 

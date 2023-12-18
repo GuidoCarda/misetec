@@ -96,8 +96,9 @@ function Dashboard() {
                 <Hourglass className="h-5 w-5" />
               </div>
               <p className="text-3xl font-bold">
-                {secondsToTime(Number(analyticsQuery.data?.resolution_time)) ??
-                  "2d 3h"}
+                {analyticsQuery.data?.resolution_time
+                  ? secondsToTime(Number(analyticsQuery.data?.resolution_time))
+                  : "Sin resultados"}
               </p>
             </Card>
           </>
