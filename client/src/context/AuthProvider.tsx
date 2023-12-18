@@ -1,9 +1,6 @@
 import { PropsWithChildren, createContext, useEffect, useState } from "react";
-
-type User = {
-  token: string;
-  role: string;
-};
+import { jwtDecode } from "jwt-decode";
+import { DecodedToken, User } from "@/types";
 
 type AuthContextType = {
   auth: User | null;
@@ -19,23 +16,32 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    const user = JSON.parse(localStorage.getItem("user") || "null");
     if (user) {
-      console.log("hay user", user);
       setAuth(user);
-      setIsLoading(false);
     }
+
+    setIsLoading(false);
   }, []);
 
-  const signIn = (user: AuthContextType["auth"]) => {
-    setAuth(user);
-    localStorage.setItem("user", JSON.stringify(user));
+  const signIn = (user: User) => {
+    const decoded = jwtDecode(user!.token) as DecodedToken;
+
+    const parsedUser = {
+      ...user,
+      userId: decoded.id,
+    };
+
+    localStorage.setItem("user", JSON.stringify(parsedUser));
+    setAuth(parsedUser);
   };
 
   const signOut = () => {
     localStorage.removeItem("user");
     setAuth(null);
   };
+
+  // re_hfqTnJPQ_NXUQjN28ujW1r9NVvFTwsFtL
 
   return (
     <AuthContext.Provider value={{ auth, signIn, signOut, isLoading }}>

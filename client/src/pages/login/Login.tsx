@@ -22,12 +22,24 @@ import { z } from "zod";
 import { clientLogin, staffLogin } from "@/services/auth";
 
 import { ROLES } from "@/constants";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { jwtDecode } from "jwt-decode";
 
 function LoginPage() {
+  const [isEmailSent, setIsEmailSent] = useState(false);
   const { auth, signIn } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location?.state?.from?.pathname || "/";
+
+  const clientToken = location?.search?.split("?token=")[1];
+  console.log(clientToken);
+
+  if (clientToken) {
+    const decoded = jwtDecode(clientToken);
+    console.log(decoded);
+  }
 
   const staffLoginMutation = useMutation({
     mutationFn: staffLogin,
@@ -48,8 +60,9 @@ function LoginPage() {
     },
     onSuccess: (user) => {
       console.log("login success", user);
-      signIn(user);
-      navigate(from, { replace: true });
+      setIsEmailSent(true);
+      // signIn(user);
+      // navigate(from, { replace: true });
     },
   });
 
@@ -69,6 +82,10 @@ function LoginPage() {
 
   const isLoginError =
     staffLoginMutation.isError || clientLoginMutation.isError;
+
+  if (isEmailSent) {
+    return <CheckEmail handleRetry={() => setIsEmailSent(false)} />;
+  }
 
   return (
     <>
@@ -119,6 +136,22 @@ function LoginPage() {
         Misetec soluciones informaticas
       </footer>
     </>
+  );
+}
+
+type CheckEmailProps = {
+  handleRetry: () => void;
+};
+
+function CheckEmail({ handleRetry }: CheckEmailProps) {
+  return (
+    <div className="flex flex-col items-center justify-center h-screen">
+      <h1 className="text-2xl font-bold mb-4">Revisa tu email</h1>
+      <p className="text-gray-500 text-center mb-10">
+        Te enviamos un email con un link para que puedas ingresar al sistema
+      </p>
+      <Button onClick={handleRetry}>Intentar nuevamente</Button>
+    </div>
   );
 }
 

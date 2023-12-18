@@ -8,129 +8,9 @@ import {
   getOrders,
   updateOrderStatus,
 } from "@/services/orders";
-import { Order, OrderStatus } from "@/types";
+import { OrderStatus, OrderWithClient } from "@/types";
 import OrdersTable from "@/components/OrdersTable";
 import { Link } from "react-router-dom";
-
-// type Order = {
-//   id: string;
-//   description: string;
-//   client_id: number;
-//   created_at: string;
-//   finished_at?: string;
-//   staff_id: string;
-//   status_id: string;
-//   firstname?: string;
-//   lastname?: string;
-//   service_type?: string;
-// };
-
-// const columns: ColumnDef<Order>[] = [
-//   {
-//     accessorKey: "id",
-//     header: "Codigo",
-//     cell: ({ row }) => {
-//       const id = row.getValue("id") as string;
-//       return <div className="text-center">{id}</div>;
-//     },
-//   },
-//   {
-//     accessorKey: "created_at",
-//     header: "Creada el",
-//     cell: ({ row }) => {
-//       const createdAt = row.getValue("created_at") as string;
-//       const formattedDate = formatTimeStamp(createdAt);
-
-//       return <div>{formattedDate}</div>;
-//     },
-//   },
-//   {
-//     accessorKey: "description",
-//     header: "Descripcion",
-//     cell: ({ row }) => {
-//       const description = row.getValue("description") as string;
-//       const serviceType = row.original.service_type;
-
-//       return (
-//         <div className="w-[350px]">
-//           {serviceType && (
-//             <TooltipWrapper tooltipContent={serviceType}>
-//               <Badge className="rounded-md" variant={"outline"}>
-//                 {serviceType.split(" ").at(0)}
-//               </Badge>
-//             </TooltipWrapper>
-//           )}
-//           <p className="mt-2 whitespace-nowrap overflow-hidden text-ellipsis">
-//             {description}
-//           </p>
-//         </div>
-//       );
-//     },
-//   },
-//   {
-//     id: "Cliente",
-//     accessorFn: (row) => `${row.firstname} ${row.lastname}`,
-//   },
-//   {
-//     accessorKey: "status_id",
-//     header: "Estado",
-//     cell: ({ row }) => {
-//       const status = row.getValue("status_id") as string;
-//       const orderId = row.original.id;
-
-//       if (!status) {
-//         return null;
-//       }
-
-//       return (
-//         <UpdateOrderStatus
-//           defaultValue={status.toString()}
-//           orderId={orderId.toString()}
-//         />
-//       );
-//     },
-//   },
-//   {
-//     id: "actions",
-//     cell: ({ row }) => {
-//       const client = row.original;
-
-//       return (
-//         <div className="text-right">
-//           <DropdownMenu>
-//             <DropdownMenuTrigger asChild>
-//               <Button variant="ghost" className="h-8 w-8 p-0">
-//                 <span className="sr-only">Open menu</span>
-//                 <MoreHorizontal className="h-4 w-4" />
-//               </Button>
-//             </DropdownMenuTrigger>
-//             <DropdownMenuContent align="end">
-//               <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-//               <DropdownMenuItem
-//                 onClick={() =>
-//                   navigator.clipboard.writeText(client.id.toString())
-//                 }
-//               >
-//                 Copiar ID
-//               </DropdownMenuItem>
-//               <DropdownMenuSeparator />
-//               <DropdownMenuItem asChild>
-//                 <Link to={`${client.id}`}>Ver detalle</Link>
-//               </DropdownMenuItem>
-//               <DropdownMenuItem asChild>
-//                 <Link to={`${client.id}/edit`}>Editar</Link>
-//               </DropdownMenuItem>
-//               <DropdownMenuItem asChild>Dar de baja</DropdownMenuItem>
-//               <DropdownMenuItem asChild>
-//                 <Link to={`/clients/${client.client_id}`}>Ver cliente</Link>
-//               </DropdownMenuItem>
-//             </DropdownMenuContent>
-//           </DropdownMenu>
-//         </div>
-//       );
-//     },
-//   },
-// ];
 
 function Orders() {
   const [search, setSearch] = useState("");
@@ -138,19 +18,18 @@ function Orders() {
   const { data, isPending, isError, error } = useQuery({
     queryKey: ["orders"],
     queryFn: getOrders,
-    placeholderData: { data: [] },
     select: (data) => {
       return data.data.filter(
-        (order: Order) =>
+        (order: OrderWithClient) =>
           order.id.toString().toLowerCase().includes(search.toLowerCase()) ||
-          order.description.toLowerCase().includes(search.toLowerCase())
+          order.description.toLowerCase().includes(search.toLowerCase()) ||
+          order?.firstname?.toLowerCase().includes(search.toLowerCase()) ||
+          order?.lastname?.toLowerCase().includes(search.toLowerCase())
       );
     },
   });
 
-  if (isPending) {
-    return <div>Loading...</div>;
-  }
+  console.log({ isPending, data });
 
   return (
     <div className="w-full">
@@ -165,21 +44,20 @@ function Orders() {
       </header>
 
       <div className="mt-5 mb-4">
-        <Label className="mb-2 block">Buscar cliente</Label>
+        <Label className="mb-2 block">Buscar orden</Label>
         <Input
           className="w-1/2"
           type="search"
           name="q"
           id="q"
-          placeholder="nombre, email, nro cliente"
+          placeholder="nombre cliente, nro cliente, nro orden"
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
       {isError && <div>Error: {error.message}</div>}
 
-      <OrdersTable data={data} />
-      {/* <DataTable columns={columns} data={data} /> */}
+      {!isPending && <OrdersTable data={data} />}
     </div>
   );
 }
@@ -193,13 +71,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-// import { formatTimeStamp } from "@/utils";
 import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { allowedTransitions } from "@/constants";
 import { Label } from "@/components/ui/label";
 import { PlusIcon } from "lucide-react";
-// import { orderStatuses } from "@/constants";
 
 type SelectDemoProps = {
   defaultValue: string;

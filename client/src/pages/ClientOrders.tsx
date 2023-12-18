@@ -12,21 +12,25 @@ import { useNavigate } from "react-router-dom";
 
 function ClientOrders() {
   const navigate = useNavigate();
-  const { signOut } = useAuth();
+  const { signOut, auth } = useAuth();
+
+  const id = auth?.userId.toString();
 
   const clientQuery = useQuery({
     queryKey: ["client"],
-    queryFn: () => getClient("1"),
+    queryFn: () => getClient(id!),
   });
 
   const { data, isPending } = useQuery({
-    queryKey: ["orders"],
-    queryFn: () => getOrdersByClientId("1"),
+    queryKey: ["client-orders"],
+    initialData: [],
+    queryFn: () => getOrdersByClientId(id!),
   });
 
   if (isPending || clientQuery.isPending) return <div>Loading...</div>;
 
-  const currentOrder = data.at(-1);
+  const clientHasOrders = data.length > 0;
+  const currentOrder = clientHasOrders && data.at(-1);
 
   return (
     <>

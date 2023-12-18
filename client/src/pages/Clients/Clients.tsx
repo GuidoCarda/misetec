@@ -58,7 +58,6 @@ function ClientsPage() {
         />
       </div>
       <ClientsTable data={data} />
-      {/* <DataTable columns={columns} data={data} /> */}
     </>
   );
 }

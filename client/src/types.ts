@@ -1,3 +1,15 @@
+export type DecodedToken = {
+  id: number;
+  email: string;
+  iat: number;
+};
+
+export type User = {
+  token: string;
+  role: string;
+  userId: number;
+};
+
 export type Client = {
   id: number;
   firstname: string;
@@ -23,6 +35,8 @@ export type Order = {
   status_id: number;
   created_at: string;
 };
+
+export type OrderWithClient = Order & Partial<Client>;
 
 export type CreateOrder = Omit<Order, "id" | "created_at">;
 
