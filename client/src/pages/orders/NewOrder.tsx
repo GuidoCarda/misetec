@@ -37,13 +37,17 @@ import { createOrder } from "@/services/orders";
 import { ServiceType } from "@/types";
 import { CaretLeftIcon } from "@radix-ui/react-icons";
 import { SectionTitle } from "@/components/PrivateLayout";
+import { useAuth } from "@/hooks/useAuth";
 
 const formSchema = z
   .object({
     client_id: z.coerce.number(),
-    description: z.string().min(2, {
-      message: "La descripcion debe tener al menos 10 caracteres.",
-    }),
+    description: z
+      .string()
+      .min(1, {
+        message: "La descripcion es requerida",
+      })
+      .max(255),
     service_type_id: z.coerce.number(),
     accesories: z.string().optional(),
     brand: z.string().optional(),
@@ -91,6 +95,7 @@ const formSchema = z
 function NewOrderPage() {
   const [client, setClient] = useState<Client>();
   const [search, setSearch] = useState("");
+  const { auth } = useAuth();
 
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -166,7 +171,7 @@ function NewOrderPage() {
     const parsedValues = {
       ...values,
       client_id: client.id,
-      staff_id: 1,
+      staff_id: auth?.userId,
     };
     orderMutation.mutate(parsedValues);
   };
