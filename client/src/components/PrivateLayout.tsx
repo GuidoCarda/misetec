@@ -3,6 +3,7 @@ import { Separator } from "@/components/ui/separator";
 import { Toaster } from "@/components/ui/toaster";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
+import { ExitIcon } from "@radix-ui/react-icons";
 import { ChevronLeft } from "lucide-react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 
@@ -76,6 +77,7 @@ function SidebarNav({ items }: SidebarProps) {
         }}
       >
         Cerrar sesion
+        <ExitIcon className="w-4 h-4 ml-2" />
       </Button>
     </nav>
   );

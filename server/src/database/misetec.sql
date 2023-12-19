@@ -119,6 +119,26 @@ INNER JOIN client c ON o.client_id = c.id
 INNER JOIN order_status os ON o.status_id = os.id
 ORDER BY o.status_id;
 
+CREATE VIEW client_order_list_view AS
+SELECT  o.id, 
+        o.created_at, 
+        o.description, 
+        o.status_id, 
+        os.denomination as status, 
+        o.service_type_id, 
+        st.denomination as service_type,  
+        o.client_id, 
+        c.firstname, 
+        c.lastname 
+FROM `order` o 
+INNER JOIN service_type st ON o.service_type_id = st.id 
+INNER JOIN client c ON o.client_id = c.id 
+INNER JOIN order_status os ON o.status_id = os.id
+ORDER BY o.status_id;
+
+
+
+
 CREATE VIEW order_detail_view AS
 SELECT o.id,
        o.created_at,

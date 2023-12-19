@@ -11,6 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -60,7 +61,13 @@ function ClientsLoginForm({ onSubmit, isPending }: ClientsLoginFormProps) {
             className={cn("mt-6 w-full", isPending ? "animate-pulse" : "")}
             type="submit"
           >
-            {isPending ? "Ingresando..." : "Ingresar al sistema"}
+            {isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Ingresando...
+              </>
+            ) : (
+              "Ingresar al sistema"
+            )}
           </Button>
         </form>
       </Form>

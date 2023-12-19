@@ -34,6 +34,8 @@ export type Order = {
   device_id: number;
   status_id: number;
   created_at: string;
+  status?: string;
+  service_type?: string;
 };
 
 export type OrderWithClient = Order & Partial<Client>;

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert } from "@/components/ui/alert";
 import {
   Card,
   CardContent,
@@ -27,7 +27,6 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 
 import { ROLES } from "@/constants";
-import { AlertCircle } from "lucide-react";
 
 function LoginPage() {
   const [isEmailSent, setIsEmailSent] = useState(false);
@@ -177,14 +176,14 @@ function LoginPage() {
   );
 }
 
-function AlertError({ message }: { message: string }) {
-  return (
-    <Alert variant="destructive">
-      <AlertCircle className="h-4 w-4" />
-      <AlertTitle>Error</AlertTitle>
-      <AlertDescription>{message}</AlertDescription>
-    </Alert>
-  );
-}
+// function AlertError({ message }: { message: string }) {
+//   return (
+//     <Alert variant="destructive">
+//       <AlertCircle className="h-4 w-4" />
+//       <AlertTitle>Error</AlertTitle>
+//       <AlertDescription>{message}</AlertDescription>
+//     </Alert>
+//   );
+// }
 
 export default LoginPage;
