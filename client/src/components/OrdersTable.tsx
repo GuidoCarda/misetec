@@ -135,9 +135,11 @@ function OrdersTable({ data }: { data: Order[] }) {
                 <DropdownMenuItem asChild>
                   <Link to={`${order.id}`}>Ver detalle</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to={`${order.id}/edit`}>Editar</Link>
-                </DropdownMenuItem>
+                {Number(order.status_id) <= 3 && (
+                  <DropdownMenuItem asChild>
+                    <Link to={`${order.id}/edit`}>Editar</Link>
+                  </DropdownMenuItem>
+                )}
                 {Number(order.status_id) < 3 && (
                   <DropdownMenuItem
                     onClick={() => handleDeleteDialog(order.id.toString())}
@@ -145,9 +147,6 @@ function OrdersTable({ data }: { data: Order[] }) {
                     Dar de baja
                   </DropdownMenuItem>
                 )}
-                <DropdownMenuItem asChild>
-                  <Link to={`/clients/${order.client_id}`}>Ver cliente</Link>
-                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

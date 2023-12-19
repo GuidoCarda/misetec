@@ -14,7 +14,6 @@ function OrderDetailsPage() {
       fetch(`http://localhost:3000/api/v1/orders/${orderId}`).then((res) =>
         res.json()
       ),
-    placeholderData: [],
   });
 
   if (isPending) {
@@ -25,7 +24,7 @@ function OrderDetailsPage() {
     return <div>Error: {error.message}</div>;
   }
 
-  console.log(data);
+  const isEditable = data.status_id !== 4 && data.status_id !== 5;
 
   return (
     <div>
@@ -34,9 +33,11 @@ function OrderDetailsPage() {
           <Link to="../">Volver</Link>
           <h2 className="text-2xl font-bold mb-4">Orden #{data.id}</h2>
         </div>
-        <Button asChild>
-          <Link to={`edit`}> Editar Orden</Link>
-        </Button>
+        {isEditable && (
+          <Button asChild>
+            <Link to={`edit`}> Editar Orden</Link>
+          </Button>
+        )}
       </header>
 
       <Card className="w-full mb-10  p-4 ">
