@@ -6,6 +6,7 @@ import analyticsRoutes from "./analytics/analytics.routes";
 import servicesRoutes from "./orders/services/services.routes";
 import orderStatusRoutes from "./orders/status/order_status.routes";
 import MessageResponse from "./interfaces/MessageResponse";
+import provincesRoutes from "./clients/provinces/provinces.routes";
 
 const router = Router();
 
@@ -19,6 +20,7 @@ router.use("/auth", authRoutes);
 router.use("/orders", ordersRoutes);
 router.use("/clients", clientsRoutes);
 router.use("/services", servicesRoutes);
+router.use("/clients", clientsRoutes);
 router.use("/order-status", orderStatusRoutes);
 router.use("/analytics", analyticsRoutes);
 

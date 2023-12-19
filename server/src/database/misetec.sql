@@ -25,11 +25,12 @@
     firstname varchar(50),
     lastname varchar(50),
     email varchar(50),
-    province varchar(50),
     `address` varchar(50),
     phone_number varchar(20),
     postal_code varchar(10),
     `status` boolean default true
+    province_id int,
+    foreign key (province_id) references province(id)
   );
 
   CREATE TABLE staff(
@@ -139,12 +140,14 @@ SELECT o.id,
       c.firstname,
       c.lastname,
       c.email,
+      c.province,
       o.staff_id
 FROM `order` o
 INNER JOIN service_type st ON o.service_type_id = st.id
 INNER JOIN order_status os ON o.status_id = os.id
 LEFT JOIN device d ON o.device_id = d.id
 INNER JOIN client c ON o.client_id = c.id;
+INNER JOIN provice p ON c.province_id = p.id;
 
 
 CREATE VIEW order_status_count_view AS
@@ -196,4 +199,42 @@ WHERE created_at BETWEEN "2022-1-17" AND "2023-12-30"
 
 
 
-ALTER TABLE `client` ADD COLUMN province varchar(50);
+ALTER TABLE `client` DROP COLUMN province;
+ALTER TABLE `client` ADD COLUMN province_id int;
+ALTER TABLE `client` ADD FOREIGN KEY (province_id) REFERENCES province(id);
+
+
+-- Agregar tabla provincias
+CREATE TABLE province(
+  id int primary key auto_increment,
+  denomination varchar(50)
+);
+
+INSERT INTO province (denomination) VALUES
+('Buenos Aires'),
+('Catamarca'),
+('Chaco'),
+('Chubut'),
+('Córdoba'),
+('Corrientes'),
+('Entre Ríos'),
+('Formosa'),
+('Jujuy'),
+('La Pampa'),
+('La Rioja'),
+('Mendoza'),
+('Misiones'),
+('Neuquén'),
+('Río Negro'),
+('Salta'),
+('San Juan'),
+('San Luis'),
+('Santa Cruz'),
+('Santa Fe'),
+('Santiago del Estero'),
+('Tierra del Fuego, Antártida e Islas del Atlántico Sur'),
+('Tucumán');
+
+
+
+ALTER TABLE `client` ADD COLUMN `otp` VARCHAR(4);
