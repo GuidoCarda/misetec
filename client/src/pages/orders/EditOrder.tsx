@@ -88,7 +88,7 @@ function EditOrderPage() {
     report: orderQuery?.data?.report ?? "",
   };
 
-  console.log(orderQuery.data);
+  console.log(orderQuery.data.service_type_id);
 
   return (
     <div>
@@ -114,17 +114,26 @@ function EditOrderPage() {
           <span className="font-semibold">Email: </span>
           {orderQuery.data.email}
         </p>
+        <p className="mb-2">
+          <span className="font-semibold">Provincia: </span>
+          {orderQuery.data.province}
+        </p>
       </div>
-      {/* Datos orden */}
+
       <Separator className={"my-6"} />
-      <EditOrderForm defaultValues={formDefaultValues} onSubmit={onSubmit} />
+
+      <EditOrderForm
+        defaultValues={formDefaultValues}
+        serviceTypeId={orderQuery.data.service_type_id}
+        onSubmit={onSubmit}
+      />
     </div>
   );
 }
 
 const orderEditFormSchema = z.object({
-  description: z.string().min(2, {
-    message: "La descripcion debe tener al menos 10 caracteres",
+  description: z.string().min(1, {
+    message: "La descripcion es requerida",
   }),
   accesories: z.string().optional(),
   device_failure: z.string().optional(),
@@ -135,9 +144,14 @@ const orderEditFormSchema = z.object({
 type EditOrderFormProps = {
   defaultValues: z.infer<typeof orderEditFormSchema>;
   onSubmit: (values: z.infer<typeof orderEditFormSchema>) => void;
+  serviceTypeId: number;
 };
 
-export function EditOrderForm({ defaultValues, onSubmit }: EditOrderFormProps) {
+export function EditOrderForm({
+  defaultValues,
+  serviceTypeId,
+  onSubmit,
+}: EditOrderFormProps) {
   const navigate = useNavigate();
   const form = useForm<z.infer<typeof orderEditFormSchema>>({
     resolver: zodResolver(orderEditFormSchema),
@@ -164,6 +178,8 @@ export function EditOrderForm({ defaultValues, onSubmit }: EditOrderFormProps) {
       ) || status.id === defaultValues.status_id
   );
 
+  const isAccessoryFieldVisible = serviceTypeId === 1 || serviceTypeId === 1;
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -180,7 +196,6 @@ export function EditOrderForm({ defaultValues, onSubmit }: EditOrderFormProps) {
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
           name="status_id"
@@ -216,19 +231,22 @@ export function EditOrderForm({ defaultValues, onSubmit }: EditOrderFormProps) {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="accesories"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Accesorios</FormLabel>
-              <FormControl>
-                <Textarea {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {isAccessoryFieldVisible && (
+          <FormField
+            control={form.control}
+            name="accesories"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Accesorios</FormLabel>
+                <FormControl>
+                  <Textarea {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
         <FormField
           control={form.control}
           name="device_failure"
@@ -255,7 +273,6 @@ export function EditOrderForm({ defaultValues, onSubmit }: EditOrderFormProps) {
             </FormItem>
           )}
         />
-
         <div className="flex gap-4 justify-end">
           <Button onClick={() => navigate(-1)} type="button" variant={"ghost"}>
             Cancelar

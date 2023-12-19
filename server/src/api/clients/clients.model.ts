@@ -5,10 +5,10 @@ export const ClientSchema = z.object({
   firstname: z.string().max(50),
   lastname: z.string().max(50),
   email: z.string().email(),
-  province: z.string().max(50),
   address: z.string().max(50),
   phone_number: z.string().max(20),
   postal_code: z.string().max(10),
+  province_id: z.coerce.number(),
 });
 
 export const ClientQueryParamsSchema = z.object({

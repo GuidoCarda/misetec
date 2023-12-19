@@ -18,7 +18,7 @@ router.get<{}, MessageResponse>("/", (_req, res) => {
 
 router.use("/auth", authRoutes);
 router.use("/orders", ordersRoutes);
-router.use("/clients", clientsRoutes);
+router.use("/provinces", provincesRoutes);
 router.use("/services", servicesRoutes);
 router.use("/clients", clientsRoutes);
 router.use("/order-status", orderStatusRoutes);

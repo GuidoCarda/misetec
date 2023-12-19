@@ -87,3 +87,20 @@ export async function deleteClient(id: string) {
 
   return data;
 }
+
+export async function getProvinces() {
+  const res = await fetch("http://localhost:3000/api/v1/provinces", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message);
+  }
+
+  return data.data;
+}

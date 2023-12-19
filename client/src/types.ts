@@ -15,7 +15,7 @@ export type Client = {
   firstname: string;
   lastname: string;
   email: string;
-  province: string;
+  province_id: number;
   address: string;
   phone_number: string;
   postal_code: string;
@@ -49,4 +49,9 @@ export type ServiceType = {
   id: number;
   denomination: string;
   description: string;
+};
+
+export type Province = {
+  id: number;
+  denomination: string;
 };

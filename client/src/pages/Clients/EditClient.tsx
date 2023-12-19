@@ -16,8 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { provinces } from "@/constants";
-import { getClient, updateClient } from "@/services/clients";
+import { getClient, getProvinces, updateClient } from "@/services/clients";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -26,6 +25,7 @@ import { z } from "zod";
 import { Client } from "./clientsColumns";
 import { CaretLeftIcon } from "@radix-ui/react-icons";
 import { SectionTitle } from "@/components/PrivateLayout";
+import { Province } from "@/types";
 
 function EditClientPage() {
   const params = useParams();
@@ -140,7 +140,7 @@ const editClientFormSchema = z.object({
   email: z.string().email({
     message: "El email debe ser valido.",
   }),
-  province: z.string({
+  province_id: z.coerce.number({
     required_error: "Debe seleccionar una provincia.",
   }),
 });
@@ -157,6 +157,15 @@ export function EditClientForm({ onSubmit, client }: EditClientProps) {
     resolver: zodResolver(editClientFormSchema),
     defaultValues: client,
   });
+
+  const provincesQuery = useQuery({
+    queryKey: ["provinces"],
+    queryFn: getProvinces,
+  });
+
+  if (provincesQuery.isPending) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Form {...form}>
@@ -222,22 +231,25 @@ export function EditClientForm({ onSubmit, client }: EditClientProps) {
 
           <FormField
             control={form.control}
-            name="province"
+            name="province_id"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Provincia</FormLabel>
                 <FormControl>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    defaultValue={field.value.toString()}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecciona una provincia" />
                     </SelectTrigger>
                     <SelectContent>
-                      {provinces.map((province) => (
-                        <SelectItem key={province.id} value={province.name}>
-                          {province.name}
+                      {provincesQuery.data.map((province: Province) => (
+                        <SelectItem
+                          key={province.id}
+                          value={province.id.toString()}
+                        >
+                          {province.denomination}
                         </SelectItem>
                       ))}
                     </SelectContent>
