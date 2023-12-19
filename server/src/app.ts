@@ -17,7 +17,6 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(passport.initialize());
 passport.use(authStrategies.jsonWebToken);
-passport.use(authStrategies.magicLogin);
 
 app.get<{}, MessageResponse>("/", (_req, res) => {
   console.log("entro");
