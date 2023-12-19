@@ -1,4 +1,5 @@
-import { Alert } from "@/components/ui/alert";
+import { useState } from "react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Card,
   CardContent,
@@ -7,9 +8,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-import { useAuth } from "@/hooks/useAuth";
-
 import ClientsLoginForm, {
   ClientLoginConfirmationForm,
   clientLoginConfirmationFormSchema,
@@ -26,13 +24,17 @@ import {
   clientLoginConfirmation,
   staffLogin,
 } from "@/services/auth";
+import { useAuth } from "@/hooks/useAuth";
 
 import { ROLES } from "@/constants";
-import { useState } from "react";
+import { AlertCircle } from "lucide-react";
 
 function LoginPage() {
   const [isEmailSent, setIsEmailSent] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+
   const { auth, signIn } = useAuth();
+
   const navigate = useNavigate();
   const location = useLocation();
   const from = location?.state?.from?.pathname || "/";
@@ -41,11 +43,12 @@ function LoginPage() {
     mutationFn: staffLogin,
     onError: (error) => {
       console.log("login error", error);
+
+      handleShowLoginError();
     },
     onSuccess: (user) => {
       console.log("login success", user);
       signIn(user);
-      // navigate(from, { replace: true });
       navigate("/orders", { replace: true });
     },
   });
@@ -54,11 +57,12 @@ function LoginPage() {
     mutationFn: clientLogin,
     onError: (error) => {
       console.log("login error", error);
+
+      handleShowLoginError();
     },
     onSuccess: (response) => {
       console.log("login 1st success", response);
       setIsEmailSent(true);
-      // signIn(user);
     },
   });
 
@@ -66,6 +70,7 @@ function LoginPage() {
     mutationFn: clientLoginConfirmation,
     onError: (error) => {
       console.log("login error", error);
+      handleShowLoginError();
     },
     onSuccess: (user) => {
       console.log("login success", user);
@@ -79,11 +84,13 @@ function LoginPage() {
   }
 
   const handleStaffLogin = (values: z.infer<typeof loginFormSchema>) => {
+    setShowAlert(false);
     console.log(values);
     staffLoginMutation.mutate(values);
   };
 
   const handleClientLogin = (values: z.infer<typeof clientLoginFormSchema>) => {
+    setShowAlert(false);
     console.log(values);
     clientLoginMutation.mutate(values);
   };
@@ -91,17 +98,25 @@ function LoginPage() {
   const handleClientLoginCofirmation = (
     values: z.infer<typeof clientLoginConfirmationFormSchema>
   ) => {
+    setShowAlert(false);
     console.log(values);
     clientLoginConfirmationMutation.mutate(values);
   };
 
-  const isLoginError =
-    staffLoginMutation.isError || clientLoginMutation.isError;
+  const handleShowLoginError = () => {
+    if (showAlert) return;
+
+    setShowAlert(true);
+
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 3000);
+  };
 
   return (
     <>
       <main className="relative px-4 grid place-items-center min-h-[calc(100vh-4rem)]">
-        {isLoginError && (
+        {showAlert && (
           <Alert
             variant={"destructive"}
             className="absolute mb-2 top-10 max-w-fit"
@@ -159,6 +174,16 @@ function LoginPage() {
         Misetec soluciones informaticas
       </footer>
     </>
+  );
+}
+
+function AlertError({ message }: { message: string }) {
+  return (
+    <Alert variant="destructive">
+      <AlertCircle className="h-4 w-4" />
+      <AlertTitle>Error</AlertTitle>
+      <AlertDescription>{message}</AlertDescription>
+    </Alert>
   );
 }
 
