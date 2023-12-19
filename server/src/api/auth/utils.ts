@@ -12,6 +12,6 @@ export async function comparePassword(password: string, hash: string) {
   return await bcrypt.compare(password, hash);
 }
 
-export function createToken(user: Record<string, any>) {
-  return jwt.sign({ id: user.id, email: user.email }, "secret");
+export function createToken(user: Record<string, any>, role: string) {
+  return jwt.sign({ id: user.id, email: user.email, role: role }, "secret");
 }

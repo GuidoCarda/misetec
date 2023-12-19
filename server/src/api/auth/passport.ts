@@ -8,23 +8,44 @@ const opts: StrategyOptions = {
 };
 
 export const jsonWebToken = new Strategy(opts, async (payload, done) => {
-  if (payload.id === undefined) {
+  console.log("payload", payload);
+
+  if (payload.id === undefined || payload.role === undefined) {
     return done(null, false, { message: "Unauthorized user" });
   }
 
-  try {
-    // get the corresponding user
-    const [users] = await pool.execute<RowDataPacket[]>(
-      "SELECT * FROM `staff` WHERE id = ?",
-      [payload.id]
-    );
-    console.log(users);
+  console.log("payload", payload);
 
-    if (users.length === 0) {
+  try {
+    let user;
+
+    if (payload.role === "staff") {
+      // get the corresponding staff member
+      console.log("entro staff");
+      const [staff] = await pool.execute<RowDataPacket[]>(
+        "SELECT * FROM `staff` WHERE id = ?",
+        [payload.id]
+      );
+
+      user = staff.length > 0 ? staff[0] : null;
+    }
+    // console.log(staff);
+
+    if (payload.role === "client") {
+      console.log("entro client");
+
+      const [clients] = await pool.execute<RowDataPacket[]>(
+        "SELECT * FROM `client` WHERE id = ?",
+        [payload.id]
+      );
+
+      user = clients.length > 0 ? clients[0] : null;
+    }
+
+    if (!user) {
       return done(null, false, { message: "Unauthorized user" });
     }
 
-    const user = users[0];
     console.log(user);
     return done(false, user);
   } catch (error) {

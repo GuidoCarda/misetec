@@ -61,7 +61,7 @@ router.post("/login", async (req, res, next) => {
       return res.status(400).json({ message: "Contraseña incorrecta" });
     }
 
-    const token = createToken(user);
+    const token = createToken(user, "staff");
 
     res.status(200).json({ role: "staff", token });
   } catch (error) {
@@ -134,7 +134,7 @@ router.post("/client-otp", async (req, res, next) => {
 
     const client = clients[0];
 
-    const token = createToken(client);
+    const token = createToken(client, "client");
 
     res.status(200).json({ role: "client", token });
   } catch (error) {

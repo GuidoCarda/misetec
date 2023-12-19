@@ -26,6 +26,14 @@ export const orderStatuses = [
   },
 ];
 
+export const ORDER_STATUS = {
+  pending: 1,
+  waiting: 2,
+  inProgress: 3,
+  canceled: 4,
+  finished: 4,
+} as const;
+
 export const allowedTransitions: Record<string, string[]> = {
   "1": ["2", "3"],
   "2": ["3", "4"],
