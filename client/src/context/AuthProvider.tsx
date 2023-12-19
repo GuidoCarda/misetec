@@ -41,8 +41,6 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     setAuth(null);
   };
 
-  // re_hfqTnJPQ_NXUQjN28ujW1r9NVvFTwsFtL
-
   return (
     <AuthContext.Provider value={{ auth, signIn, signOut, isLoading }}>
       {children}

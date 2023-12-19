@@ -50,7 +50,7 @@ function SidebarNav({ items }: SidebarProps) {
   const { signOut } = useAuth();
 
   return (
-    <nav className="flex lg:flex-col gap-4 flex-1">
+    <nav className="flex lg:flex-col gap-4  flex-1">
       {items.map(({ to, label }) => (
         <NavLink
           key={to}

@@ -19,7 +19,6 @@ export async function staffLogin(values: StaffLoginParams) {
     throw new Error(data.message);
   }
 
-  // window.localStorage.setItem("user", JSON.stringify(data));
   return data;
 }
 
@@ -44,6 +43,23 @@ export async function clientLogin(values: ClientLoginParams) {
     throw new Error(data.message);
   }
 
-  // window.localStorage.setItem("user", JSON.stringify(data));
+  return data;
+}
+
+export async function clientLoginConfirmation(values: { otp: string }) {
+  const res = await fetch("http://localhost:3000/api/v1/auth/client-otp", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(values),
+  });
+
+  const data = await res.json();
+
+  if (res.status === 400) {
+    throw new Error(data.message);
+  }
+
   return data;
 }

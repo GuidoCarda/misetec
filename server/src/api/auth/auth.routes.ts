@@ -2,9 +2,7 @@ import { Router } from "express";
 import pool from "../../database/db";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
 import { comparePassword, createToken, encryptPassword } from "./utils";
-import * as authStrategies from "./passport";
-import passport from "passport";
-import transporter from "../nodemailer";
+// import transporter, { sendEmail } from "../nodemailer";
 
 const router = Router();
 
@@ -90,48 +88,57 @@ router.post("/client-login", async (req, res, next) => {
 
     const user = users[0];
 
-    const token = createToken(user);
+    //handle otp
+    const otp = Math.floor(1000 + Math.random() * 9000);
 
-    res.status(200).json({ role: "client", token });
+    const [results] = await pool.execute<ResultSetHeader>(
+      "UPDATE `client` SET `otp` = ? WHERE `id` = ?",
+      [otp, user.id]
+    );
+
+    console.log(results);
+
+    // await sendEmail(
+    //   user.email,
+    //   "Codigo de verificacion",
+    //   `
+    //     <h3>Codigo de verificacion</h3>
+    //     <br/>
+    //     <br/>
+    //     <p>El codigo de verificacion es: ${otp}</p>
+    //   `
+    // );
+
+    res.status(200).json({ role: "client", otp });
   } catch (error) {
     next(error);
   }
 });
 
-router.post("/logout", () => {});
-
-router.post("/magiclogin", authStrategies.magicLogin.send);
-
-router.get(
-  "/magiclogin/confirm",
-  function (req, res, next) {
-    passport.authenticate("magiclogin", { session: false })(req, res, next);
-  },
-  (req, res) => {
-    res.json({ ...req.user, token: req.query.token });
+router.post("/client-otp", async (req, res, next) => {
+  if (!req.body.otp) {
+    return res.status(400).json({ message: "El otp es requerido" });
   }
-);
 
-router.get("/send", async (_req, res) => {
-  console.log("entro");
   try {
-    const data = await transporter.sendMail({
-      from: "Misetec <soluciones.misetec@gmail.com>",
-      to: "guidoc128@gmail.com",
-      subject: "Hola",
-      html: `
-        <h3>Email de prueba</h3>
-        <br/>
-        <br/>
-        <p>Esto es un mail de prueva</p>
-      `,
-    });
+    const [clients] = await pool.execute<RowDataPacket[]>(
+      "SELECT * FROM `client` WHERE `otp` = ?",
+      [req.body.otp]
+    );
 
-    console.log(data);
+    if (clients.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "El codigo ingresado es incorrecto" });
+    }
 
-    res.status(200).json(data);
+    const client = clients[0];
+
+    const token = createToken(client);
+
+    res.status(200).json({ role: "client", token });
   } catch (error) {
-    res.status(400).json(error);
+    next(error);
   }
 });
 

@@ -11,6 +11,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
 
 import ClientsLoginForm, {
+  ClientLoginConfirmationForm,
+  clientLoginConfirmationFormSchema,
   clientLoginFormSchema,
 } from "@/pages/login/ClientsLoginForm";
 import StaffLoginForm, { loginFormSchema } from "@/pages/login/StaffLoginForm";
@@ -19,12 +21,14 @@ import { useMutation } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import { z } from "zod";
 
-import { clientLogin, staffLogin } from "@/services/auth";
+import {
+  clientLogin,
+  clientLoginConfirmation,
+  staffLogin,
+} from "@/services/auth";
 
 import { ROLES } from "@/constants";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { jwtDecode } from "jwt-decode";
 
 function LoginPage() {
   const [isEmailSent, setIsEmailSent] = useState(false);
@@ -32,14 +36,6 @@ function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location?.state?.from?.pathname || "/";
-
-  const clientToken = location?.search?.split("?token=")[1];
-  console.log(clientToken);
-
-  if (clientToken) {
-    const decoded = jwtDecode(clientToken);
-    console.log(decoded);
-  }
 
   const staffLoginMutation = useMutation({
     mutationFn: staffLogin,
@@ -49,7 +45,8 @@ function LoginPage() {
     onSuccess: (user) => {
       console.log("login success", user);
       signIn(user);
-      navigate(from, { replace: true });
+      // navigate(from, { replace: true });
+      navigate("/orders", { replace: true });
     },
   });
 
@@ -58,9 +55,20 @@ function LoginPage() {
     onError: (error) => {
       console.log("login error", error);
     },
+    onSuccess: (response) => {
+      console.log("login 1st success", response);
+      setIsEmailSent(true);
+      // signIn(user);
+    },
+  });
+
+  const clientLoginConfirmationMutation = useMutation({
+    mutationFn: clientLoginConfirmation,
+    onError: (error) => {
+      console.log("login error", error);
+    },
     onSuccess: (user) => {
       console.log("login success", user);
-      // setIsEmailSent(true);
       signIn(user);
       navigate(from, { replace: true });
     },
@@ -80,12 +88,15 @@ function LoginPage() {
     clientLoginMutation.mutate(values);
   };
 
+  const handleClientLoginCofirmation = (
+    values: z.infer<typeof clientLoginConfirmationFormSchema>
+  ) => {
+    console.log(values);
+    clientLoginConfirmationMutation.mutate(values);
+  };
+
   const isLoginError =
     staffLoginMutation.isError || clientLoginMutation.isError;
-
-  if (isEmailSent) {
-    return <CheckEmail handleRetry={() => setIsEmailSent(false)} />;
-  }
 
   return (
     <>
@@ -96,7 +107,8 @@ function LoginPage() {
             className="absolute mb-2 top-10 max-w-fit"
           >
             {staffLoginMutation.error?.message ||
-              clientLoginMutation.error?.message}
+              clientLoginMutation.error?.message ||
+              clientLoginConfirmationMutation.error?.message}
           </Alert>
         )}
         <Card className="min-w-full md:min-w-[500px]">
@@ -110,12 +122,23 @@ function LoginPage() {
               <CardHeader>
                 <CardTitle className="2xl">Ingresa al sistema</CardTitle>
                 <CardDescription>
-                  Ingresa tu email para poder consultar las ordenes de servicio
-                  a tu nombre
+                  {isEmailSent
+                    ? "Ingresa el codigo de confirmacion que te enviamos a tu email"
+                    : `Ingresa tu email para poder consultar las ordenes de servicio
+                a tu nombre`}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <ClientsLoginForm onSubmit={handleClientLogin} />
+                {isEmailSent ? (
+                  <ClientLoginConfirmationForm
+                    onSubmit={handleClientLoginCofirmation}
+                  />
+                ) : (
+                  <ClientsLoginForm
+                    onSubmit={handleClientLogin}
+                    isPending={clientLoginMutation.isPending}
+                  />
+                )}
               </CardContent>
             </TabsContent>
             <TabsContent value={ROLES.staff}>
@@ -136,22 +159,6 @@ function LoginPage() {
         Misetec soluciones informaticas
       </footer>
     </>
-  );
-}
-
-type CheckEmailProps = {
-  handleRetry: () => void;
-};
-
-function CheckEmail({ handleRetry }: CheckEmailProps) {
-  return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-2xl font-bold mb-4">Revisa tu email</h1>
-      <p className="text-gray-500 text-center mb-10">
-        Te enviamos un email con un link para que puedas ingresar al sistema
-      </p>
-      <Button onClick={handleRetry}>Intentar nuevamente</Button>
-    </div>
   );
 }
 
