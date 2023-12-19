@@ -13,4 +13,26 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+export async function sendEmail(
+  destination: string,
+  subject: string,
+  content: string
+) {
+  try {
+    const data = await transporter.sendMail({
+      from: "Misetec <soluciones.misetec@gmail.com>",
+      to: destination,
+      subject: subject,
+      html: content,
+    });
+
+    console.log(data);
+
+    return data;
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw error;
+  }
+}
+
 export default transporter;

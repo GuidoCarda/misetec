@@ -14,7 +14,7 @@ import {
   getNamedPlaceholders,
   getUpdateNamedPlaceholders,
 } from "../../database/utils";
-import transporter from "../nodemailer";
+import { sendEmail } from "../nodemailer";
 
 export async function getAllOrders(
   req: Request<{}, {}, {}, OrderQueryParams>,
@@ -124,6 +124,24 @@ export async function updateOrder(
 
   try {
     const [results] = await pool.execute<ResultSetHeader[]>(query, req.body);
+
+    if (req.body.status_id === 5) {
+      const [order] = await pool.execute<RowDataPacket[]>(
+        "SELECT * FROM `order_detail_view` WHERE id = ? ",
+        [id]
+      );
+
+      const { email, service_type } = order[0];
+      await sendEmail(
+        email,
+        "Orden finalizada",
+        `
+          <h2>La orden #${id} (${service_type}) a tu nombre a sido finalizada</h2>
+          <p>Contactanos para mas informacion</p>
+        `
+      );
+    }
+
     res.json(results);
   } catch (error) {
     console.log(error);
@@ -159,10 +177,8 @@ export async function updateOrderState(
         [id]
       );
 
-      console.log(order);
       const { email, service_type } = order[0];
-      console.log(email);
-      await notifyClient(
+      await sendEmail(
         email,
         "Orden finalizada",
         `
@@ -172,10 +188,9 @@ export async function updateOrderState(
       );
     }
 
-    console.log(results);
-
     res.json(results);
   } catch (error) {
+    console.log(error);
     next(error);
   }
 }
@@ -207,31 +222,8 @@ export async function createDevice(deviceData: CreateDevice) {
   try {
     const [results] = await pool.execute<ResultSetHeader>(query, deviceData);
 
-    console.log(results);
-
-    // if (results.affectedRows === 0) {
-    //   return null;
-    // }
-
     return results.insertId;
   } catch (error) {
     return error;
   }
-}
-
-async function notifyClient(
-  destination: string,
-  subject: string,
-  content: string
-) {
-  const data = await transporter.sendMail({
-    from: "Misetec <soluciones.misetec@gmail.com>",
-    to: destination,
-    subject: subject,
-    html: content,
-  });
-
-  console.log(data);
-
-  return data;
 }
