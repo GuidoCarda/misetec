@@ -42,7 +42,7 @@ export async function updateOrder(id: string, values: any) {
   const headers = getHeaders();
   console.log(headers);
   const res = await fetch(`http://localhost:3000/api/v1/orders/${id}`, {
-    method: "PUT",
+    method: "PATCH",
     headers,
     body: JSON.stringify(values),
   });

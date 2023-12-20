@@ -18,7 +18,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { allowedTransitions } from "@/constants";
-import { getOrderStatusList } from "@/services/orders";
+import { getOrder, getOrderStatusList, updateOrder } from "@/services/orders";
 import { OrderStatus } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CaretLeftIcon } from "@radix-ui/react-icons";
@@ -35,15 +35,12 @@ function EditOrderPage() {
 
   const orderQuery = useQuery({
     queryKey: ["updateOrder", id],
-    queryFn: () =>
-      fetch(`http://localhost:3000/api/v1/orders/${id}`).then((res) =>
-        res.json()
-      ),
+    queryFn: () => getOrder(id || ""),
   });
 
   const orderMutation = useMutation({
     mutationFn: (values: z.infer<typeof orderEditFormSchema>) =>
-      updateOrder(values),
+      updateOrder(id || "", values),
     onSuccess: () => {
       console.log("Orden actualizada");
       queryClient.invalidateQueries({ queryKey: ["updateOrder", id] });
@@ -51,21 +48,21 @@ function EditOrderPage() {
     },
   });
 
-  async function updateOrder(values: z.infer<typeof orderEditFormSchema>) {
-    const res = await fetch(`http://localhost:3000/api/v1/orders/${id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    });
+  // async function updateOrder(values: z.infer<typeof orderEditFormSchema>) {
+  //   const res = await fetch(`http://localhost:3000/api/v1/orders/${id}`, {
+  //     method: "PATCH",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(values),
+  //   });
 
-    if (res.status !== 200) {
-      throw new Error("Error al actualizar la orden");
-    }
-    const data = await res.json();
-    return data;
-  }
+  //   if (res.status !== 200) {
+  //     throw new Error("Error al actualizar la orden");
+  //   }
+  //   const data = await res.json();
+  //   return data;
+  // }
 
   const onSubmit = (values: z.infer<typeof orderEditFormSchema>) => {
     console.log(values);

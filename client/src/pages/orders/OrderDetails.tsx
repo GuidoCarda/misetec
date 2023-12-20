@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { getOrder } from "@/services/orders";
 import { useQuery } from "@tanstack/react-query";
 import { ComputerIcon } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
@@ -8,12 +9,10 @@ import { Link, useParams } from "react-router-dom";
 function OrderDetailsPage() {
   const params = useParams();
   const orderId = params.id;
+
   const { data, isPending, isError, error } = useQuery({
     queryKey: ["order", orderId],
-    queryFn: () =>
-      fetch(`http://localhost:3000/api/v1/orders/${orderId}`).then((res) =>
-        res.json()
-      ),
+    queryFn: () => getOrder(orderId || ""),
   });
 
   if (isPending) {
