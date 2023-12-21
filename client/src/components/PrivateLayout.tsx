@@ -24,12 +24,14 @@ const sidebarNavItems = [
 
 function PrivateLayout() {
   return (
-    <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0  min-h-screen">
+    <div className="flex flex-col space-y-4 lg:flex-row lg:space-x-12 lg:space-y-0  min-h-screen">
       <aside className=" lg:w-1/5 lg:py-10 lg:px-6 relative border-r flex flex-col bg-white min-h-full">
-        <h3 className="text-2xl font-bold ml-4 mb-10 sticky top-10">Misetec</h3>
+        <h3 className="text-2xl font-bold pl-4 pt-4 mb-4 lg:pl-4 lg:pt-4  lg:ml-4 lg:mb-10 lg:sticky lg:top-10">
+          Misetec
+        </h3>
         <SidebarNav items={sidebarNavItems} />
       </aside>
-      <main className="flex-1 lg:max-w-6xl p-4 lg:p-10">
+      <main className="flex-1 lg:max-w-6xl p-2 lg:p-10">
         <Outlet />
       </main>
       <Toaster />
@@ -51,7 +53,7 @@ function SidebarNav({ items }: SidebarProps) {
   const { signOut } = useAuth();
 
   return (
-    <nav className="flex lg:flex-col sticky gap-4 top-28 h-48 ">
+    <nav className="flex gap-4 pl-4 lg:p-0 lg:mt-0 lg:sticky top-28 lg:h-48 lg:flex-col ">
       {items.map(({ to, label }) => (
         <NavLink
           key={to}
