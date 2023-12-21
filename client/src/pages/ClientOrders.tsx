@@ -34,14 +34,34 @@ function ClientOrders() {
   });
 
   // console.log(clientQuery.data);
-  console.log(data);
+  // console.log(data);
 
   if (isPending || clientQuery.isPending) return <div>Loading...</div>;
 
   const clientHasOrders = data.length > 0;
-  const currentOrder = clientHasOrders && data.at(0);
 
-  console.log(data.find((order: Order) => order.status_id === 3) || data.at(0));
+  // let currentOrder: Order | null = null;
+
+  // if (clientHasOrders) {
+  //   const order = data.find((order: Order) => order.status_id === 3);
+  //   if (order) {
+  //     if (order.length > 1) {
+  //       currentOrder = order[0];
+  //     } else {
+  //       currentOrder = order;
+  //     }
+  //   } else {
+  //     currentOrder = data.at(0);
+  //   }
+  // }
+
+  const currentOrder =
+    (clientHasOrders && data.find((order: Order) => order.status_id === 3)) ||
+    data.at(0);
+
+  // console.log(data.find((order: Order) => order.status_id === 3));
+
+  console.log(currentOrder);
 
   const handleOrderSheet = (order: Order) => {
     setOrderSheet(order.id);
@@ -83,7 +103,7 @@ function ClientOrders() {
                   #{currentOrder.id}{" "}
                 </span>
               </h3>
-              <Badge className="rounded-md h-max">En espera</Badge>
+              <Badge className="rounded-md h-max">{currentOrder.status}</Badge>
             </div>
             <h2 className="text-lg font-semibold leading-none mb-2">
               Descripcion
@@ -109,7 +129,7 @@ function ClientOrders() {
               className="mt-4"
               size={"sm"}
               variant={"secondary"}
-              onClick={() => handleOrderSheet(currentOrder)}
+              onClick={() => currentOrder && handleOrderSheet(currentOrder)}
             >
               <PlusIcon className="h-4 w-4 mr-1" /> Ver más
             </Button>
@@ -118,7 +138,7 @@ function ClientOrders() {
 
         {!currentOrder && (
           <Card className="w-full h-60 grid place-content-center mb-10">
-            <TextSelect className="h-20 w-20 text-black mx-auto mb-4" />
+            <TextSelect className="h-20 w-20 text-zinc-600 mx-auto mb-4" />
             <p className="text-slate-500">
               No tienes ordenes pendientes a tu nombre
             </p>
@@ -179,7 +199,7 @@ function ClientOrders() {
         </Card>
       ) : (
         <Card className="w-full h-96 grid place-content-center">
-          <TextSelect className="h-20 w-20 text-black mx-auto mb-4" />
+          <TextSelect className="h-20 w-20 text-zinc-600 mx-auto mb-4" />
           <p className="text-slate-500">No tienes ordenes a tu nombre</p>
         </Card>
       )}
@@ -212,7 +232,7 @@ function OrderDetailSheet({
     enabled: !!orderId,
   });
 
-  console.log({ data, isPending, isRefetching });
+  // console.log({ data, isPending, isRefetching });
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
@@ -288,6 +308,46 @@ function OrderDetailSheet({
                   {data.description}
                 </p>
               </div>
+
+              {data.device_id && (
+                <div className="mt-6">
+                  <h3 className="text-lg font-semibold mb-1 leading-none">
+                    Dispositivo
+                  </h3>
+                  <div className="space-y-1 w-5/6">
+                    <div className="flex justify-between ">
+                      <span>Tipo</span>
+                      <p className="text-zinc-500"> {data.type}</p>
+                    </div>
+                    <div className="flex justify-between ">
+                      <span>Marca</span>
+                      <p className="text-zinc-500"> {data.brand}</p>
+                    </div>
+                    <div className="flex justify-between ">
+                      <span>Modelo</span>
+                      <p className="text-zinc-500"> {data.model}</p>
+                    </div>
+                    <div className="flex justify-between ">
+                      <span>Nro de serie</span>
+                      <p className="text-zinc-500"> {data.serial_number}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {data.device_failure && (
+                <div className="mt-6">
+                  <h3 className="text-lg font-semibold mb-1 leading-none">
+                    {data.service_type_id < 3
+                      ? "Falla del dispositivo"
+                      : "Analisis inicial"}
+                  </h3>
+                  <p className="max-w-[60ch] text-gray-500">
+                    {data.device_failure}
+                  </p>
+                </div>
+              )}
+
               {data.report && (
                 <div className="mt-6">
                   <h3 className="text-lg font-semibold mb-1 leading-none">

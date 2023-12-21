@@ -30,6 +30,8 @@ export type Order = {
   description: string;
   accesories?: string;
   service_type_id: number;
+  report?: string;
+  device_failure?: string;
   client_id: number;
   device_id: number;
   status_id: number;

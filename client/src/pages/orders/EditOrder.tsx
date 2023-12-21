@@ -111,6 +111,7 @@ function EditOrderPage() {
           <span className="font-semibold">Email: </span>
           {orderQuery.data.email}
         </p>
+
         <p className="mb-2">
           <span className="font-semibold">Provincia: </span>
           {orderQuery.data.province}
@@ -249,7 +250,7 @@ export function EditOrderForm({
           name="device_failure"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Falla encontrada</FormLabel>
+              <FormLabel>Falla encontrada | Primer analisis</FormLabel>
               <FormControl>
                 <Textarea {...field} />
               </FormControl>

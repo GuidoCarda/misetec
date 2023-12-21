@@ -2,7 +2,7 @@ import { Router } from "express";
 import pool from "../../database/db";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
 import { comparePassword, createToken, encryptPassword } from "./utils";
-// import transporter, { sendEmail } from "../nodemailer";
+import { sendEmail } from "../nodemailer";
 
 const router = Router();
 
@@ -23,8 +23,8 @@ router.post("/signup", async (req, res, next) => {
 
     const passwordHash = await encryptPassword(req.body.password);
     const [results] = await pool.execute<ResultSetHeader>(
-      "INSERT INTO `staff` (email, password) values (?,?)",
-      [req.body.email, passwordHash]
+      "INSERT INTO `staff` (email, password,firstname, lastname) values (?,?,?,?)",
+      [req.body.email, passwordHash, req.body.firstname, req.body.lastname]
     );
 
     if (results.affectedRows !== 1) {
@@ -98,16 +98,19 @@ router.post("/client-login", async (req, res, next) => {
 
     console.log(results);
 
-    // await sendEmail(
-    //   user.email,
-    //   "Codigo de verificacion",
-    //   `
-    //     <h3>Codigo de verificacion</h3>
-    //     <br/>
-    //     <br/>
-    //     <p>El codigo de verificacion es: ${otp}</p>
-    //   `
-    // );
+    await sendEmail(
+      user.email,
+      "Codigo de verificacion",
+      `
+        <h3>Codigo de verificacion</h3>
+        <br/>
+        <br/>
+        <p>El codigo de verificacion es: ${otp}</p>
+        <br/>
+        <p>Misetec soluciones informaticas</p>
+
+      `
+    );
 
     res.status(200).json({ role: "client", otp });
   } catch (error) {

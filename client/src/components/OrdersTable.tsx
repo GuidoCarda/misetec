@@ -15,10 +15,11 @@ import TooltipWrapper from "./TooltipWrapper";
 import { Badge } from "./ui/badge";
 import { MoreHorizontal } from "lucide-react";
 import DataTable from "./ui/data-table";
-import { formatTimeStamp } from "@/utils";
 import ConfirmationDialog from "./ConfirmationDialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteOrder } from "@/services/orders";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 type Order = {
   id: string;
@@ -57,7 +58,9 @@ function OrdersTable({ data }: { data: Order[] }) {
       header: "Creada el",
       cell: ({ row }) => {
         const createdAt = row.getValue("created_at") as string;
-        const formattedDate = formatTimeStamp(createdAt);
+        const formattedDate = format(new Date(createdAt), "dd/MM/yyyy", {
+          locale: es,
+        });
 
         return <div>{formattedDate}</div>;
       },

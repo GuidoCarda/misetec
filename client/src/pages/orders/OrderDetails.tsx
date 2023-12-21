@@ -101,7 +101,11 @@ function OrderDetailsPage() {
 
         {Boolean(data.device_failure) && (
           <Card className="w-full p-4">
-            <h3 className="text-lg font-semibold">Falla del dispositivo</h3>
+            <h3 className="text-lg font-semibold">
+              {data.service_type_id < 3
+                ? "Falla del dispositivo"
+                : "Analisis inicial"}
+            </h3>
             <p className="text-zinc-500">{data.device_failure}</p>
           </Card>
         )}
@@ -119,20 +123,24 @@ function OrderDetailsPage() {
                   <p className="text-zinc-500">#{data.device_id}</p>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <span>Marca</span>
-                  <p className="text-zinc-500">{data.brand}</p>
-                </div>
+                {data.type === "notebook" && (
+                  <>
+                    <div className="flex items-center justify-between">
+                      <span>Marca</span>
+                      <p className="text-zinc-500">{data.brand}</p>
+                    </div>
 
-                <div className="flex items-center justify-between">
-                  <span>Modelo</span>
-                  <p className="text-zinc-500">{data.model}</p>
-                </div>
+                    <div className="flex items-center justify-between">
+                      <span>Modelo</span>
+                      <p className="text-zinc-500">{data.model}</p>
+                    </div>
 
-                <div className="flex items-center justify-between ">
-                  <span>Numero de serie</span>
-                  <p className="text-zinc-500">{data.serial_number}</p>
-                </div>
+                    <div className="flex items-center justify-between ">
+                      <span>Numero de serie</span>
+                      <p className="text-zinc-500">{data.serial_number}</p>
+                    </div>
+                  </>
+                )}
               </div>
             </CardContent>
           </Card>
