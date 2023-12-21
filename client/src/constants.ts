@@ -3,6 +3,11 @@ export const ROLES = {
   client: "client",
 } as const;
 
+export const DEVICE_TYPES = {
+  pc: "pc",
+  notebook: "notebook",
+} as const;
+
 export const orderStatuses = [
   {
     id: 1,

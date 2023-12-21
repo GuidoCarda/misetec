@@ -77,19 +77,23 @@ export async function createOrder(
   let device_id = null;
 
   if (service_type_id === 1 || service_type_id === 2) {
-    const { brand, model, serial_number } = req.body;
-
-    const deviceData = { brand, model, serial_number };
-    device_id = await createDevice(deviceData);
+    console.log("req.body", req.body);
+    if (req.body.type === "notebook") {
+      const { brand, model, serial_number } = req.body;
+      console.log({ brand, model, serial_number });
+      const deviceData = { brand, model, serial_number };
+      device_id = await createDevice(deviceData);
+      console.log(device_id);
+    }
   }
 
-  console.log({
-    description,
-    accesories,
-    service_type_id,
-    client_id,
-    device_id,
-  });
+  // console.log({
+  //   description,
+  //   accesories,
+  //   service_type_id,
+  //   client_id,
+  //   device_id,
+  // });
 
   try {
     const [results] = await pool.execute<RowDataPacket[]>(

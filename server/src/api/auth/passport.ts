@@ -8,20 +8,20 @@ const opts: StrategyOptions = {
 };
 
 export const jsonWebToken = new Strategy(opts, async (payload, done) => {
-  console.log("payload", payload);
+  // console.log("payload", payload);
 
   if (payload.id === undefined || payload.role === undefined) {
     return done(null, false, { message: "Unauthorized user" });
   }
 
-  console.log("payload", payload);
+  // console.log("payload", payload);
 
   try {
     let user;
 
     if (payload.role === "staff") {
       // get the corresponding staff member
-      console.log("entro staff");
+      // console.log("entro staff");
       const [staff] = await pool.execute<RowDataPacket[]>(
         "SELECT * FROM `staff` WHERE id = ?",
         [payload.id]
@@ -32,7 +32,7 @@ export const jsonWebToken = new Strategy(opts, async (payload, done) => {
     // console.log(staff);
 
     if (payload.role === "client") {
-      console.log("entro client");
+      // console.log("entro client");
 
       const [clients] = await pool.execute<RowDataPacket[]>(
         "SELECT * FROM `client` WHERE id = ?",

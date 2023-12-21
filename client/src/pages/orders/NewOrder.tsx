@@ -38,6 +38,7 @@ import { ServiceType } from "@/types";
 import { CaretLeftIcon } from "@radix-ui/react-icons";
 import { SectionTitle } from "@/components/PrivateLayout";
 import { useAuth } from "@/hooks/useAuth";
+import { DEVICE_TYPES } from "@/constants";
 
 const formSchema = z
   .object({
@@ -50,6 +51,7 @@ const formSchema = z
       .max(255),
     service_type_id: z.coerce.number(),
     accesories: z.string().optional(),
+    type: z.string().optional(),
     brand: z.string().optional(),
     model: z.string().optional(),
     serial_number: z.string().optional(),
@@ -57,12 +59,28 @@ const formSchema = z
   .refine(
     (data) => {
       if (data.service_type_id === 1 || data.service_type_id === 2) {
-        return data.brand;
+        return data.type;
       }
       return true;
     },
     {
-      message: "La marca es requerida para este tipo de servicio.",
+      message: "El tipo de equipo es requerido para este tipo de servicio",
+      path: ["type"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.service_type_id === 1 || data.service_type_id === 2) {
+        if (data.type === "notebook") {
+          return data.brand;
+        }
+        // return data.brand;
+      }
+
+      return true;
+    },
+    {
+      message: "La marca es requerida para este tipo de servicio y dispositivo",
       path: ["brand"],
     }
   )
@@ -70,24 +88,32 @@ const formSchema = z
     (data) => {
       console.log(data);
       if (data.service_type_id === 1 || data.service_type_id === 2) {
-        return data.model;
+        if (data.type === "notebook") {
+          return data.model;
+        }
+        // return data.model;
       }
       return true;
     },
     {
-      message: "El modelo es requerido para este tipo de servicio.",
+      message:
+        "El modelo es requerido para este tipo de servicio y dispositivo",
       path: ["model"],
     }
   )
   .refine(
     (data) => {
       if (data.service_type_id === 1 || data.service_type_id === 2) {
-        return data.serial_number;
+        if (data.type === "notebook") {
+          return data.serial_number;
+        }
+        // return data.serial_number;
       }
       return true;
     },
     {
-      message: "El numero de serie es requerido para este tipo de servicio.",
+      message:
+        "El numero de serie es requerido para este tipo de servicio y dispositivo",
       path: ["serial_number"],
     }
   );
@@ -155,14 +181,16 @@ function NewOrderPage() {
     }
 
     if (values.service_type_id === 1 || values.service_type_id === 2) {
-      if (!values.brand || !values.model || !values.serial_number) {
-        toast({
-          variant: "destructive",
-          title: "Datos de equipo requeridos",
-          description:
-            "Debe completar los datos de equipo para generar la orden",
-        });
-        return;
+      if (values.type === "notebook") {
+        if (!values.brand || !values.model || !values.serial_number) {
+          toast({
+            variant: "destructive",
+            title: "Datos de equipo requeridos",
+            description:
+              "Debe completar los datos de equipo para generar la orden",
+          });
+          return;
+        }
       }
     }
 
@@ -173,6 +201,8 @@ function NewOrderPage() {
       client_id: client.id,
       staff_id: auth?.userId,
     };
+
+    console.log(parsedValues);
     orderMutation.mutate(parsedValues);
   };
 
@@ -187,17 +217,6 @@ function NewOrderPage() {
 
   return (
     <div>
-      {/* <header className="mb-10">
-        <Link
-          to=".."
-          className="group rounded-sm flex text-sm items-center text-slate-400 select-none  hover:text-slate-600 focus-within:outline-slate-100"
-        >
-          <CaretLeftIcon className="group-hover:-translate-x-1 transition-all duration-200" />
-          <span className="">Volver</span>
-        </Link>
-        <h2 className="text-2xl font-bold tracking-tight">Nueva Orden</h2>
-      </header> */}
-
       <Link
         to=".."
         className="group rounded-sm flex text-sm items-center text-slate-400 select-none  hover:text-slate-600 focus-within:outline-slate-100"
@@ -352,6 +371,7 @@ function NewOrderForm({ onSubmit }: NewOrderFormProps) {
     defaultValues: {
       description: "",
       service_type_id: 1,
+      type: "pc",
       client_id: 1,
     },
   });
@@ -359,11 +379,14 @@ function NewOrderForm({ onSubmit }: NewOrderFormProps) {
   console.log(form.formState.errors);
 
   const selectedServiceType = form.watch("service_type_id", undefined);
+  const selectedDeviceType = form.watch("type", undefined);
 
   console.log(selectedServiceType);
 
   const showDeviceFieldsAndAccesories =
     Number(selectedServiceType) === 1 || Number(selectedServiceType) === 2;
+
+  const showDeviceFields = selectedDeviceType === "notebook";
 
   return (
     <Form {...form}>
@@ -422,41 +445,76 @@ function NewOrderForm({ onSubmit }: NewOrderFormProps) {
                 identificar el equipo.
               </p>
             </div>
+            {}
             <FormField
               control={form.control}
-              name="brand"
+              name="type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Marca</FormLabel>
-                  <Input {...field} />
+                  <FormLabel>Tipo de dispositivo</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="w-[250px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {Object.entries(DEVICE_TYPES).map(([key, value]) => {
+                        return (
+                          <SelectItem key={key} value={value}>
+                            {value}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="model"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Modelo</FormLabel>
-                  <Input {...field} />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {showDeviceFields && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="brand"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Marca</FormLabel>
+                      <Input {...field} />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="serial_number"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Numero de serie</FormLabel>
-                  <Input {...field} />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name="model"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Modelo</FormLabel>
+                      <Input {...field} />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="serial_number"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Numero de serie</FormLabel>
+                      <Input {...field} />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
 
             <FormField
               control={form.control}

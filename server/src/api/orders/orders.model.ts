@@ -17,6 +17,7 @@ export const OrderSchema = z.object({
 
 export const DeviceSchema = z.object({
   id: z.number().positive(),
+  type: z.string(),
   brand: z.string(),
   model: z.string(),
   serial_number: z.string(),
