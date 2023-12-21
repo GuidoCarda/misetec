@@ -319,7 +319,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `order_status_count_view`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `order_status_count_view`  AS SELECT count(0) AS `total_orders`, sum(case when `order`.`status_id` = 5 then 1 else 0 end) AS `finished_orders`, sum(case when `order`.`status_id` = 4 then 1 else 0 end) AS `cancelled_orders`, sum(case when `order`.`status_id` = 3 then 1 else 0 end) AS `in_progress_orders`, sum(case when `order`.`status_id` = 2 then 1 else 0 end) AS `waiting_for_approval_orders`, sum(case when `order`.`status_id` = 1 then 1 else 0 end) AS `pending_orders` FROM `order``order`  ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `order_status_count_view`  AS SELECT count(0) AS `total_orders`, sum(case when `order`.`status_id` = 5 then 1 else 0 end) AS `finished_orders`, sum(case when `order`.`status_id` = 4 then 1 else 0 end) AS `cancelled_orders`, sum(case when `order`.`status_id` = 3 then 1 else 0 end) AS `in_progress_orders`, sum(case when `order`.`status_id` = 2 then 1 else 0 end) AS `waiting_for_approval_orders`, sum(case when `order`.`status_id` = 1 then 1 else 0 end) AS `pending_orders` FROM `order`  ;
 
 --
 -- Índices para tablas volcadas

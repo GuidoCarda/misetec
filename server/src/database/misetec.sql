@@ -180,6 +180,46 @@ SELECT
   SUM(CASE WHEN status_id = 1 THEN 1 ELSE 0 END) AS pending_orders
 FROM `order`;
 
+SELECT
+  COUNT(*) AS total_orders,
+  SUM(CASE WHEN status_id = 5 THEN 1 ELSE 0 END) AS finished_orders,
+  SUM(CASE WHEN status_id = 4 THEN 1 ELSE 0 END) AS cancelled_orders,
+  SUM(CASE WHEN status_id = 3 THEN 1 ELSE 0 END) AS in_progress_orders,
+  SUM(CASE WHEN status_id = 2 THEN 1 ELSE 0 END) AS waiting_for_approval_orders,
+  SUM(CASE WHEN status_id = 1 THEN 1 ELSE 0 END) AS pending_orders
+FROM `order`;
+
+
+
+//Count orders by status
+SELECT  status_id, 
+        status,
+        COUNT(*) AS total 
+FROM `order_list_view`
+GROUP BY status_id, status;
+
+SELECT  service_type_id, 
+        service_type,
+        COUNT(*) AS total 
+FROM `order_list_view`
+GROUP BY service_type_id, service_type;
+
+// Combine the previous two queries
+SELECT  status_id, 
+        status,
+        COUNT(*) AS total
+FROM `order_list_view`
+GROUP BY status_id, status
+UNION
+SELECT  service_type_id, 
+        service_type,
+        COUNT(*) AS total
+FROM `order_list_view`
+GROUP BY service_type_id, service_type;
+
+
+
+
 
 SELECT * FROM client WHERE  status = 1;
 
@@ -258,3 +298,5 @@ INSERT INTO province (denomination) VALUES
 
 
 ALTER TABLE `client` ADD COLUMN `otp` VARCHAR(4);
+
+
