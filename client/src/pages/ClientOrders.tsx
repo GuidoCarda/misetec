@@ -61,7 +61,7 @@ function ClientOrders() {
 
   // console.log(data.find((order: Order) => order.status_id === 3));
 
-  console.log(currentOrder);
+  // console.log(currentOrder);
 
   const handleOrderSheet = (order: Order) => {
     setOrderSheet(order.id);

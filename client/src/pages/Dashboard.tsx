@@ -52,7 +52,7 @@ function Dashboard() {
 
   if (analyticsQuery.isError) return <p>{analyticsQuery.error.message}</p>;
 
-  console.log(analyticsQuery.data);
+  // console.log(analyticsQuery.data);
 
   return (
     <>

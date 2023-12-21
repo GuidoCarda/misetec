@@ -48,7 +48,7 @@ function EditClientPage() {
   });
 
   const onSubmit = (values: z.infer<typeof editClientFormSchema>) => {
-    console.log(values);
+    // console.log(values);
     updateClientMutation.mutate(values);
   };
 

@@ -60,7 +60,7 @@ function LoginPage() {
       handleShowLoginError();
     },
     onSuccess: (response) => {
-      console.log("login 1st success", response);
+      // console.log("login 1st success", response);
       setIsEmailSent(true);
     },
   });

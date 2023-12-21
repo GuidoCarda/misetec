@@ -29,7 +29,7 @@ function Orders() {
     },
   });
 
-  console.log({ isPending, data });
+  // console.log({ isPending, data });
 
   return (
     <div className="w-full">

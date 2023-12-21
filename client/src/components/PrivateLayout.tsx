@@ -25,8 +25,8 @@ const sidebarNavItems = [
 function PrivateLayout() {
   return (
     <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0  min-h-screen">
-      <aside className=" lg:w-1/5 lg:py-10 lg:px-6 border-r flex flex-col bg-white min-h-full">
-        <h3 className="text-2xl font-bold ml-4 mb-10">Misetec</h3>
+      <aside className=" lg:w-1/5 lg:py-10 lg:px-6 relative border-r flex flex-col bg-white min-h-full">
+        <h3 className="text-2xl font-bold ml-4 mb-10 sticky top-10">Misetec</h3>
         <SidebarNav items={sidebarNavItems} />
       </aside>
       <main className="flex-1 lg:max-w-6xl p-4 lg:p-10">
@@ -51,7 +51,7 @@ function SidebarNav({ items }: SidebarProps) {
   const { signOut } = useAuth();
 
   return (
-    <nav className="flex lg:flex-col gap-4  flex-1">
+    <nav className="flex lg:flex-col sticky gap-4 top-28 h-48 ">
       {items.map(({ to, label }) => (
         <NavLink
           key={to}
@@ -70,7 +70,7 @@ function SidebarNav({ items }: SidebarProps) {
         </NavLink>
       ))}
       <Button
-        className="mt-auto"
+        className=""
         onClick={() => {
           signOut();
           navigate("/");

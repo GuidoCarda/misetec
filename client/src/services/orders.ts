@@ -15,7 +15,7 @@ export async function getOrders() {
 
 export async function getOrder(id: string) {
   const headers = getHeaders();
-  console.log(headers);
+  // console.log(headers);
   const res = await fetch(`http://localhost:3000/api/v1/orders/${id}`, {
     method: "GET",
     headers,
@@ -27,7 +27,7 @@ export async function getOrder(id: string) {
 
 export async function createOrder(values: any) {
   const headers = getHeaders();
-  console.log(headers);
+  // console.log(headers);
   const res = await fetch("http://localhost:3000/api/v1/orders", {
     method: "POST",
     headers,
@@ -40,7 +40,7 @@ export async function createOrder(values: any) {
 
 export async function updateOrder(id: string, values: any) {
   const headers = getHeaders();
-  console.log(headers);
+  // console.log(headers);
   const res = await fetch(`http://localhost:3000/api/v1/orders/${id}`, {
     method: "PATCH",
     headers,
