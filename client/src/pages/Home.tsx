@@ -1,11 +1,7 @@
-import { SectionTitle } from "@/components/PrivateLayout";
+import { Navigate } from "react-router-dom";
 
 function Home() {
-  return (
-    <>
-      <SectionTitle />
-    </>
-  );
+  return <Navigate to="/orders" />;
 }
 
 export default Home;
