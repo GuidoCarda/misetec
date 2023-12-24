@@ -160,9 +160,9 @@ export function UpdateOrderStatus({
       status.id.toString() === defaultValue
   );
 
-  if (mutation.isPending && defaultValue === "5") {
+  if (mutation.isPending) {
     return (
-      <Skeleton className="w-[160px] h-10 flex items-center px-2">
+      <Skeleton className="w-[160px] text-slate-500 select-none cursor-wait h-10 flex items-center px-2">
         Actualizando..
       </Skeleton>
     );

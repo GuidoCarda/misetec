@@ -64,15 +64,6 @@
 ALTER TABLE `order` MODIFY COLUMN created_at timestamp default current_timestamp;
 ALTER TABLE `order` MODIFY COLUMN finished_at timestamp default null;
 
-  -- CREATE TABLE order_history(
-  --   id int primary key auto_increment,
-  --   order_id int,
-  --   status_id int,
-  --   created_at timestamp default current_timestamp,
-  --   foreign key (order_id) references `order`(id),
-  --   foreign key (status_id) references order_status(id)
-  -- );
-
 INSERT INTO order_status (denomination) 
 VALUES ('sin revisar'),
       ('en espera'),

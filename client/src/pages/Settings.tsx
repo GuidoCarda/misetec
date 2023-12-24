@@ -9,6 +9,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
 import { createStaffAccount, getStaffMembers } from "@/services/staff";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -169,20 +170,22 @@ function StaffMembersList({ members }: { members: Record<string, string>[] }) {
   return (
     <div className="flex flex-col gap-4">
       <h2 className="text-2xl font-bold">Tecnicos</h2>
-      <ul className="flex flex-col gap-2">
-        {members?.map((member) => (
-          <li
-            key={member.id}
-            className="flex flex-col gap-2 border p-4 rounded-md"
-          >
-            <span className="block leading-none">
-              {member.firstname} {member.lastname}
-            </span>
+      <ScrollArea className="w-full h-72 border rounded-md">
+        <ul className="flex flex-col gap-2 py-2 pl-2 pr-4">
+          {members?.map((member) => (
+            <li
+              key={member.id}
+              className="flex flex-col gap-2 border p-4 rounded-md"
+            >
+              <span className="block leading-none">
+                {member.firstname} {member.lastname}
+              </span>
 
-            <span className="text-sm text-slate-500">{member.email}</span>
-          </li>
-        ))}
-      </ul>
+              <span className="text-sm text-slate-500">{member.email}</span>
+            </li>
+          ))}
+        </ul>
+      </ScrollArea>
     </div>
   );
 }
