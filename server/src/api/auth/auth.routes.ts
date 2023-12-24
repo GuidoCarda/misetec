@@ -18,7 +18,9 @@ router.post("/signup", async (req, res, next) => {
     );
 
     if (users.length > 0) {
-      return res.status(400).json({ message: "email already exists" });
+      return res
+        .status(400)
+        .json({ message: "Ya hay una creada cuenta con ese email" });
     }
 
     const passwordHash = await encryptPassword(req.body.password);
@@ -28,7 +30,9 @@ router.post("/signup", async (req, res, next) => {
     );
 
     if (results.affectedRows !== 1) {
-      return res.status(400).json({ message: "error creating user" });
+      return res
+        .status(400)
+        .json({ message: "Hubo un error creando al usuario" });
     }
 
     res.json(results);
@@ -140,6 +144,37 @@ router.post("/client-otp", async (req, res, next) => {
     const token = createToken(client, "client");
 
     res.status(200).json({ role: "client", token });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/me", async (req, res, next) => {
+  try {
+    const [users] = await pool.execute<RowDataPacket[]>(
+      "SELECT * FROM `staff` WHERE `id` = ?",
+      [req.body.id]
+    );
+
+    if (users.length === 0) {
+      return res.status(400).json({ message: "user not found" });
+    }
+
+    const user = users[0];
+
+    res.json(user);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/staff", async (_req, res, next) => {
+  try {
+    const [users] = await pool.execute<RowDataPacket[]>(
+      "SELECT * FROM `staff`"
+    );
+
+    res.json(users);
   } catch (error) {
     next(error);
   }

@@ -1,7 +1,5 @@
 import { useMemo, useState } from "react";
-import DataTable from "./ui/data-table";
 import { Client } from "@/pages/clients/clientsColumns";
-import { ColumnDef } from "@tanstack/react-table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,9 +9,14 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
-import { MoreHorizontal } from "lucide-react";
+import ConfirmationDialog from "./ConfirmationDialog";
+import DataTable from "./ui/data-table";
 import { Link } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ColumnDef } from "@tanstack/react-table";
+import { useToast } from "./ui/use-toast";
+import { deleteClient } from "@/services/clients";
+import { MoreHorizontal } from "lucide-react";
 
 function ClientsTable({ data }: { data: Client[] }) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -133,8 +136,6 @@ function ClientsTable({ data }: { data: Client[] }) {
   );
 }
 
-export default ClientsTable;
-
 export function useDeleteClient() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -150,6 +151,5 @@ export function useDeleteClient() {
     },
   });
 }
-import { useToast } from "./ui/use-toast";
-import ConfirmationDialog from "./ConfirmationDialog";
-import { deleteClient } from "@/services/clients";
+
+export default ClientsTable;

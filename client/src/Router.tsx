@@ -21,6 +21,7 @@ import LoginPage from "@/pages/login/Login";
 
 //Constants
 import { ROLES } from "@/constants";
+import SettingsPage from "@/pages/Settings";
 
 const router = createBrowserRouter([
   {
@@ -74,6 +75,10 @@ const router = createBrowserRouter([
           {
             path: "dashboard",
             element: <Dashboard />,
+          },
+          {
+            path: "settings",
+            element: <SettingsPage />,
           },
         ],
       },

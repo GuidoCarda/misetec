@@ -20,6 +20,10 @@ const sidebarNavItems = [
     to: "/dashboard",
     label: "Informes",
   },
+  {
+    to: "/settings",
+    label: "Ajustes",
+  },
 ];
 
 function PrivateLayout() {
