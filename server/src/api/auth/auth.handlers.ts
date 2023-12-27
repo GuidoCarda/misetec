@@ -4,7 +4,11 @@ import { ResultSetHeader, RowDataPacket } from "mysql2";
 import { comparePassword, createToken, encryptPassword } from "./utils";
 import { sendEmail } from "../nodemailer";
 
-export async function signUp(req: Request, res: Response, next: NextFunction) {
+export async function staffSignUp(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   if (!req.body.password || !req.body.password) {
     return res.status(400).json({ message: "email and password are required" });
   }
