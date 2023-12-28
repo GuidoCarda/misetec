@@ -5,6 +5,7 @@ import { validateRequest } from "../middlewares";
 import {
   clientLogInSchema,
   clientOtpSchema,
+  deleteStaffMemberSchema,
   staffLogInSchema,
   staffSignUpSchema,
 } from "./auth.model";
@@ -46,5 +47,13 @@ router.post(
 router.get("/me", authHandlers.getStaffAccountDetails);
 
 router.get("/staff", authHandlers.getStaff);
+
+router.delete(
+  "/staff/:id",
+  validateRequest({
+    params: deleteStaffMemberSchema,
+  }),
+  authHandlers.deleteStaffMember
+);
 
 export default router;

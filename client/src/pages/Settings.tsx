@@ -11,6 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
+import { deleteStaffMember } from "@/services/auth";
 import { createStaffAccount, getStaffMembers } from "@/services/staff";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -167,6 +168,21 @@ function NewStaffUserForm() {
 }
 
 function StaffMembersList({ members }: { members: Record<string, string>[] }) {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  const mutation = useMutation({
+    mutationFn: (id: string) => deleteStaffMember(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["staffMembers"] });
+      toast({
+        title: "Cuenta eliminada",
+        description: "La cuenta fue eliminada correctamente",
+      });
+    },
+    onError: () => {},
+  });
+
   return (
     <div className="flex flex-col gap-4">
       <h2 className="text-2xl font-bold">Tecnicos</h2>
@@ -175,13 +191,22 @@ function StaffMembersList({ members }: { members: Record<string, string>[] }) {
           {members?.map((member) => (
             <li
               key={member.id}
-              className="flex flex-col gap-2 border p-4 rounded-md"
+              className="flex justify-between gap-2 border p-4 rounded-md"
             >
-              <span className="block leading-none">
-                {member.firstname} {member.lastname}
-              </span>
+              <div>
+                <span className="block leading-none">
+                  {member.firstname} {member.lastname}
+                </span>
 
-              <span className="text-sm text-slate-500">{member.email}</span>
+                <span className="text-sm text-slate-500">{member.email}</span>
+              </div>
+              <Button
+                size={"sm"}
+                variant={"ghost"}
+                onClick={() => mutation.mutate(member.id)}
+              >
+                Eliminar
+              </Button>
             </li>
           ))}
         </ul>

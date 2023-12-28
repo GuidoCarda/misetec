@@ -289,5 +289,5 @@ INSERT INTO province (denomination) VALUES
 
 
 ALTER TABLE `client` ADD COLUMN `otp` VARCHAR(4);
-
+ALTER TABLE `staff` ADD COLUMN `status` BOOLEAN DEFAULT TRUE
 

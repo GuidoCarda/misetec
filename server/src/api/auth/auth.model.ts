@@ -25,7 +25,12 @@ export const clientOtpSchema = z.object({
     }, "El codigo ingresado debe ser un numero de 4 digitos"),
 });
 
+export const deleteStaffMemberSchema = z.object({
+  id: z.coerce.number().int(),
+});
+
 export type StaffSignUp = z.infer<typeof staffSignUpSchema>;
 export type StaffLogIn = z.infer<typeof staffLogInSchema>;
 export type ClientLogIn = z.infer<typeof clientLogInSchema>;
 export type ClientOtp = z.infer<typeof clientOtpSchema>;
+export type DeleteStaffMember = z.infer<typeof deleteStaffMemberSchema>;

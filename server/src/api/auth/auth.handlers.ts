@@ -190,10 +190,27 @@ export async function getStaff(
 ) {
   try {
     const [users] = await pool.execute<RowDataPacket[]>(
-      "SELECT * FROM `staff`"
+      "SELECT * FROM `staff` WHERE `status` = 1"
     );
 
     res.json(users);
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function deleteStaffMember(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const [results] = await pool.execute<ResultSetHeader>(
+      "UPDATE `staff` SET status = 0 WHERE `id` = ?",
+      [req.params.id]
+    );
+
+    res.json(results);
   } catch (error) {
     next(error);
   }
