@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { ORDER_STATUS, SERVICE_TYPES } from "@/constants";
 import { getOrder } from "@/services/orders";
 import { CaretLeftIcon } from "@radix-ui/react-icons";
 import { useQuery } from "@tanstack/react-query";
@@ -27,7 +28,9 @@ function OrderDetailsPage() {
     return <div>Error: {error.message}</div>;
   }
 
-  const isEditable = data.status_id !== 4 && data.status_id !== 5;
+  const isEditable =
+    data.status_id !== ORDER_STATUS.CANCELLED &&
+    data.status_id !== ORDER_STATUS.FINISHED;
 
   return (
     <div>
@@ -102,7 +105,9 @@ function OrderDetailsPage() {
         {Boolean(data.device_failure) && (
           <Card className="w-full p-4">
             <h3 className="text-lg font-semibold">
-              {data.service_type_id < 3
+              {[SERVICE_TYPES.REPAIR, SERVICE_TYPES.MAINTENANCE].includes(
+                data.service_type_id
+              )
                 ? "Falla del dispositivo"
                 : "Analisis inicial"}
             </h3>

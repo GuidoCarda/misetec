@@ -22,11 +22,11 @@ function RequireAuth({ allowedRoles }: RequireAuthProps) {
   const isAllowed = allowedRoles.includes(auth?.role);
 
   if (!isAllowed) {
-    if (auth.role === ROLES.client) {
+    if (auth.role === ROLES.CLIENT) {
       return <Navigate to="/portal" state={{ from: location }} replace />;
     }
 
-    if (auth.role === ROLES.staff) {
+    if (auth.role === ROLES.STAFF) {
       return <Navigate to="/" state={{ from: location }} replace />;
     }
   }

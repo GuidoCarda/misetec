@@ -32,13 +32,13 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
 import { User } from "lucide-react";
-import { createClient } from "@/services/clients";
+import { createClient, getClients } from "@/services/clients";
 import { createOrder } from "@/services/orders";
 import { ServiceType } from "@/types";
 import { CaretLeftIcon } from "@radix-ui/react-icons";
 import { SectionTitle } from "@/components/PrivateLayout";
 import { useAuth } from "@/hooks/useAuth";
-import { DEVICE_TYPES } from "@/constants";
+import { DEVICE_TYPES, SERVICE_TYPES } from "@/constants";
 
 const formSchema = z
   .object({
@@ -58,7 +58,10 @@ const formSchema = z
   })
   .refine(
     (data) => {
-      if (data.service_type_id === 1 || data.service_type_id === 2) {
+      if (
+        data.service_type_id === SERVICE_TYPES.REPAIR ||
+        data.service_type_id === SERVICE_TYPES.MAINTENANCE
+      ) {
         return data.type;
       }
       return true;
@@ -70,13 +73,14 @@ const formSchema = z
   )
   .refine(
     (data) => {
-      if (data.service_type_id === 1 || data.service_type_id === 2) {
-        if (data.type === "notebook") {
+      if (
+        data.service_type_id === SERVICE_TYPES.REPAIR ||
+        data.service_type_id === SERVICE_TYPES.MAINTENANCE
+      ) {
+        if (data.type === DEVICE_TYPES.NOTEBOOK) {
           return data.brand;
         }
-        // return data.brand;
       }
-
       return true;
     },
     {
@@ -86,12 +90,13 @@ const formSchema = z
   )
   .refine(
     (data) => {
-      console.log(data);
-      if (data.service_type_id === 1 || data.service_type_id === 2) {
-        if (data.type === "notebook") {
+      if (
+        data.service_type_id === SERVICE_TYPES.REPAIR ||
+        data.service_type_id === SERVICE_TYPES.MAINTENANCE
+      ) {
+        if (data.type === DEVICE_TYPES.NOTEBOOK) {
           return data.model;
         }
-        // return data.model;
       }
       return true;
     },
@@ -103,11 +108,13 @@ const formSchema = z
   )
   .refine(
     (data) => {
-      if (data.service_type_id === 1 || data.service_type_id === 2) {
-        if (data.type === "notebook") {
+      if (
+        data.service_type_id === SERVICE_TYPES.REPAIR ||
+        data.service_type_id === SERVICE_TYPES.REPAIR
+      ) {
+        if (data.type === DEVICE_TYPES.NOTEBOOK) {
           return data.serial_number;
         }
-        // return data.serial_number;
       }
       return true;
     },
@@ -128,8 +135,7 @@ function NewOrderPage() {
 
   const clientsQuery = useQuery({
     queryKey: ["clients"],
-    queryFn: () =>
-      fetch("http://localhost:3000/api/v1/clients").then((res) => res.json()),
+    queryFn: getClients,
     placeholderData: [],
     select: (data) =>
       data.filter(
@@ -143,7 +149,6 @@ function NewOrderPage() {
   const orderMutation = useMutation({
     mutationFn: (values: z.infer<typeof formSchema>) => createOrder(values),
     onSuccess: () => {
-      console.log("Orden creada");
       navigate("..");
     },
   });
@@ -152,11 +157,9 @@ function NewOrderPage() {
     mutationFn: (values: z.infer<typeof newClientFormSchema>) =>
       createClient(values),
     onSuccess: (data) => {
-      console.log(data);
       setClient(data);
     },
     onError(error) {
-      console.log(error);
       toast({
         variant: "destructive",
         title: error.name,
@@ -180,8 +183,11 @@ function NewOrderPage() {
       return;
     }
 
-    if (values.service_type_id === 1 || values.service_type_id === 2) {
-      if (values.type === "notebook") {
+    if (
+      values.service_type_id === SERVICE_TYPES.REPAIR ||
+      values.service_type_id === SERVICE_TYPES.MAINTENANCE
+    ) {
+      if (values.type === DEVICE_TYPES.NOTEBOOK) {
         if (!values.brand || !values.model || !values.serial_number) {
           toast({
             variant: "destructive",
@@ -193,26 +199,16 @@ function NewOrderPage() {
         }
       }
     }
-
-    console.log(values);
-
     const parsedValues = {
       ...values,
       client_id: client.id,
       staff_id: auth?.userId,
     };
-
-    console.log(parsedValues);
     orderMutation.mutate(parsedValues);
   };
 
   const onSubmitNewClient = (values: z.infer<typeof newClientFormSchema>) => {
-    console.log(values);
     clientMutation.mutate(values);
-    console.log(clientMutation);
-    if (client) {
-      console.log(client);
-    }
   };
 
   return (
@@ -315,7 +311,6 @@ type OrderClientDetailsProps = {
 };
 
 function OrderClientDetails({ client, onClose }: OrderClientDetailsProps) {
-  console.log(client);
   return (
     <Card className="mb-6">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -370,23 +365,20 @@ function NewOrderForm({ onSubmit }: NewOrderFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       description: "",
-      service_type_id: 1,
-      type: "pc",
+      service_type_id: SERVICE_TYPES.REPAIR,
+      type: DEVICE_TYPES.PC,
       client_id: 1,
     },
   });
 
-  console.log(form.formState.errors);
-
   const selectedServiceType = form.watch("service_type_id", undefined);
   const selectedDeviceType = form.watch("type", undefined);
 
-  console.log(selectedServiceType);
-
   const showDeviceFieldsAndAccesories =
-    Number(selectedServiceType) === 1 || Number(selectedServiceType) === 2;
+    Number(selectedServiceType) === SERVICE_TYPES.REPAIR ||
+    Number(selectedServiceType) === SERVICE_TYPES.MAINTENANCE;
 
-  const showDeviceFields = selectedDeviceType === "notebook";
+  const showDeviceFields = selectedDeviceType === DEVICE_TYPES.NOTEBOOK;
 
   return (
     <Form {...form}>

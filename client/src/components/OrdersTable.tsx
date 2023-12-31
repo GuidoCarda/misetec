@@ -20,6 +20,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteOrder } from "@/services/orders";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { ORDER_STATUS } from "@/constants";
+import { toast } from "@/components/ui/use-toast";
 
 type Order = {
   id: string;
@@ -138,12 +140,12 @@ function OrdersTable({ data }: { data: Order[] }) {
                 <DropdownMenuItem asChild>
                   <Link to={`${order.id}`}>Ver detalle</Link>
                 </DropdownMenuItem>
-                {Number(order.status_id) <= 3 && (
+                {Number(order.status_id) <= ORDER_STATUS.IN_PROGRESS && (
                   <DropdownMenuItem asChild>
                     <Link to={`${order.id}/edit`}>Editar</Link>
                   </DropdownMenuItem>
                 )}
-                {Number(order.status_id) < 3 && (
+                {Number(order.status_id) < ORDER_STATUS.IN_PROGRESS && (
                   <DropdownMenuItem
                     onClick={() => handleDeleteDialog(order.id.toString())}
                   >
@@ -161,7 +163,10 @@ function OrdersTable({ data }: { data: Order[] }) {
   const deleteOrderMutation = useMutation({
     mutationFn: (orderId: string) => deleteOrder(orderId),
     onSuccess: () => {
-      console.log("Orden cancelada");
+      toast({
+        title: "Orden dada de baja",
+        description: "La orden fue dada de baja correctamente",
+      });
       queryClient.invalidateQueries({ queryKey: ["orders"] });
     },
   });

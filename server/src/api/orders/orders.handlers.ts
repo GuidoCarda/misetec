@@ -16,6 +16,8 @@ import {
 } from "../../database/utils";
 import { sendEmail } from "../nodemailer";
 
+import { ORDER_STATUS, SERVICE_TYPES } from "../../../../client/src/constants";
+
 export async function getAllOrders(
   req: Request<{}, {}, {}, OrderQueryParams>,
   res: Response,
@@ -76,7 +78,10 @@ export async function createOrder(
 
   let device_id = null;
 
-  if (service_type_id === 1 || service_type_id === 2) {
+  if (
+    service_type_id === SERVICE_TYPES.REPAIR ||
+    service_type_id === SERVICE_TYPES.MAINTENANCE
+  ) {
     console.log("req.body", req.body);
     if (req.body.type === "notebook") {
       const { brand, model, serial_number } = req.body;
@@ -86,14 +91,6 @@ export async function createOrder(
       console.log(device_id);
     }
   }
-
-  // console.log({
-  //   description,
-  //   accesories,
-  //   service_type_id,
-  //   client_id,
-  //   device_id,
-  // });
 
   try {
     const [results] = await pool.execute<RowDataPacket[]>(
@@ -129,7 +126,7 @@ export async function updateOrder(
   try {
     const [results] = await pool.execute<ResultSetHeader[]>(query, req.body);
 
-    if (req.body.status_id === 5) {
+    if (req.body.status_id === ORDER_STATUS.FINISHED) {
       const [order] = await pool.execute<RowDataPacket[]>(
         "SELECT * FROM `order_detail_view` WHERE id = ? ",
         [id]
@@ -162,7 +159,7 @@ export async function updateOrderState(
   const { status_id } = req.body;
 
   let query = "UPDATE `order` SET status_id = ?";
-  if (status_id === 5) {
+  if (status_id === ORDER_STATUS.FINISHED) {
     query += ", `finished_at` = NOW()";
   }
   query += " WHERE id = ?";
@@ -175,7 +172,7 @@ export async function updateOrderState(
 
     console.log(status_id);
 
-    if (status_id === 5) {
+    if (status_id === ORDER_STATUS.FINISHED) {
       const [order] = await pool.execute<RowDataPacket[]>(
         "SELECT * FROM `order_detail_view` WHERE id = ? ",
         [id]

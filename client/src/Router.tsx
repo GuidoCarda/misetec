@@ -26,7 +26,7 @@ import SettingsPage from "@/pages/Settings";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <RequireAuth allowedRoles={[ROLES.staff]} />,
+    element: <RequireAuth allowedRoles={[ROLES.STAFF]} />,
     children: [
       {
         element: <PrivateLayout />,
@@ -86,7 +86,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/portal",
-    element: <RequireAuth allowedRoles={[ROLES.client]} />,
+    element: <RequireAuth allowedRoles={[ROLES.CLIENT]} />,
     children: [
       {
         element: <PublicLayout />,

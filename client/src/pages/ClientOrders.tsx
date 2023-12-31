@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetHeader } from "@/components/ui/sheet";
+import { ORDER_STATUS, SERVICE_TYPES } from "@/constants";
 import { useAuth } from "@/hooks/useAuth";
 import { getClient } from "@/services/clients";
 import { getOrder, getOrdersByClientId } from "@/services/orders";
@@ -33,35 +34,16 @@ function ClientOrders() {
     queryFn: () => getOrdersByClientId(id!),
   });
 
-  // console.log(clientQuery.data);
-  // console.log(data);
-
   if (isPending || clientQuery.isPending) return <div>Loading...</div>;
 
   const clientHasOrders = data.length > 0;
 
-  // let currentOrder: Order | null = null;
-
-  // if (clientHasOrders) {
-  //   const order = data.find((order: Order) => order.status_id === 3);
-  //   if (order) {
-  //     if (order.length > 1) {
-  //       currentOrder = order[0];
-  //     } else {
-  //       currentOrder = order;
-  //     }
-  //   } else {
-  //     currentOrder = data.at(0);
-  //   }
-  // }
-
   const currentOrder =
-    (clientHasOrders && data.find((order: Order) => order.status_id === 3)) ||
+    (clientHasOrders &&
+      data.find(
+        (order: Order) => order.status_id === ORDER_STATUS.IN_PROGRESS
+      )) ||
     data.at(0);
-
-  // console.log(data.find((order: Order) => order.status_id === 3));
-
-  // console.log(currentOrder);
 
   const handleOrderSheet = (order: Order) => {
     setOrderSheet(order.id);
@@ -232,8 +214,6 @@ function OrderDetailSheet({
     enabled: !!orderId,
   });
 
-  // console.log({ data, isPending, isRefetching });
-
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-[600px] items-start">
@@ -338,7 +318,9 @@ function OrderDetailSheet({
               {data.device_failure && (
                 <div className="mt-6">
                   <h3 className="text-lg font-semibold mb-1 leading-none">
-                    {data.service_type_id < 3
+                    {[SERVICE_TYPES.REPAIR, SERVICE_TYPES.MAINTENANCE].includes(
+                      data.service_type_id
+                    )
                       ? "Falla del dispositivo"
                       : "Analisis inicial"}
                   </h3>

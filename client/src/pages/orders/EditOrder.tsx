@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { allowedTransitions } from "@/constants";
+import { SERVICE_TYPES, allowedTransitions } from "@/constants";
 import { getOrder, getOrderStatusList, updateOrder } from "@/services/orders";
 import { OrderStatus } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -48,22 +48,6 @@ function EditOrderPage() {
     },
   });
 
-  // async function updateOrder(values: z.infer<typeof orderEditFormSchema>) {
-  //   const res = await fetch(`http://localhost:3000/api/v1/orders/${id}`, {
-  //     method: "PATCH",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(values),
-  //   });
-
-  //   if (res.status !== 200) {
-  //     throw new Error("Error al actualizar la orden");
-  //   }
-  //   const data = await res.json();
-  //   return data;
-  // }
-
   const onSubmit = (values: z.infer<typeof orderEditFormSchema>) => {
     console.log(values);
     orderMutation.mutate(values);
@@ -84,8 +68,6 @@ function EditOrderPage() {
     accesories: orderQuery?.data?.accesories ?? "",
     report: orderQuery?.data?.report ?? "",
   };
-
-  console.log(orderQuery.data.service_type_id);
 
   return (
     <div>
@@ -176,7 +158,9 @@ export function EditOrderForm({
       ) || status.id === defaultValues.status_id
   );
 
-  const isAccessoryFieldVisible = serviceTypeId === 1 || serviceTypeId === 1;
+  const isAccessoryFieldVisible =
+    serviceTypeId === SERVICE_TYPES.REPAIR ||
+    serviceTypeId === SERVICE_TYPES.MAINTENANCE;
 
   return (
     <Form {...form}>

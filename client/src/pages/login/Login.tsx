@@ -59,8 +59,7 @@ function LoginPage() {
 
       handleShowLoginError();
     },
-    onSuccess: (response) => {
-      // console.log("login 1st success", response);
+    onSuccess: () => {
       setIsEmailSent(true);
     },
   });
@@ -126,13 +125,13 @@ function LoginPage() {
           </Alert>
         )}
         <Card className="min-w-full md:min-w-[500px]">
-          <Tabs defaultValue={ROLES.client}>
+          <Tabs defaultValue={ROLES.CLIENT}>
             <TabsList className="max-w-fit mt-6 ml-6">
-              <TabsTrigger value={ROLES.client}>Clientes</TabsTrigger>
-              <TabsTrigger value={ROLES.staff}>Personal</TabsTrigger>
+              <TabsTrigger value={ROLES.CLIENT}>Clientes</TabsTrigger>
+              <TabsTrigger value={ROLES.STAFF}>Personal</TabsTrigger>
             </TabsList>
 
-            <TabsContent value={ROLES.client}>
+            <TabsContent value={ROLES.CLIENT}>
               <CardHeader>
                 <CardTitle className="2xl">Ingresa al sistema</CardTitle>
                 <CardDescription>
@@ -155,7 +154,7 @@ function LoginPage() {
                 )}
               </CardContent>
             </TabsContent>
-            <TabsContent value={ROLES.staff}>
+            <TabsContent value={ROLES.STAFF}>
               <CardHeader>
                 <CardTitle className="text-2xl">Ingresar al sistema</CardTitle>
                 <CardDescription>
@@ -175,15 +174,5 @@ function LoginPage() {
     </>
   );
 }
-
-// function AlertError({ message }: { message: string }) {
-//   return (
-//     <Alert variant="destructive">
-//       <AlertCircle className="h-4 w-4" />
-//       <AlertTitle>Error</AlertTitle>
-//       <AlertDescription>{message}</AlertDescription>
-//     </Alert>
-//   );
-// }
 
 export default LoginPage;
