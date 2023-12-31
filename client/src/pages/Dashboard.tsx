@@ -4,10 +4,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { secondsToTime } from "@/utils";
 import { useQuery } from "@tanstack/react-query";
 import { Card } from "@tremor/react";
-import { format, startOfMonth } from "date-fns";
+import { startOfMonth } from "date-fns";
 import { Hourglass, ListChecks, Loader } from "lucide-react";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
+import { getAnalytics } from "@/services/analytics";
 
 function Dashboard() {
   const [date, setDate] = useState<DateRange | undefined>({
@@ -15,7 +16,6 @@ function Dashboard() {
     to: new Date(),
   });
 
-  // console.log(date);
   const analyticsQuery = useQuery({
     queryKey: ["analytics", date?.from, date?.to],
     queryFn: () => getAnalytics(date),
@@ -23,36 +23,7 @@ function Dashboard() {
     retry: false,
   });
 
-  async function getAnalytics(date: DateRange | undefined) {
-    const url = new URL("http://localhost:3000/api/v1/analytics");
-
-    if (date) {
-      // console.log(date, "entro");
-      const { from: fromDate, to: toDate } = date as DateRange;
-
-      const params = new URLSearchParams({
-        start: format(fromDate!, "yyyy-MM-dd"),
-      });
-      // console.log(params);
-
-      if (toDate) {
-        params.append("end", format(toDate!, "yyyy-MM-dd"));
-      }
-
-      url.search = params.toString();
-      // add the url params to the url
-
-      // console.log(url.toString());
-    }
-
-    const res = await fetch(url);
-    const data = await res.json();
-    return data;
-  }
-
   if (analyticsQuery.isError) return <p>{analyticsQuery.error.message}</p>;
-
-  // console.log(analyticsQuery.data);
 
   return (
     <>
