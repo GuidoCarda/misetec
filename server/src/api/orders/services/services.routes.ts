@@ -11,7 +11,6 @@ router.get("/", async (_req, res, next) => {
     );
 
     res.json({
-      message: "Services - 👋🌎🌍🌏",
       data: results,
     });
   } catch (error) {

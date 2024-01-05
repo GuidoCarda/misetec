@@ -30,8 +30,6 @@ export async function getAllOrders(
   try {
     const [results] = await pool.execute<RowDataPacket[]>(query, req.query);
 
-    console.log(query);
-
     res.json({
       query,
       data: results,
@@ -72,7 +70,6 @@ export async function createOrder(
   res: Response,
   next: NextFunction
 ) {
-  console.log(req.body);
   const { description, client_id, staff_id, service_type_id, accesories } =
     req.body;
 
@@ -82,13 +79,10 @@ export async function createOrder(
     service_type_id === SERVICE_TYPES.REPAIR ||
     service_type_id === SERVICE_TYPES.MAINTENANCE
   ) {
-    console.log("req.body", req.body);
     if (req.body.type === "notebook") {
       const { brand, model, serial_number } = req.body;
-      console.log({ brand, model, serial_number });
       const deviceData = { brand, model, serial_number };
       device_id = await createDevice(deviceData);
-      console.log(device_id);
     }
   }
 
@@ -106,7 +100,6 @@ export async function createOrder(
     );
     res.json(results);
   } catch (error) {
-    console.log(error);
     next(error);
   }
 }
@@ -116,7 +109,6 @@ export async function updateOrder(
   res: Response,
   next: NextFunction
 ) {
-  console.log("entro?");
   const id = req.params.id;
 
   let query = "UPDATE `order` SET ";
@@ -145,7 +137,6 @@ export async function updateOrder(
 
     res.json(results);
   } catch (error) {
-    console.log(error);
     next(error);
   }
 }
@@ -170,8 +161,6 @@ export async function updateOrderState(
       id,
     ]);
 
-    console.log(status_id);
-
     if (status_id === ORDER_STATUS.FINISHED) {
       const [order] = await pool.execute<RowDataPacket[]>(
         "SELECT * FROM `order_detail_view` WHERE id = ? ",
@@ -191,7 +180,6 @@ export async function updateOrderState(
 
     res.json(results);
   } catch (error) {
-    console.log(error);
     next(error);
   }
 }
@@ -217,8 +205,6 @@ export async function createDevice(deviceData: CreateDevice) {
   let query = "INSERT INTO device";
   const namedPlaceholders = getInsertNamedPlacehoders(deviceData);
   query += namedPlaceholders;
-
-  console.log(query);
 
   try {
     const [results] = await pool.execute<ResultSetHeader>(query, deviceData);

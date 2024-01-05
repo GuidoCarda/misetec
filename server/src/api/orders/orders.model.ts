@@ -28,13 +28,6 @@ export const CreateDeviceSchema = DeviceSchema.omit({
   id: true,
 }).partial();
 
-// export const CreateOrderSchema = OrderSchema.omit({
-//   id: true,
-//   created_at: true,
-//   status_id: true,
-//   finished_at: true,
-// });
-
 export const CreateOrderSchema = OrderSchema.omit({
   id: true,
   created_at: true,

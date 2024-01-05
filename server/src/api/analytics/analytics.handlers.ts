@@ -8,7 +8,6 @@ export async function getAnalytics(
   next: NextFunction
 ) {
   const { start, end } = req.query as { start: string; end: string };
-  console.log(start, end);
 
   let query = `
     SELECT
@@ -56,14 +55,8 @@ export async function getAnalytics(
   orderByStatusCountQuery += " GROUP BY status_id, status ";
   orderByServiceTypeCountQuery += " GROUP BY service_type_id, service_type ";
 
-  console.log(query);
-  console.log(orderByStatusCountQuery);
-  console.log(orderByServiceTypeCountQuery);
-  console.log(values);
-
   try {
     const [results] = await pool.execute<RowDataPacket[]>(query, values);
-    console.log(results);
 
     const [statusCount] = await pool.execute<RowDataPacket[]>(
       orderByStatusCountQuery,
@@ -75,13 +68,9 @@ export async function getAnalytics(
       values
     );
 
-    console.log(statusCount);
-    console.log(serviceTypeCount);
-
     const primaryAnalytics = results[0];
     res.json({ primaryAnalytics, statusCount, serviceTypeCount });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 }

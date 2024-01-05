@@ -74,8 +74,6 @@ export async function createClient(
       [client.email]
     );
 
-    console.log(existingClient);
-
     if (existingClient.length > 0) {
       const client = existingClient[0];
 
@@ -123,7 +121,6 @@ export async function updateClient(
 ) {
   const id = req.params.id;
   const client = req.body;
-  console.log(client);
 
   if (Object.keys(client).length === 0) {
     return res.status(400).json({ message: "client body is empty" });
