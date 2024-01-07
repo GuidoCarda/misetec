@@ -25,6 +25,8 @@ function Dashboard() {
 
   if (analyticsQuery.isError) return <p>{analyticsQuery.error.message}</p>;
 
+  console.log(analyticsQuery.data);
+
   return (
     <>
       <header className="flex items-center justify-between md:mb-10">

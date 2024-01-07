@@ -15,8 +15,7 @@ import {
   getUpdateNamedPlaceholders,
 } from "../../database/utils";
 import { sendEmail } from "../nodemailer";
-
-import { ORDER_STATUS, SERVICE_TYPES } from "../../../../client/src/constants";
+import { ORDER_STATUS, SERVICE_TYPES } from "../constants";
 
 export async function getAllOrders(
   req: Request<{}, {}, {}, OrderQueryParams>,

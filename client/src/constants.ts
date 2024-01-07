@@ -3,11 +3,6 @@ export const ROLES = {
   CLIENT: "client",
 } as const;
 
-export const DEVICE_TYPES = {
-  PC: "pc",
-  NOTEBOOK: "notebook",
-} as const;
-
 export const orderStatuses = [
   {
     id: 1,
@@ -30,6 +25,11 @@ export const orderStatuses = [
     denomination: "finalizada",
   },
 ];
+
+export const DEVICE_TYPES = {
+  PC: "pc",
+  NOTEBOOK: "notebook",
+} as const;
 
 export const SERVICE_TYPES = {
   REPAIR: 1,
