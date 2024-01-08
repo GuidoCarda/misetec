@@ -22,17 +22,16 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { z } from "zod";
-import { Client } from "./clientsColumns";
 import { CaretLeftIcon } from "@radix-ui/react-icons";
 import { SectionTitle } from "@/components/PrivateLayout";
-import { Province } from "@/types";
+import { Client, Province } from "@/types";
 
 function EditClientPage() {
   const params = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { isLoading, isError, error, data } = useQuery<Client>({
+  const { isLoading, isError, error, data } = useQuery({
     queryKey: ["client", params.id],
     queryFn: () => getClient(params.id as string),
     retry: false,

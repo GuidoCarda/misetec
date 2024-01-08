@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import { Client } from "@/pages/clients/clientsColumns";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +16,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { useToast } from "./ui/use-toast";
 import { deleteClient } from "@/services/clients";
 import { MoreHorizontal } from "lucide-react";
+import { Client } from "@/types";
 
 function ClientsTable({ data }: { data: Client[] }) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);

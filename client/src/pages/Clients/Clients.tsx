@@ -1,13 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Client } from "@/pages/clients/clientsColumns";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import ClientsTable from "@/components/ClientsTable";
 import { getClients } from "@/services/clients";
 import { PlusIcon } from "@radix-ui/react-icons";
+import { Client } from "@/types";
+import ClientsTable from "@/components/ClientsTable";
 
 function ClientsPage() {
   const [search, setSearch] = useState("");
