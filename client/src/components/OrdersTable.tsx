@@ -22,21 +22,9 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { ORDER_STATUS } from "@/constants";
 import { toast } from "@/components/ui/use-toast";
+import { OrderWithClientDetails } from "@/types";
 
-type Order = {
-  id: string;
-  description: string;
-  client_id: number;
-  created_at: string;
-  finished_at?: string;
-  staff_id: string;
-  status_id: string;
-  firstname?: string;
-  lastname?: string;
-  service_type?: string;
-};
-
-function OrdersTable({ data }: { data: Order[] }) {
+function OrdersTable({ data }: { data: OrderWithClientDetails[] }) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
   const queryClient = useQueryClient();
@@ -46,7 +34,7 @@ function OrdersTable({ data }: { data: Order[] }) {
     setDeleteDialogOpen((prev) => !prev);
   };
 
-  const columns: ColumnDef<Order>[] = [
+  const columns: ColumnDef<OrderWithClientDetails>[] = [
     {
       accessorKey: "id",
       header: "Codigo",

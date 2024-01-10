@@ -12,8 +12,8 @@ export async function getClient(id: string) {
 }
 
 export async function createClient(values: CreateClient) {
-  const response = await api.post<CreateClient>("/clients", values);
-  return response.data;
+  const response = await api.post<{ data: Client }>("/clients", values);
+  return response.data.data;
 }
 
 export async function updateClient(id: string, values: UpdateClient) {

@@ -27,22 +27,34 @@ export type UpdateClient = Partial<Omit<Client, "id">>;
 
 export type Order = {
   id: number;
-  description: string;
-  accesories?: string;
-  service_type_id: number;
-  report?: string;
-  device_failure?: string;
-  client_id: number;
-  device_id: number;
-  status_id: number;
   created_at: string;
-  status?: string;
-  service_type?: string;
+  finished_at: string | null;
+  description: string;
+  device_failure: string;
+  accesories: string;
+  report: string;
+  service_type_id: number;
+  status_id: number;
+  device_id: number;
+  client_id: number;
+  staff_id: number;
 };
 
-export type OrderWithClient = Order & Partial<Client>;
+export type CreateOrder = {
+  client_id: number;
+  description: string;
+  service_type_id: number;
+  accesories?: string | undefined;
+  type?: string | undefined;
+  brand?: string | undefined;
+  model?: string | undefined;
+  serial_number?: string | undefined;
+};
 
-export type CreateOrder = Omit<Order, "id" | "created_at">;
+export type UpdateOrder = Partial<Omit<Order, "id" | "created_at">>;
+
+export type OrderWithClientDetails = Order &
+  Partial<Client> & { province: string; service_type: string };
 
 export type OrderStatus = {
   id: number;

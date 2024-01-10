@@ -25,7 +25,6 @@ import { z } from "zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { NewClientForm, newClientFormSchema } from "../clients/NewClient";
 import { useState } from "react";
-import { Client } from "../clients/clientsColumns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
@@ -34,7 +33,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { User } from "lucide-react";
 import { createClient, getClients } from "@/services/clients";
 import { createOrder } from "@/services/orders";
-import { ServiceType } from "@/types";
+import { Client, ServiceType } from "@/types";
 import { CaretLeftIcon } from "@radix-ui/react-icons";
 import { SectionTitle } from "@/components/PrivateLayout";
 import { useAuth } from "@/hooks/useAuth";
@@ -437,7 +436,6 @@ function NewOrderForm({ onSubmit }: NewOrderFormProps) {
                 identificar el equipo.
               </p>
             </div>
-            {}
             <FormField
               control={form.control}
               name="type"

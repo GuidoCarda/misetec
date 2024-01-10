@@ -8,9 +8,23 @@ import {
   getOrders,
   updateOrderStatus,
 } from "@/services/orders";
-import { OrderStatus, OrderWithClient } from "@/types";
-import OrdersTable from "@/components/OrdersTable";
+import { OrderStatus, OrderWithClientDetails } from "@/types";
 import { Link } from "react-router-dom";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useToast } from "@/components/ui/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ORDER_STATUS, allowedTransitions } from "@/constants";
+import { Label } from "@/components/ui/label";
+import { PlusIcon } from "lucide-react";
+import OrdersTable from "@/components/OrdersTable";
 
 function Orders() {
   const [search, setSearch] = useState("");
@@ -19,8 +33,9 @@ function Orders() {
     queryKey: ["orders"],
     queryFn: getOrders,
     select: (data) => {
-      return data.data.filter(
-        (order: OrderWithClient) =>
+      console.log(data);
+      return data.filter(
+        (order: OrderWithClientDetails) =>
           order.id.toString().toLowerCase().includes(search.toLowerCase()) ||
           order.description.toLowerCase().includes(search.toLowerCase()) ||
           order?.firstname?.toLowerCase().includes(search.toLowerCase()) ||
@@ -29,7 +44,9 @@ function Orders() {
     },
   });
 
-  // console.log({ isPending, data });
+  if (!isPending && !data) {
+    return <div>No hay datos</div>;
+  }
 
   return (
     <div className="w-full">
@@ -61,21 +78,6 @@ function Orders() {
     </div>
   );
 }
-
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useToast } from "@/components/ui/use-toast";
-import { Skeleton } from "@/components/ui/skeleton";
-import { allowedTransitions } from "@/constants";
-import { Label } from "@/components/ui/label";
-import { PlusIcon } from "lucide-react";
 
 type SelectDemoProps = {
   disabled: boolean;
@@ -154,7 +156,11 @@ export function UpdateOrderStatus({
     return <Skeleton className="w-[160px] h-10" />;
   }
 
-  const allowedStatusList = orderStatusList.data.filter(
+  if (orderStatusList.isError) {
+    return <div>Error: {orderStatusList.error.message}</div>;
+  }
+
+  const allowedStatusList = orderStatusList?.data.filter(
     (status: OrderStatus) =>
       allowedTransitions[defaultValue].includes(status.id.toString()) ||
       status.id.toString() === defaultValue
@@ -168,7 +174,9 @@ export function UpdateOrderStatus({
     );
   }
 
-  const isDisabled = defaultValue === "4" || defaultValue === "5";
+  const isDisabled =
+    Number(defaultValue) === ORDER_STATUS.CANCELLED ||
+    Number(defaultValue) === ORDER_STATUS.FINISHED;
 
   return (
     <SelectDemo
