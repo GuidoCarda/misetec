@@ -71,3 +71,12 @@ export type Province = {
   id: number;
   denomination: string;
 };
+
+export type StaffMember = {
+  id: number;
+  firstname: string;
+  lastname: string;
+  password?: string;
+  email: string;
+  status: number;
+};

@@ -13,6 +13,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
 import { deleteStaffMember } from "@/services/auth";
 import { createStaffAccount, getStaffMembers } from "@/services/staff";
+import { StaffMember } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -167,7 +168,7 @@ function NewStaffUserForm() {
   );
 }
 
-function StaffMembersList({ members }: { members: Record<string, string>[] }) {
+function StaffMembersList({ members }: { members: StaffMember[] | undefined }) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -182,6 +183,10 @@ function StaffMembersList({ members }: { members: Record<string, string>[] }) {
     },
     onError: () => {},
   });
+
+  if (!members) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -203,7 +208,7 @@ function StaffMembersList({ members }: { members: Record<string, string>[] }) {
               <Button
                 size={"sm"}
                 variant={"ghost"}
-                onClick={() => mutation.mutate(member.id)}
+                onClick={() => mutation.mutate(String(member.id))}
               >
                 Eliminar
               </Button>
