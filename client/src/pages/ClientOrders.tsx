@@ -214,6 +214,8 @@ function OrderDetailSheet({
     enabled: !!orderId,
   });
 
+  if (!data) return null;
+
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-[600px] items-start">
@@ -319,7 +321,7 @@ function OrderDetailSheet({
                 <div className="mt-6">
                   <h3 className="text-lg font-semibold mb-1 leading-none">
                     {[SERVICE_TYPES.REPAIR, SERVICE_TYPES.MAINTENANCE].includes(
-                      data.service_type_id
+                      data.service_type_id as 1 | 2
                     )
                       ? "Falla del dispositivo"
                       : "Analisis inicial"}

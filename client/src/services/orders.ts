@@ -5,7 +5,7 @@ import {
   OrderWithClientDetails,
   UpdateOrder,
 } from "@/types";
-import api, { getHeaders } from "./config";
+import api from "./config";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export async function getOrders() {
@@ -47,16 +47,6 @@ export async function getOrderStatusList() {
 }
 
 export async function getOrdersByClientId(id: string) {
-  const headers = getHeaders();
-
-  const res = await fetch(
-    `http://localhost:3000/api/v1/orders?client_id=${id}`,
-    {
-      method: "GET",
-      headers,
-    }
-  );
-
-  const data = await res.json();
-  return data.data;
+  const response = await api.get(`/orders?client_id=${id}`);
+  return response.data;
 }

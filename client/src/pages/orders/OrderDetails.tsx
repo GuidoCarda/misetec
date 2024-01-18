@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { ORDER_STATUS, SERVICE_TYPES } from "@/constants";
+import { DEVICE_TYPES, ORDER_STATUS, SERVICE_TYPES } from "@/constants";
 import { getOrder } from "@/services/orders";
 import { CaretLeftIcon } from "@radix-ui/react-icons";
 import { useQuery } from "@tanstack/react-query";
@@ -106,7 +106,7 @@ function OrderDetailsPage() {
           <Card className="w-full p-4">
             <h3 className="text-lg font-semibold">
               {[SERVICE_TYPES.REPAIR, SERVICE_TYPES.MAINTENANCE].includes(
-                data.service_type_id
+                data.service_type_id as 1 | 2
               )
                 ? "Falla del dispositivo"
                 : "Analisis inicial"}
@@ -128,7 +128,7 @@ function OrderDetailsPage() {
                   <p className="text-zinc-500">#{data.device_id}</p>
                 </div>
 
-                {data.type === "notebook" && (
+                {data.type === DEVICE_TYPES.NOTEBOOK && (
                   <>
                     <div className="flex items-center justify-between">
                       <span>Marca</span>

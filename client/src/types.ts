@@ -34,7 +34,9 @@ export type Order = {
   accesories: string;
   report: string;
   service_type_id: number;
+  service_type?: string;
   status_id: number;
+  status?: string;
   device_id: number;
   client_id: number;
   staff_id: number;
@@ -54,11 +56,19 @@ export type CreateOrder = {
 export type UpdateOrder = Partial<Omit<Order, "id" | "created_at">>;
 
 export type OrderWithClientDetails = Order &
-  Partial<Client> & { province: string; service_type: string };
+  Partial<Client> & { province: string } & Partial<Device>;
 
 export type OrderStatus = {
   id: number;
   denomination: string;
+};
+
+export type Device = {
+  id: number;
+  type: "pc" | "notebook";
+  brand: string;
+  model: string;
+  serial_number: string;
 };
 
 export type ServiceType = {
