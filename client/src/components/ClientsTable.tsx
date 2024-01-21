@@ -22,10 +22,14 @@ function ClientsTable({ data }: { data: Client[] }) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [client, setClient] = useState<Client | null>(null);
 
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
   const handleDeleteDialog = (client: Client | null) => {
     setClient(client);
     setDeleteDialogOpen((prev) => !prev);
   };
+
   const columns: ColumnDef<Client>[] = useMemo(
     () => [
       {
@@ -112,7 +116,16 @@ function ClientsTable({ data }: { data: Client[] }) {
     []
   );
 
-  const deleteClientMutation = useDeleteClient();
+  const deleteClientMutation = useMutation({
+    mutationFn: (id: string) => deleteClient(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
+      toast({
+        title: "Cliente dado de baja",
+        description: "El cliente fue dado de baja correctamente",
+      });
+    },
+  });
 
   return (
     <>
@@ -134,22 +147,6 @@ function ClientsTable({ data }: { data: Client[] }) {
       <DataTable columns={columns} data={data} />
     </>
   );
-}
-
-export function useDeleteClient() {
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
-
-  return useMutation({
-    mutationFn: (id: string) => deleteClient(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["clients"] });
-      toast({
-        title: "Cliente dado de baja",
-        description: "El cliente fue dado de baja correctamente",
-      });
-    },
-  });
 }
 
 export default ClientsTable;
