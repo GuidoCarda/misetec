@@ -1,3 +1,5 @@
+import axios, { AxiosRequestHeaders, InternalAxiosRequestConfig } from "axios";
+
 export const getHeaders = (): {
   "Content-Type": string;
   Authorization?: string;
@@ -17,11 +19,25 @@ export const getHeaders = (): {
   };
 };
 
-import axios from "axios";
-
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
-  headers: getHeaders(),
 });
+
+export const AxiosInterceptor = () => {
+  const updateHeader = (request: InternalAxiosRequestConfig) => {
+    request.headers = getHeaders() as AxiosRequestHeaders;
+    return request;
+  };
+
+  api.interceptors.request.use((request) => {
+    // if wanted here I could add especial cases for some requests
+    // for example: if the request is for assets, I could skip the header update
+    // if(request.url?.includes('assets')) {
+    //   return request
+    // }
+
+    return updateHeader(request);
+  });
+};
 
 export default api;
