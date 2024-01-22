@@ -48,5 +48,5 @@ export async function getOrderStatusList() {
 
 export async function getOrdersByClientId(id: string) {
   const response = await api.get(`/orders?client_id=${id}`);
-  return response.data;
+  return response.data.data;
 }

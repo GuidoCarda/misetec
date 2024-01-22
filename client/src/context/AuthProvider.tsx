@@ -41,8 +41,6 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     setAuth(null);
   };
 
-  console.log(auth);
-
   return (
     <AuthContext.Provider value={{ auth, signIn, signOut, isLoading }}>
       {children}

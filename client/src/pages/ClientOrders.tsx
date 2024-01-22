@@ -214,8 +214,6 @@ function OrderDetailSheet({
     enabled: !!orderId,
   });
 
-  if (!data) return null;
-
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-[600px] items-start">
@@ -240,13 +238,13 @@ function OrderDetailSheet({
             <div className="flex flex-col   justify-between mt-4">
               <header className="space-y-2 mb-4">
                 <h2 className="text-2xl mb-2 font-semibold text-gray-800">
-                  Orden #{data.id}
+                  Orden #{data?.id}
                 </h2>
                 <p className="text-zinc-600">
                   Creada el:{" "}
                   <span className="text-black">
                     {format(
-                      new Date(data.created_at),
+                      new Date(data!.created_at),
                       "dd 'de' MMMM 'de' yyyy",
                       {
                         locale: es,
@@ -255,7 +253,7 @@ function OrderDetailSheet({
                   </span>
                 </p>
 
-                {data.finished_at && (
+                {data?.finished_at && (
                   <p className="text-zinc-600">
                     Finalizada el:{" "}
                     <span className="text-black">
@@ -271,80 +269,86 @@ function OrderDetailSheet({
                 )}
                 <span className=" block text-zinc-600">
                   Estado:
-                  <Badge className="rounded-md ml-2 h-fit">{data.status}</Badge>
+                  <Badge className="rounded-md ml-2 h-fit">
+                    {data?.status}
+                  </Badge>
                 </span>
                 <span className=" block text-zinc-600">
                   Tipo servicio:
                   <Badge variant={"outline"} className="rounded-md ml-2 h-fit">
-                    {data.service_type}
+                    {data?.service_type}
                   </Badge>
                 </span>
               </header>
               <Separator />
 
-              <div className="mt-6">
-                <h3 className="text-lg font-semibold mb-1 leading-none">
-                  Descripcion
-                </h3>
-                <p className="max-w-[60ch] text-gray-500 ">
-                  {data.description}
-                </p>
-              </div>
+              <DetailSheetSection title="Descripcion">
+                {data?.description}
+              </DetailSheetSection>
 
-              {data.device_id && (
+              {data?.device_id && (
                 <div className="mt-6">
                   <h3 className="text-lg font-semibold mb-1 leading-none">
                     Dispositivo
                   </h3>
-                  <div className="space-y-1 w-5/6">
-                    <div className="flex justify-between ">
+                  <div className="space-y-1 md:w-5/6">
+                    <div className="flex flex-col md:flex-row md:justify-between ">
                       <span>Tipo</span>
-                      <p className="text-zinc-500"> {data.type}</p>
+                      <p className="text-zinc-500"> {data?.type}</p>
                     </div>
-                    <div className="flex justify-between ">
+                    <div className="flex flex-col  md:flex-row md:justify-between ">
                       <span>Marca</span>
-                      <p className="text-zinc-500"> {data.brand}</p>
+                      <p className="text-zinc-500"> {data?.brand}</p>
                     </div>
-                    <div className="flex justify-between ">
+                    <div className="flex flex-col  md:flex-row md:justify-between ">
                       <span>Modelo</span>
-                      <p className="text-zinc-500"> {data.model}</p>
+                      <p className="text-zinc-500"> {data?.model}</p>
                     </div>
-                    <div className="flex justify-between ">
+                    <div className="flex flex-col justify-center md:flex-row md:justify-between ">
                       <span>Nro de serie</span>
-                      <p className="text-zinc-500"> {data.serial_number}</p>
+                      <p className="text-zinc-500"> {data?.serial_number}</p>
                     </div>
                   </div>
                 </div>
               )}
 
-              {data.device_failure && (
-                <div className="mt-6">
-                  <h3 className="text-lg font-semibold mb-1 leading-none">
-                    {[SERVICE_TYPES.REPAIR, SERVICE_TYPES.MAINTENANCE].includes(
-                      data.service_type_id as 1 | 2
-                    )
-                      ? "Falla del dispositivo"
-                      : "Analisis inicial"}
-                  </h3>
-                  <p className="max-w-[60ch] text-gray-500">
-                    {data.device_failure}
-                  </p>
-                </div>
-              )}
+              <DetailSheetSection
+                title={
+                  [SERVICE_TYPES.REPAIR, SERVICE_TYPES.MAINTENANCE].includes(
+                    data?.service_type_id as 1 | 2
+                  )
+                    ? "Falla del dispositivo"
+                    : "Analisis inicial"
+                }
+              >
+                {data?.device_failure}
+              </DetailSheetSection>
 
-              {data.report && (
-                <div className="mt-6">
-                  <h3 className="text-lg font-semibold mb-1 leading-none">
-                    Informe
-                  </h3>
-                  <p className="max-w-[60ch] text-gray-500">{data.report}</p>
-                </div>
-              )}
+              <DetailSheetSection title="Informe">
+                {data?.report}
+              </DetailSheetSection>
             </div>
           )}
         </SheetHeader>
       </SheetContent>
     </Sheet>
+  );
+}
+
+function DetailSheetSection({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  if (!children) return null;
+
+  return (
+    <div className="mt-6">
+      <h3 className="text-lg font-semibold mb-1 leading-none">{title}</h3>
+      <div className=" text-gray-500">{children}</div>
+    </div>
   );
 }
 
